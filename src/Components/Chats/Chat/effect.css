@@ -1,0 +1,17 @@
+
+.chat-options-button{
+    transition: .7s !important;
+}
+/* 
+.chat-options-button:hover{
+    opacity: 1 !important;
+} */
+
+.icon:hover{
+    opacity: 1 !important;
+    transform: scale(1.05);
+}
+
+.chat-options-button-icon:hover{
+    opacity: 1 !important;
+}

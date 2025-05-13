@@ -1,0 +1,4 @@
+.text-add:hover {
+    transform: scale(1.02) !important;
+    color: greenyellow !important;
+}

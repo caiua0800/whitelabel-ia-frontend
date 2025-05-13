@@ -1,0 +1,16 @@
+
+
+.button:hover{
+    transform: scale(1.02) !important;
+    background: rgba(0, 180, 255, 1) !important;
+}
+
+.close-btn:hover{
+    color: red !important;
+    transform: scale(1.05) !important;
+}
+
+.save-btn:hover{
+    transform: scale(1.02) !important;
+    background: rgba(55, 150, 0, 1) !important;
+}

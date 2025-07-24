@@ -1,0 +1,91 @@
+
+.container-vendedores{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 0;
+    border-radius: 8px;
+}
+
+.titulo-container-vendedores{
+    display: flex;
+}
+
+.titulo-vendedores{
+    margin: 0;
+    font-size: 30px;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 800;
+}
+
+.container-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    padding-left: 28px;
+    padding-right: 28px;
+    background-color: rgb(86, 170, 253);
+    border-radius: 10px;
+}
+
+.card {
+    background-color: white;
+    width: 380px;
+    height: 95px;
+    display: grid;
+    grid-template-columns: 3fr 6fr 4fr;
+    border-radius: 10px;
+    align-items: center;
+    justify-self: center; 
+    margin: 0; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.card-container-img{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px 0 0 10px;
+}
+
+.card-container-name{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border-right: 4px solid black;
+}
+
+.card-name{
+    font-size: 1.3em;
+    margin: 0;
+}
+
+.card-container-vendas{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 10px 10px 0;
+}
+
+.card-vendas{
+    font-size: 1.7em;
+    margin: 0;
+    opacity: 0.7;
+    font-weight: 800;
+}
+
+.card-img{
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

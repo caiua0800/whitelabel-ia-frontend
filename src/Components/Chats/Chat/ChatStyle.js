@@ -8,7 +8,7 @@ const style = {
         display: "flex",
         flexDirection: "column",
         background: "white",
-        borderLeft: "2px solid rgba(0,0,0,0.1)"
+        // borderLeft: "2px solid rgba(0,0,0,0.1)"
     },
     chatHeader: {
         width: "100%",
@@ -38,9 +38,10 @@ const style = {
         fontSize: 16,
         color: "black",
         background: "white",
-        opacity: 0.4,
+        opacity: 0.6,
         borderRadius: 8,
         padding: 5,
+        zIndex: 9,
         boxShadow: "2px 2px 3px rgba(0,0,0,0.6)"
     },
     optionsIcon: {
@@ -53,16 +54,32 @@ const style = {
         height: "68vh",
         boxSizing: "border-box",
         overflowY: "auto",
-        padding: 30,
         boxSizing: "border-box",
-        background: "rgba(240, 240, 255, 1)"
+        backgroundImage: "url('/images/whatsapp-wallpaper.jpg')",
+        backgroundSize: "contain",
+        backgroundPosition: "center",
+        position: "relative"
+    },
+    chatBodyBlackOpacity: {
+        width: "100%",
+        minHeight: "68vh",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: 1,
+        background: "rgba(0,0,0,0.4)"
     },
     bodyContent: {
         width: "100%",
         height: "max-content",
         display: "flex",
         flexDirection: "column",
-        gap: 10
+        gap: 10,
+        zIndex: 2,
+        padding: 30,
+        boxSizing: "border-box",
+        position: "relative"
     },
     sendMessagesBox: {
         width: "100%",
@@ -155,7 +172,8 @@ const style = {
         justifyContent: "center",
         alignItems: "center",
         borderRadius: "50%",
-        boxShadow: "3px 3px 5px rgba(0,0,0,0.4)"
+        boxShadow: "3px 3px 5px rgba(0,0,0,0.4)",
+        cursor: "pointer"
     },
     clientPicture: {
         width: "150%",
@@ -165,6 +183,7 @@ const style = {
         color: "rgba(0,0,0,0.7)",
         fontWeight: 600,
         marginLeft: 20,
+        cursor: "pointer"
     }
 }
 

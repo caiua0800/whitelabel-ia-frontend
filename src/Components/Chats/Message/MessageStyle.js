@@ -5,6 +5,7 @@ const style = {
         display: "flex",
         marginBottom: 20,
         boxSizing: "border-box",
+        zIndex: 2
     },
     messageBox: {
         maxWidth: "70%",
@@ -24,7 +25,7 @@ const style = {
         // right: 0,
         fontSize: 12,
         fontWeight: 600,
-        color: "rgba(30, 30, 30, 0.7)"
+        color: "rgba(255, 255, 255, 1)"
     },
     fileMessage: {
         display: "flex",

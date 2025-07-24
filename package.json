@@ -10,15 +10,17 @@
     "assert": "^2.1.0",
     "axios": "^1.9.0",
     "dns": "^0.2.2",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "fs": "^0.0.1-security",
     "pg": "^8.15.6",
     "react": "^19.1.0",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "^19.1.0",
     "react-loading-indicators": "^1.0.1",
     "react-router-dom": "^7.5.3",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",

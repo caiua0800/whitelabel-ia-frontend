@@ -12,7 +12,7 @@ const style = {
     body: {
         width: "100%",
         height: "84vh",
-        background: "green"
+        background: "white"
     },
     bodyGrid: {
         width: "100%",

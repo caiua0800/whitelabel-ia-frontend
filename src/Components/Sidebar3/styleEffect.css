@@ -1,0 +1,12 @@
+.close-icon:hover {
+    opacity: 0.2;
+    transition: .3s;
+}
+
+.menu-item:hover {
+    opacity: 0.5;
+}
+
+.user-button:hover {
+    opacity: 0.5;
+}

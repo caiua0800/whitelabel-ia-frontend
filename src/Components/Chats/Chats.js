@@ -7,7 +7,7 @@ import { ChatContext } from "../../Context/ChatContext";
 import Header from "./Header/Header";
 
 export default function Chats() {
-    const { activeChat, setActiveChat, chatsDb, fetchMessages, loading } = useContext(ChatContext);
+    const { activeChat, setActiveChat, chatsDb, fetchMessages } = useContext(ChatContext);
     const [messages, setMessages] = useState([]);
     const [chatStats, setChatStats] = useState({
         total: 0,
@@ -15,6 +15,7 @@ export default function Chats() {
         closed: 0,
         inProgress: 0
     });
+        
 
     const updateStats = useCallback((chats) => {
         if (chats && chats.length > 0) {
@@ -46,23 +47,14 @@ export default function Chats() {
         }
     }, [fetchMessages]);
 
-    if (loading) {
-        return <div>Carregando chats...</div>;
-    }
-
 
     return (
         <div style={style.container}>
            <Header />
             <div style={style.body}>
                 <div style={style.bodyGrid}>
-                    <ChatsRows
-                        chats={chatsDb}
-                    />
-                    <Chat
-                        chat={activeChat}
-                        messages={messages}
-                    />
+                    <ChatsRows/>
+                    <Chat chat={activeChat}/>
                 </div>
             </div>
         </div>

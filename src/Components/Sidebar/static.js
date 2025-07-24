@@ -1,12 +1,13 @@
 
 
 export const menuItems = [
-    {name: "HOME", icon: "./icons/home-icon.svg"},
-    {name: "CHATS", icon: "./icons/chat-icon.svg"},
-    {name: "VENDAS", icon: "./icons/deal-icon.svg"},
-    {name: "AGENTES", icon: "./icons/bot-icon.svg"},
-    {name: "CLIENTES", icon: "./icons/clients-icon.svg"},
-    {name: "USUÁRIOS", icon: "./icons/admins-icon.svg"},
-    {name: "ESTATÍSTICAS", icon: "./icons/statistics-icon.svg"},
+    // {name: "HOME", icon: "./icons/home-icon.svg", route: "/home"},
+    {name: "CHATS", icon: "./icons/chat-icon.svg", route: "/"},
+    {name: "PRODUTOS", icon: "./icons/product-icon.svg", route: "/produtos"},
+    {name: "VENDAS", icon: "./icons/sale-icon.svg", route: "/vendas"},
+    {name: "CLIENTES", icon: "./icons/clients-icon.svg", route: "/clientes"},
+    {name: "TAGS", icon: "./icons/tag-icon.svg", route: "/tags"},
+    {name: "CATEGORIAS", icon: "./icons/tag-icon.svg", route: "/categorias"},
+    {name: "DISPAROS", icon: "./icons/airplane2-icon.svg", route: "/disparos"},
 ]
 

@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./LoginStyle";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const { login } = useContext(AuthContext);
-    const [id, setId] = useState("523106");
-    const [password, setPassword] = useState("^hY4D9hY");
+    const { login, credentials, loading } = useContext(AuthContext);
+    const [id, setId] = useState("72295318");
+    const [password, setPassword] = useState("u0a83&X#");
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -15,11 +15,18 @@ export default function Login() {
 
         try {
             await login(id, password);
-            navigate("/", { replace: true }); // Redireciona para a página principal
+            navigate("/", { replace: true });
         } catch (error) {
             console.error("Login failed:", error);
         }
     };
+
+    useEffect(() => {
+        if (!loading && credentials?.isAuthenticated) {
+          navigate("/", { replace: true });
+        }
+      }, [credentials, loading]);
+      
 
     return (
         <div style={styles.container}>
@@ -47,10 +54,12 @@ export default function Login() {
                                 <button onClick={handleLogin} style={styles.loginButton}>
                                     Login
                                 </button>
-                                <span style={{ color: "white", fontWeight: "600" }}>OU</span>
-                                <div style={styles.signUpButton}>Cadastre-se</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div style={styles.wallpaperContainer}>
+                        <img src="./images/wallpaper1.webp" style={styles.wallpaperImage} />
                     </div>
                 </div>
             </div>

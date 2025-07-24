@@ -1,36 +1,58 @@
 import React, { useContext, useEffect, useState } from "react";
 import style from "./ChatBoxStyle";
-import "./effect.css"
+import "./effect.css";
 import formatHelpers from "../../helpers/formatHelpers";
 import { ChatContext } from "../../../Context/ChatContext";
 
 const ChatBox = ({ chat }) => {
-    const { handleSelectChat } = useContext(ChatContext);
+  const { handleSelectChat, activeChat } = useContext(ChatContext);
 
-    const handleSelect = () => {
-        handleSelectChat(chat);
-    };
+  const handleSelect = () => {
+    handleSelectChat(chat);
+  };
+  
 
-    if (!chat) return null;
+  function limitarString(texto, limite = 10) {
+    if (typeof texto !== 'string' || texto.length <= limite) {
+      return texto;
+    }
+    return texto.substring(0, limite - 3) + '...';
+  }
 
-    return (
-        <div onClick={handleSelect} className="chat-box" style={{...style.chatContainer, background: chat.lastMessageIsSeen ? "rgba(240, 240, 250, 1)" : "rgba(100, 240, 29, 0.4)"}}>
-            <div style={style.chatContent}>
-                <div style={style.profilePhotoBox}>
-                    <img style={style.profilePhoto} src="./images/usuario.webp" />
-                </div>
-                <div style={style.info}>
-                    <span style={style.clientName}>{chat.client_name || chat.id || "Indefinido"}</span>
-                    <div style={style.clientLastMessage}>
-                        <span style={style.staticInput}>Msg: </span>
-                        <span style={style.message}>{chat.lastMessageText || "sem mensagens"}</span>
-                    </div>
-                </div>
+  if (!chat || !chat.lastMessageText) return null;
+
+  return (
+    <>
+      <div
+        onClick={handleSelect}
+        className={(activeChat && chat.id == activeChat.id) ? "" : "chat-box"}
+        style={{
+          ...style.chatContainer,
+          background: (activeChat && chat.id == activeChat.id) ? "rgba(0, 180, 0, 1)" : "rgba(220, 220, 230, 1)",
+        }}
+      >
+        <div style={style.chatContent}>
+          <div style={style.profilePhotoBox}>
+            <img style={style.profilePhoto} src="./icons/user-icon2.png" />
+          </div>
+          <div style={style.info}>
+            <span style={style.clientName}>
+              {limitarString(chat.clientName) || chat.id || "Indefinido"}
+            </span>
+            <div style={style.clientLastMessage}>
+              <span style={style.staticInput}>Msg: </span>
+              <span style={style.message}>
+                {chat.lastMessageText || "sem mensagens"}
+              </span>
             </div>
-            <span style={style.hour}>{formatHelpers.formatarData(chat.lastMessageDate)}</span>
+          </div>
         </div>
-    );
+        <span style={style.hour}>
+          {formatHelpers.formatarData(chat.lastMessageDate)}
+        </span>
+      </div>
+    </>
+  );
 };
-
 
 export default ChatBox;

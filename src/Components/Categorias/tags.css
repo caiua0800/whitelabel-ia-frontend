@@ -1,0 +1,9 @@
+
+
+.tagBox:hover{
+    transform: scale(1.03) !important;
+}
+
+.tagBox:hover .tag-text{
+    color: rgb(40, 183, 211) !important;
+}

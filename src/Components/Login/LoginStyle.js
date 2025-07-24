@@ -31,14 +31,13 @@ const styles = {
     contentContent: {
         width: "100%",
         height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        display: "grid",
+        gridTemplateRows: "10vh 90vh",
         color: "blue"
     },
     header: {
         width: "100%",
-        height: 90,
+        height: "100%",
         background: "linear-gradient(-20deg, #004886, #102c32)",
         display: "grid",
         gridTemplateColumns: "48% 52%"
@@ -90,6 +89,19 @@ const styles = {
         display: "flex",
         color: "rgba(0, 200, 255, 1)",
         textDecoration: "underline",
+    },
+    wallpaperContainer: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+        // marginTop: 40
+    },
+    wallpaperImage: {
+        width: 1000,
+        borderRadius: 20,
+        opacity: 1
     }
 }
 

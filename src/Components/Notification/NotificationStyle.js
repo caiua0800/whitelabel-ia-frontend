@@ -3,14 +3,16 @@
 const style = {
     notificationContainer: {
         position: "fixed",
-        top: 70,
-        right: 80,
+        bottom: 20,
+        left: 30,
         width: 560,
         height: 140,
         zIndex: 9
     },
     notificationBox: { 
-        background: "rgba(40, 200, 220, 1)",
+        background: "rgba(100, 200, 0, 1)",
+        border: "2px solid rgba(80, 80, 80, 1)",
+        boxShadow: "3px 3px 3px rgba(0,0,0,0.4)",
         minWidth: "200px",
         width: "max-content",
         maxWidth: "100%",
@@ -21,13 +23,14 @@ const style = {
         display: "grid",
         gridTemplateColumns: "30% 70%",
         gap: 20,
+        cursor: "pointer",
         position: "relative"
     },
     closeBtn: {
         position: "absolute",
         top: 10,
         left: 15,
-        fontSize: 16,
+        fontSize: 18,
         color: "black",
         fontWeight: 600,
         cursor: "pointer"
@@ -43,7 +46,7 @@ const style = {
         width: 80,
         height: 80,
         borderRadius: "50%",
-        border: "1px solid rgba(0,0,0,0.4)",
+        border: "3px solid rgba(0,0,0,0.4)",
         boxShadow: "2px 2px 3px rgba(0,0,0,0.4)",
         overflow: "hidden",
         display: "flex",
@@ -51,7 +54,7 @@ const style = {
         alignItems: "center"
     },
     photo: {
-        width: "160%"
+        width: "170%"
     },
     anotherPart: {
         width: "100%",
@@ -78,7 +81,7 @@ const style = {
         display: "flex",
         justifyContent: "start",
         alignItems: "start",
-        textAlign: "center",
+        textAlign: "start",
         position: "relative"
     },
     message: {

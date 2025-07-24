@@ -3,19 +3,18 @@ const style = {
     header: {
         width: "100%",
         height: "100%",
-        background: "rgba(200, 200, 220, 1)",
+        background: "rgba(30, 80, 80, 1)",
         display: "grid",
         gridTemplateColumns: "0.4fr 4fr 2fr 2fr",
         gap: 20,
         padding: "0 10px",
         boxSizing: "border-box",
-        borderBottom: "1px solid rgba(255, 255, 255, 1)"
     },
     boxAdd: {
         width: "100%",
         height: "80%",
         borderRadius: 8,
-        background: "radial-gradient(#60b6fb, #1e96fc)",
+        background: "radial-gradient(rgba(30, 150, 80, 1), rgba(30, 200, 80, 1))",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -47,20 +46,22 @@ const style = {
         width: "400px",
         height: "80%",
         borderRadius: 8,
-        background: "rgba(230, 230, 255, 1)",
+        background: "rgba(30, 200, 80, 1)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        filter: "drop-shadow(10px 4px 12px rgba(255, 255, 255, 0.1))"
     },
     boxTitle: {
         fontSize: 22,
         fontWeight: 600,
-        color: "rgba(0, 0, 0, 0.7)"
+        color: "white"
     },
     boxValue: {
         fontSize: 28,
-        fontWeight: 600
+        fontWeight: 600,
+        color: "white"
     }
 }
 

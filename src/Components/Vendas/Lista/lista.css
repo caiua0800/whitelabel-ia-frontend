@@ -1,0 +1,246 @@
+.container-vendas-list {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(230, 230, 230);
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.container-titulo-list {
+    display: flex;
+}
+
+.titulo-list-h3 {
+    margin: 0;
+    padding-left: 8px;
+    padding-bottom: 5px;
+    font-size: 1.4em;
+}
+
+.container-list {
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-vendas {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.list-header {
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+.container-input-b {
+    width: 100%;
+    background-color: royalblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+}
+
+.container-input {
+    display: grid;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 80% 20%;
+    gap: 20px;
+    height: 100%;
+}
+
+.input-and-button-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #a0a0a0;
+}
+
+.input-list-vendas {
+    padding-left: 10px;
+    width: 100%;
+    height: 40px;
+    border-radius: 15px 0 0 15px;
+    outline: none;
+    border: none;
+    background-color: rgb(230, 230, 230);
+    box-sizing: border-box;
+}
+
+.button-buscar-vendas {
+    width: 100%;
+    height: 40px;
+    border-radius: 0 15px 15px 0;
+    border: none;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.container-titulo-cel {
+    background-color: #f2f2f2;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.list-header-h3 {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 1em;
+}
+
+.list-body {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.cel-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.list-body .cel-list:nth-child(odd) {
+    background-color: white;
+}
+
+.list-body .cel-list:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.list-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.list-footer button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.list-footer button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.list-footer button.active {
+    background-color: rgba(100, 150, 244, 1);
+    color: white;
+    border: none;
+}
+
+
+
+/* //new */
+
+.container-new {
+    width: 100%;
+    height: max-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title-box-new {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.title-box-new span {
+    font-size: 36px;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 800;
+}
+
+.table-container-new {
+    width: 100%;
+    height: max-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+.table-header-cells {
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 2fr 3fr 3fr;
+}
+
+.table-header-cells .cell {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-header-cells .cell span {
+    display: flex;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.table-body-new {
+    width: 100%;
+    height: max-content;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+}
+
+.table-body-new .row {
+    width: 100%;
+    height: 50px;
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 2fr 3fr 3fr;
+}
+
+.table-body-new .row .cell {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-body-new .row:nth-child(odd) {
+    background-color: rgb(236, 236, 236);
+}
+
+.table-body-new .row:nth-child(even) {
+    background-color: rgb(248, 249, 250);
+}
+
+.table-body-new .row .cell span {
+    font-size: 18px;
+    font-weight: 600;
+}

@@ -184,8 +184,7 @@ const ChatProvider = ({ children }) => {
 
     // Constrói a URL de forma segura
     const wsUrl = new URL(
-      process.env.REACT_APP_WS_URL ||
-        "wss://servidordotnet.demelloagent.app/ws"
+      process.env.REACT_APP_WS_URL || "wss://servidordotnet.demelloagent.app/ws"
     );
     wsUrl.searchParams.append("access_token", rawToken);
     wsUrl.searchParams.append("agent_number", agentNum);
@@ -234,6 +233,8 @@ const ChatProvider = ({ children }) => {
     };
 
     ws.current.onclose = (event) => {
+      if (!ws.current) return; // Adicione esta verificação
+
       console.log(
         `WebSocket: Desconectado (código: ${event.code}, motivo: ${
           event.reason || "não especificado"
@@ -246,8 +247,12 @@ const ChatProvider = ({ children }) => {
       console.log(`WebSocket: Tentando reconectar em ${delay}ms`);
 
       setTimeout(() => {
-        ws.current.reconnectAttempts = (ws.current.reconnectAttempts || 0) + 1;
-        connectWebSocket();
+        if (ws.current) {
+          // Adicione esta verificação
+          ws.current.reconnectAttempts =
+            (ws.current.reconnectAttempts || 0) + 1;
+          connectWebSocket();
+        }
       }, delay);
     };
 
@@ -270,10 +275,13 @@ const ChatProvider = ({ children }) => {
     updateChatInList,
   ]);
 
-  
-
   const disconnectWebSocket = useCallback(() => {
     if (ws.current) {
+      ws.current.onopen = null;
+      ws.current.onmessage = null;
+      ws.current.onerror = null;
+      ws.current.onclose = null;
+
       ws.current.close();
       ws.current = null;
       setSocketStatus("disconnected");
@@ -407,7 +415,6 @@ const ChatProvider = ({ children }) => {
     };
   }, [user, credentials?.accessToken, connectWebSocket, disconnectWebSocket]);
 
-  // Efeito para carregar chats quando o usuário loga
   useEffect(() => {
     if (user && credentials?.accessToken) {
       fetchChats();
@@ -461,6 +468,7 @@ const ChatProvider = ({ children }) => {
         avaliableAgents,
         selectedAgent,
         setSelectedAgent,
+        disconnectWebSocket,
       }}
     >
       {children}

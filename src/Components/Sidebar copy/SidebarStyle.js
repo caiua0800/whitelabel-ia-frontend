@@ -1,6 +1,6 @@
 const style = {
   sidebarContainer: {
-    width: "100px",
+    width: "20vw",
     height: "95vh",
     background: "#9CEC5B",
     position: "fixed",
@@ -13,25 +13,23 @@ const style = {
     borderRadius: 4,
     boxShadow: "3px 4px 10px rgba(0,0,0,0.4)",
     zIndex: 9,
-    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out", 
+    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out", // Transições específicas
   },
   sidebarContainerClosed: {
     transform: "translateY(-50%) translateX(-100%)", // Move para esquerda (fora da tela)
     opacity: 0,
-    width: "100px",
+    width: "20vw",
     height: "95vh",
-    background: "#9CEC5B",
+    background: "rgba(100, 150, 244, 1)",
     position: "fixed",
     top: "50%",
     left: "2vh",
-    transform: "translateY(-50%) translateX(0)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     borderRadius: 4,
-    boxShadow: "3px 4px 10px rgba(0,0,0,0.4)",
     zIndex: 9,
-    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out", 
+    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
   },
   sidebarContent: {
     width: "100%",
@@ -44,9 +42,8 @@ const style = {
   },
   closeIconBox: {
     position: "absolute",
-    top: 30,
-    left: "50%",
-    transform: "translateX(-50%)",
+    top: 20,
+    left: 20,
     width: 30,
     height: 30,
     display: "flex",
@@ -78,23 +75,14 @@ const style = {
     width: "100%",
   },
   agenteTitleBox: {
-    width: "auto",  // Remove a largura fixa
-    height: "100%", 
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: "0 10px",
-    marginTop: 100,
+    width: "100%",
+    textAlign: "center",
   },
   agenteTitle: {
-    fontSize: "1.4rem",
-    textShadow: "2px 2px 1px rgba(0,0,0,0.5)",
-    color: "rgba(255, 255, 255, 1)",
+    fontSize: 24,
+    // marginTop: 10,
+    color: "rgba(80, 80, 80, 1)",
     fontWeight: 600,
-    writingMode: "vertical-rl", // Texto vertical (right-to-left)
-    textOrientation: "mixed",  // Mantém a orientação dos caracteres
-    transform: "rotate(180deg)", // Opcional: inverte a direção (se necessário)
-    letterSpacing: "2px", // Melhora a legibilidade
   },
   menu: {
     width: "100%",
@@ -118,16 +106,17 @@ const style = {
   menuItemsCenter: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "start",
   },
   menuItem: {
     // width: "100%",
-    height: "2.8rem",
+    height: 55,
     display: "grid",
     gridTemplateColumns: "35px auto",
     boxSizing: "border-box",
+    gap: 10,
     cursor: "pointer",
-    // transition: ".3s",
+    transition: ".3s",
   },
   menuItemIconBox: {
     width: "100%",
@@ -135,27 +124,17 @@ const style = {
     display: "flex",
     justifyContent: "center",
     alignItem: "center",
-    position: "relative"
   },
   menuItemIcon: {
     width: "100%",
   },
   menuItemTextBox: {
-    // width: 230,
-    padding: "0px 30px",
-    // display: "flex",
-    justifyContent: "center",
+    width: "100%",
+    display: "flex",
+    justifyContent: "start",
     alignItems: "center",
-    position: "absolute",
-    top: 0,
-    left: 80,
-    borderRadius: "0px 30px 30px 0px",
-    height: "100%",
-    background: "rgba(156, 236, 91, 1)",
-    overflow: "hidden"
   },
   menuItemText: {
-    width: "100%",
     color: "rgba(80, 80, 80, 1)",
     fontWeight: 600,
     fontSize: 22,

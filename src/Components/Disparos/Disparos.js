@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { searchShots } from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
 import DisparoPage from "./DisparoPage/DisparoPage";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -25,6 +26,7 @@ export default function Disparos() {
   const [order, setOrder] = useState("desc");
   const [statusFilter, setStatusFilter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const {startLoading, stopLoading} = useContext(LoadingContext)
 
   const handleGoToNewShot = () => {
     navigate("/novo-disparo");
@@ -32,6 +34,7 @@ export default function Disparos() {
 
   const fetchShots = useCallback(
     async (page = 1) => {
+      startLoading()
       try {
         setIsLoading(true);
         const response = await searchShots(
@@ -49,6 +52,7 @@ export default function Disparos() {
         console.error("Erro ao buscar disparos:", error);
       } finally {
         setIsLoading(false);
+        stopLoading()
       }
     },
     [searchTerm, order, startDate, endDate, statusFilter, credentials]

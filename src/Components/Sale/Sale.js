@@ -7,6 +7,7 @@ import { searchProducts } from "../../Services/dbservice";
 import NewProduct from "./NewProduct/NewProduct";
 import SalePage from "./SalePage/SalePage";
 import { SaleContext } from "../../Context/SaleContext";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 const primaryColor = "#4f46e5";
 const hoverColor = "#f3f4f6";
@@ -18,6 +19,7 @@ const ITEMS_PER_PAGE = 5;
 export default function Sale() {
   const { credentials } = useContext(AuthContext);
   const { sales, getSales } = useContext(SaleContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +36,7 @@ export default function Sale() {
 
   const handleSearch = async (term = searchTerm, page = 1) => {
     try {
+      startLoading()
       setIsSearching(true);
       const response = await getSales(
         term,
@@ -52,6 +55,7 @@ export default function Sale() {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
+      stopLoading()
     }
   };
 

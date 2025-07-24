@@ -5,6 +5,7 @@ import "./effect.css";
 import StartChat from "../Chat/StartChat/StartChat";
 import { AuthContext } from "../../../Context/AuthContext";
 import { ChatContext } from "../../../Context/ChatContext";
+import { LoadingContext } from "../../../Context/LoadingContext";
 
 const ChatsRows = ({ selectChat }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +15,7 @@ const ChatsRows = ({ selectChat }) => {
   const { credentials } = useContext(AuthContext);
   const { getChats, chats, avaliableAgents, selectedAgent, setSelectedAgent } =
     useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -22,6 +24,7 @@ const ChatsRows = ({ selectChat }) => {
 
   const fetchChats = async (page = 1) => {
     try {
+      startLoading();
       setLoading(true);
       await getChats(
         searchTerm,
@@ -40,6 +43,8 @@ const ChatsRows = ({ selectChat }) => {
     } catch (error) {
       console.error("Erro ao buscar chats:", error);
       setLoading(false);
+    } finally{
+      stopLoading()
     }
   };
 
@@ -60,20 +65,20 @@ const ChatsRows = ({ selectChat }) => {
   }, [chats, currentPage, itemsPerPage]);
 
   useEffect(() => {
-    if (
-      (!chats || chats.length === 0) &&
-      searchTerm.trim() === "" &&
-      selectedAgent
-    ) {
-      console.log(selectedAgent);
-      fetchChats(1);
-    }
-  }, [selectedAgent]);
+    const loadChats = async () => {
+      if (selectedAgent) {
+        await fetchChats(1);
+      }
+    };
+    loadChats();
+  }, [selectedAgent, searchTerm, sortOrder]);
 
   const handleFilterClick = () => {
+    startLoading();
     const newOrder = sortOrder === "desc" ? "asc" : "desc";
     setSortOrder(newOrder);
     fetchChats(1);
+    stopLoading();
   };
 
   const handleSearch = (e) => {
@@ -220,7 +225,12 @@ const ChatsRows = ({ selectChat }) => {
           )}
         </div>
       </div>
-      {startChat && <StartChat onClose={() => setStartChat(false)} />}
+      {startChat && (
+        <StartChat
+          reload={() => fetchChats(1)}
+          onClose={() => setStartChat(false)}
+        />
+      )}
     </>
   );
 };

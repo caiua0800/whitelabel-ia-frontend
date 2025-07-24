@@ -6,10 +6,17 @@ import func from "../../Services/fotmatters";
 import { getPrompt, obterAdmins, updatePrompt } from "../../Services/dbservice";
 import ChangePass from "./ChangePass/ChangePass";
 import { ChatContext } from "../../Context/ChatContext";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function Usuarios() {
-  const { user = {}, enterprise = {}, credentials, logout } = useContext(AuthContext);
-  const { avaliableAgents } = useContext(ChatContext);
+  const {
+    user = {},
+    enterprise = {},
+    credentials,
+    logout,
+  } = useContext(AuthContext);
+  const { avaliableAgents, disconnectWebSocket } = useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [admins, setAdmins] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [modalChangePass, setModalChangePass] = useState(false);
@@ -32,6 +39,7 @@ export default function Usuarios() {
 
   const getAdmins = async () => {
     try {
+      startLoading()
       const response = await obterAdmins(credentials.accessToken);
 
       if (response) {
@@ -43,11 +51,14 @@ export default function Usuarios() {
     } catch (error) {
       console.log("Erro ao obter admins");
       console.log(error);
+    } finally{
+      stopLoading()
     }
   };
 
   const obterPrompt = async () => {
     try {
+      startLoading()
       var res = await getPrompt(credentials.accessToken, chosenAgent.number);
       if (res) {
         setPrompt(res);
@@ -55,6 +66,8 @@ export default function Usuarios() {
     } catch (error) {
       console.log("Erro ao obter Prompt");
       console.log(error);
+    } finally{
+      stopLoading()
     }
   };
 
@@ -64,7 +77,7 @@ export default function Usuarios() {
         alert("Selecione um agente primeiro");
         return;
       }
-
+      startLoading()
       var res = await updatePrompt(
         credentials.accessToken,
         prompt,
@@ -80,6 +93,8 @@ export default function Usuarios() {
       console.log("Erro ao editar Prompt");
       console.log(error);
       alert("Erro ao editar prompt");
+    } finally{
+      stopLoading()
     }
   };
 
@@ -139,10 +154,7 @@ export default function Usuarios() {
                 >
                   Alterar senha
                 </button>
-                <button
-                  onClick={() => logout()}
-                  style={style.exit}
-                >
+                <button onClick={() => {disconnectWebSocket(); logout()}} style={style.exit}>
                   Sair
                 </button>
               </div>
@@ -192,7 +204,7 @@ export default function Usuarios() {
         <div style={style.promptContainer}>
           <span style={style.promptContainerTitle}>Prompt da empresa:</span>
           <select
-          style={style.agentNumberSelect}
+            style={style.agentNumberSelect}
             value={chosenAgent?.number || ""}
             onChange={(e) => {
               const selected = avaliableAgents.find(

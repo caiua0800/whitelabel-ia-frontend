@@ -6,6 +6,7 @@ import func from "../../Services/fotmatters";
 import { searchProducts } from "../../Services/dbservice";
 import NewProduct from "./NewProduct/NewProduct";
 import ProductPage from "./ProductPage/ProductPage";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 const primaryColor = "#4f46e5";
 const hoverColor = "#f3f4f6";
@@ -17,6 +18,7 @@ const ITEMS_PER_PAGE = 5;
 export default function Product() {
   const { credentials } = useContext(AuthContext);
   const { products, getProducts } = useContext(ProductContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,6 +35,7 @@ export default function Product() {
 
   const handleSearch = async (term = searchTerm, page = 1) => {
     try {
+      startLoading()
       setIsSearching(true);
       const normalizedTerm = term
         .normalize("NFD")
@@ -61,6 +64,7 @@ export default function Product() {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
+      stopLoading()
     }
   };
 
@@ -89,7 +93,7 @@ export default function Product() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -169,7 +173,7 @@ export default function Product() {
                 placeholder="Nome ou Id"
                 style={style.searchBarInput}
                 value={searchTerm}
-                onKeyDown={handleKeyDown} 
+                onKeyDown={handleKeyDown}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
@@ -265,7 +269,11 @@ export default function Product() {
                           color: product.status === 1 ? accentColor : "#ef4444",
                         }}
                       >
-                        {product.status === 1 ? "Ativo" : product.status === 2 ? "Esgotado" : "Indisponível"}
+                        {product.status === 1
+                          ? "Ativo"
+                          : product.status === 2
+                          ? "Esgotado"
+                          : "Indisponível"}
                       </td>
                     </tr>
                   ))
@@ -343,13 +351,22 @@ export default function Product() {
 
       {showNewProductModal && (
         <>
-          <NewProduct reload={() => handleSearch("", 1)} onClose={() => setShowNewProductModal(false)} />
+          <NewProduct
+            reload={() => handleSearch("", 1)}
+            onClose={() => setShowNewProductModal(false)}
+          />
         </>
       )}
 
       {selectedProduct && (
         <>
-          <ProductPage reload={() => handleSearch("", 1)} product={selectedProduct} onClose={() => {setSelectedProduct(null)}} />
+          <ProductPage
+            reload={() => handleSearch("", 1)}
+            product={selectedProduct}
+            onClose={() => {
+              setSelectedProduct(null);
+            }}
+          />
         </>
       )}
     </>

@@ -7,6 +7,7 @@ import CriarTag from "./Modais/CriarTag/CriarCategoria";
 import VerTag from "./Modais/VerCategoria/VerCategoria";
 import CriarCategoria from "./Modais/CriarTag/CriarCategoria";
 import VerCategoria from "./Modais/VerCategoria/VerCategoria";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function Categorias() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -16,12 +17,14 @@ export default function Categorias() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const { credentials } = useContext(AuthContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const [createCategory, setCreateCategory] = useState(false);
   const [seeCategory, setSeeCategory] = useState(null);
 
   const getAllCategories = async () => {
     try {
+      startLoading();
       const cats = await obterCategorias(credentials.accessToken);
       if (cats) {
         setCategorias(cats);
@@ -31,6 +34,8 @@ export default function Categorias() {
       }
     } catch (error) {
       console.log("Erro ao buscar tags:", error);
+    } finally {
+      stopLoading();
     }
   };
 
@@ -119,9 +124,9 @@ export default function Categorias() {
         <div style={style.explanationBox}>
           <div style={style.explanationBoxCenter}>
             <span style={style.expText}>
-              Com as <span style={style.expTextBold}>📌 #CATEGORIAS</span> é possível
-              fazer uma filtragem mais ágil dos seus produtos e ajudar seus clientes na 
-              hora da pesquisa deles 😉
+              Com as <span style={style.expTextBold}>📌 #CATEGORIAS</span> é
+              possível fazer uma filtragem mais ágil dos seus produtos e ajudar
+              seus clientes na hora da pesquisa deles 😉
             </span>
             <span style={style.expText}>
               Você pode criar a categoria com um nome e descrição, e depois
@@ -131,7 +136,10 @@ export default function Categorias() {
         </div>
 
         <div style={style.optionsBox}>
-          <button onClick={() => setCreateCategory(true)} style={style.optionButton}>
+          <button
+            onClick={() => setCreateCategory(true)}
+            style={style.optionButton}
+          >
             Criar nova categoria
           </button>
           <button style={style.optionButton}></button>
@@ -215,7 +223,22 @@ export default function Categorias() {
                   className="tagBox"
                   style={{ ...style.tag }}
                 >
-                  <span className="tag-text" style={{...style.tagText, background: (cat && cat.backgroundColor && cat.backgroundColor.trim () != "") ? cat.backgroundColor : "rgba(80, 80, 80, 1)", color: (cat && cat.color && cat.color.trim () != "") ? cat.color : "rgba(255, 255, 255, 1)"}}>
+                  <span
+                    className="tag-text"
+                    style={{
+                      ...style.tagText,
+                      background:
+                        cat &&
+                        cat.backgroundColor &&
+                        cat.backgroundColor.trim() != ""
+                          ? cat.backgroundColor
+                          : "rgba(80, 80, 80, 1)",
+                      color:
+                        cat && cat.color && cat.color.trim() != ""
+                          ? cat.color
+                          : "rgba(255, 255, 255, 1)",
+                    }}
+                  >
                     {cat.name}
                   </span>
                 </div>
@@ -258,7 +281,10 @@ export default function Categorias() {
 
       {createCategory && (
         <>
-          <CriarCategoria actualCategories={categorias} onClose={closeCreateCategory} />
+          <CriarCategoria
+            actualCategories={categorias}
+            onClose={closeCreateCategory}
+          />
         </>
       )}
 

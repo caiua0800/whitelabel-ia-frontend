@@ -8,6 +8,7 @@ import { ChatContext } from "../../Context/ChatContext";
 import AddClient from "./AddClient/AddClient";
 import EditarContato from "./EditarContato/EditarContato";
 import InsertClients from "./InsertClients/InsertClients";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 const tableBorder = "2px solid rgba(80, 80, 80, 1)";
 const tableBorder2 = "2px solid rgba(80, 80, 80, 0)";
@@ -16,6 +17,7 @@ const ITEMS_PER_PAGE = 5;
 export default function Clients() {
   const { credentials } = useContext(AuthContext);
   const { chats, getChats, avaliableAgents } = useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +78,7 @@ export default function Clients() {
 
   const handleSearch = async (term = searchTerm, page = 1) => {
     try {
+      startLoading()
       setIsSearching(true);
       const normalizedTerm = term
         .normalize("NFD")
@@ -117,6 +120,7 @@ export default function Clients() {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
+      stopLoading()
     }
   };
 

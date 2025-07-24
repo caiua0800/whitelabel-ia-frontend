@@ -3,12 +3,11 @@ import style from "./SidebarStyle";
 import "./styleEffect.css";
 import { menuItems } from "./static";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../Context/AuthContext";
+import {AuthContext} from "../../Context/AuthContext"
 
 export default function Sidebar({ state, onClose }) {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
-  const [isHovered, setIsHovered] = useState(null);
+  const {user} = useContext(AuthContext);
 
   return (
     <>
@@ -21,12 +20,12 @@ export default function Sidebar({ state, onClose }) {
             className="close-icon"
             style={style.closeIconBox}
           >
-            <img style={style.closeIcon} src="./icons/close-icon2.svg" />
+            <img style={style.closeIcon} src="./icons/close-icon.svg" />
           </div>
           <div style={style.header}>
-            {/* <div style={style.logoBox}>
+            <div style={style.logoBox}>
               <img style={style.logoImage} src="./images/agente-logo.png" />
-            </div> */}
+            </div>
             <div style={style.agenteTitleBox}>
               <span style={style.agenteTitle}>Agente IA M82</span>
             </div>
@@ -46,20 +45,11 @@ export default function Sidebar({ state, onClose }) {
                         key={key}
                         style={style.menuItem}
                       >
-                        <div 
-                          onMouseEnter={() => setIsHovered(item.name)}
-                              onMouseLeave={() => setIsHovered(null)}
-                      style={style.menuItemIconBox}>
-                          <img
-                            style={style.menuItemIcon}
-                            src={item && item.icon}
-                          />
-
-                          <div style={{...style.menuItemTextBox, display: isHovered === item.name ? "flex" : "none"}}>
-                            <span style={style.menuItemText}>
-                              {item && item.name}
-                            </span>
-                          </div>
+                        <div style={style.menuItemIconBox}>
+                          <img style={style.menuItemIcon} src={item && item.icon} />
+                        </div>
+                        <div style={style.menuItemTextBox}>
+                          <span style={style.menuItemText}>{item && item.name}</span>
                         </div>
                       </div>
                     </>
@@ -68,15 +58,11 @@ export default function Sidebar({ state, onClose }) {
               </div>
             </div>
             <div style={style.userButtonBox}>
-              <div
-                onClick={() => {navigate("/usuarios"); onClose()}}
-                className="user-button"
-                style={style.userButton}
-              >
+              <div className="user-button" style={style.userButton}>
                 <div style={style.userImageBox}>
                   <img style={style.userImage} src="./icons/user-icon3.png" />
                 </div>
-                {/* <span style={style.username}>{(user && user.name ) ? user.name : (user && user.loginId) ? user.loginId : ""}</span> */}
+                <span onClick={() => {navigate("/usuarios");onClose()}} style={style.username}>{(user && user.name ) ? user.name : (user && user.loginId) ? user.loginId : ""}</span>
               </div>
             </div>
           </div>

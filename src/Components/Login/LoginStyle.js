@@ -5,7 +5,6 @@ const styles = {
         height: "100vh",
         background: "rgba(15, 0, 25, 1)",
         position: "relative",
-        // background: "rgba(15, 55, 98, 1)"
     },
     background: {
         position: "fixed",
@@ -32,37 +31,59 @@ const styles = {
         width: "100%",
         height: "100%",
         display: "grid",
-        gridTemplateRows: "10vh 90vh",
+        gridTemplateRows: "100vh",
         color: "blue"
     },
     header: {
         width: "100%",
-        height: "100%",
-        background: "linear-gradient(-20deg, #004886, #102c32)",
-        display: "grid",
-        gridTemplateColumns: "48% 52%"
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 9,
+        display: "flex",
+        padding: "10px 30px",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxSizing: "border-box"
+    },
+    agentLogo: {
+        width: 80
     },
     firstHeaderPart: {
-        width: "100%",
-        height: "100%"
+        display: "flex",
+        justifyContent: "start",
+        alignItems: "center",
+        height: "100%",
+        boxSizing: "border-box",
     },
     secondHeaderPart: {
-        width: "100%",
         height: "100%",
         display: "flex",
         alignItems: "center",
-        gap: 20
+        gap: 10
+    },
+    seLoko: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start"
+    },
+    seLokoTitle: {
+        fontSize: 16,
+        color: "rgba(210, 210, 210, 1)",
+        fontWeight: 600
     },
     inputBox: {
-        width: 250,
-        height: 40,
-        borderRadius: 8,
+        width: 300,
+        height: 35,
+        borderRadius: 4,
         border: 0,
         padding: 0,
         boxSizing: "border-box",
         paddingLeft: 20,
         fontSize: 18,
-        background: "rgba(210, 210, 210, 1)"
+        background: "rgba(210, 210, 210, 0.6)",
+        outline: "none",
+        fontWeight: 600
     },
     loginOrSignUp: {
         display: "flex",
@@ -71,9 +92,9 @@ const styles = {
     },
     loginButton: {
         width: 150,
-        height: 40,
-        background: "rgba(100, 230, 0, 1)",
-        borderRadius: 8,
+        height: 35,
+        background: "rgba(80, 200, 0, 1)",
+        borderRadius: 4,
         border: 0,
         cursor: "pointer",
         fontSize: 18,
@@ -99,8 +120,8 @@ const styles = {
         // marginTop: 40
     },
     wallpaperImage: {
-        width: 1000,
-        borderRadius: 20,
+        width: "60%",
+        borderRadius: 4,
         opacity: 1
     }
 }

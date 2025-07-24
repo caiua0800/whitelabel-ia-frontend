@@ -3,8 +3,9 @@ import style from "./StartChatStyle";
 import { iniciarChat } from "../../../../Services/dbservice";
 import { AuthContext } from "../../../../Context/AuthContext";
 import { ChatContext } from "../../../../Context/ChatContext";
+import { LoadingContext } from "../../../../Context/LoadingContext";
 
-export default function StartChat({ onClose }) {
+export default function StartChat({ onClose, reload }) {
   const [contact, setContact] = useState("");
   const [myName, setMyName] = useState("");
   const [displayValue, setDisplayValue] = useState("");
@@ -12,6 +13,7 @@ export default function StartChat({ onClose }) {
   const textInputRef = useRef(null);
   const { credentials } = useContext(AuthContext);
   const { fetchNewChat, selectedAgent } = useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const formatNumber = (number) => {
     const cleaned = number.replace(/\D/g, "");
@@ -64,6 +66,7 @@ export default function StartChat({ onClose }) {
     }
 
     try {
+      startLoading()
       const response = await iniciarChat(
         credentials.accessToken,
         selectedAgent.number,
@@ -73,12 +76,15 @@ export default function StartChat({ onClose }) {
       );
       
       if (response === 200) {
-        await fetchNewChat("55" + contact.trim());
+        // await fetchNewChat("55" + contact.trim());
+        reload()
         handleClose();
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       alert("Erro ao enviar mensagem. Por favor, tente novamente.");
+    } finally{
+      stopLoading()
     }
   };
 

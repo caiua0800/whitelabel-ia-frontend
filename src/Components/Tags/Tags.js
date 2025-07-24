@@ -5,12 +5,14 @@ import { obterTags } from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
 import CriarTag from "./Modais/CriarTag/CriarTag";
 import VerTag from "./Modais/VerTag/VerTag";
+import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function Tags() {
   const [itemsPerPage, setItemsPerPage] = useState(16);
   const [currentPage, setCurrentPage] = useState(1);
   const [tags, setTags] = useState([]);
   const [filteredTags, setFilteredTags] = useState([]);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const { credentials } = useContext(AuthContext);
@@ -20,6 +22,7 @@ export default function Tags() {
 
   const getAllTags = async () => {
     try {
+      startLoading();
       const tags = await obterTags(credentials.accessToken);
       if (tags) {
         setTags(tags);
@@ -29,6 +32,8 @@ export default function Tags() {
       }
     } catch (error) {
       console.log("Erro ao buscar tags:", error);
+    } finally {
+      stopLoading();
     }
   };
 
@@ -110,7 +115,7 @@ export default function Tags() {
     setSortOrder(e.target.value);
   };
 
-  console.log(filteredTags)
+  console.log(filteredTags);
 
   return (
     <>
@@ -217,7 +222,22 @@ export default function Tags() {
                   className="tagBox"
                   style={{ ...style.tag }}
                 >
-                  <span className="tag-text" style={{...style.tagText, background: (tag && tag.backgroundColor && tag.backgroundColor.trim () != "") ? tag.backgroundColor : "rgba(80, 80, 80, 1)", color: (tag && tag.color && tag.color.trim () != "") ? tag.color : "rgba(255, 255, 255, 1)"}}>
+                  <span
+                    className="tag-text"
+                    style={{
+                      ...style.tagText,
+                      background:
+                        tag &&
+                        tag.backgroundColor &&
+                        tag.backgroundColor.trim() != ""
+                          ? tag.backgroundColor
+                          : "rgba(80, 80, 80, 1)",
+                      color:
+                        tag && tag.color && tag.color.trim() != ""
+                          ? tag.color
+                          : "rgba(255, 255, 255, 1)",
+                    }}
+                  >
                     {tag.name}
                   </span>
                 </div>

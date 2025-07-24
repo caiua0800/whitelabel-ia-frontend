@@ -3,20 +3,25 @@ import style from "./ChatBoxStyle";
 import "./effect.css";
 import formatHelpers from "../../helpers/formatHelpers";
 import { ChatContext } from "../../../Context/ChatContext";
+import { LoadingContext } from "../../../Context/LoadingContext";
 
 const ChatBox = ({ chat }) => {
   const { handleSelectChat, activeChat } = useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const handleSelect = () => {
+    startLoading()
     handleSelectChat(chat);
+    setTimeout(() => {
+      stopLoading()
+    }, 400)
   };
-  
 
   function limitarString(texto, limite = 10) {
-    if (typeof texto !== 'string' || texto.length <= limite) {
+    if (typeof texto !== "string" || texto.length <= limite) {
       return texto;
     }
-    return texto.substring(0, limite - 3) + '...';
+    return texto.substring(0, limite - 3) + "...";
   }
 
   if (!chat || !chat.lastMessageText) return null;
@@ -25,10 +30,13 @@ const ChatBox = ({ chat }) => {
     <>
       <div
         onClick={handleSelect}
-        className={(activeChat && chat.id == activeChat.id) ? "" : "chat-box"}
+        className={activeChat && chat.id == activeChat.id ? "" : "chat-box"}
         style={{
           ...style.chatContainer,
-          background: (activeChat && chat.id == activeChat.id) ? "rgba(0, 180, 0, 1)" : "rgba(220, 220, 230, 1)",
+          background:
+            activeChat && chat.id == activeChat.id
+              ? "rgba(0, 180, 0, 1)"
+              : "rgba(220, 220, 230, 1)",
         }}
       >
         <div style={style.chatContent}>

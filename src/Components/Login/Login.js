@@ -6,15 +6,21 @@ import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function Login() {
   const { login, credentials, loading } = useContext(AuthContext);
+  // const [id, setId] = useState("72295318");
+  // const [password, setPassword] = useState("GoldenPass");
   const [id, setId] = useState("72295318");
-  const [password, setPassword] = useState("u0a83&X#");
+  const [password, setPassword] = useState("GoldenPass");
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const handleLogin = async () => {
-    if (id.trim() === "" || password.trim() === "")
-      return alert("Insira corretamente suas credenciais.");
     startLoading();
+
+    if (id.trim() === "" || password.trim() === "") {
+      alert("Insira corretamente suas credenciais.");
+      startLoading();
+      return;
+    }
     try {
       await login(id, password);
       navigate("/", { replace: true });
@@ -42,7 +48,7 @@ export default function Login() {
         <div style={styles.contentContent}>
           <div style={styles.header}>
             <div style={styles.firstHeaderPart}>
-                <img src="./images/agente-logo.png" style={styles.agentLogo} />
+              <img src="./images/agente-logo.png" style={styles.agentLogo} />
             </div>
             <div style={styles.secondHeaderPart}>
               <div style={styles.seLoko}>
@@ -67,7 +73,7 @@ export default function Login() {
               </div>
               <div style={styles.seLoko}>
                 <span style={{ ...styles.seLokoTitle, opacity: 0 }}>s</span>
-                <button onClick={handleLogin} style={styles.loginButton}>
+                <button onClick={() => {startLoading(); handleLogin()}} style={styles.loginButton}>
                   Login
                 </button>
               </div>

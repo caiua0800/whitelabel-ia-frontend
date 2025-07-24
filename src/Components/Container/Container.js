@@ -4,10 +4,12 @@ import Sidebar from "../Sidebar/Sidebar";
 import { ChatContext } from "../../Context/ChatContext";
 import Notification from "../Notification/Notification";
 import Loading from "../Loading/Loading";
+import { AuthContext } from "../../Context/AuthContext";
+import SubscriptionNotification from "./SubscriptionNotification/SubscriptionNotification";
 
 const Container = ({ children }) => {
     const [sidebarState, setSidebarState] = useState(false);
-    const { notification } = useContext(ChatContext)
+    const { subscriptionInfo } = useContext(AuthContext)
 
     return (
         <>
@@ -26,10 +28,9 @@ const Container = ({ children }) => {
                 )}
                 {children}
             </div>
-
+            <SubscriptionNotification />
             <Notification />
             <Loading />
-
         </>
     )
 }

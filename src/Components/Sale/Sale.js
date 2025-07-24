@@ -137,10 +137,12 @@ export default function Sale() {
               Exporte (Excel)
             </button>
             <button
-              onClick={() => setShowNewProductModal(true)}
+              // onClick={() => setShowNewProductModal(true)}
               style={{
                 ...style.headerButton,
                 background: "rgba(210, 210, 210, 1)",
+                textDecoration: "line-through",
+                opacity: 0.6
               }}
             >
               Nova Venda
@@ -230,7 +232,7 @@ export default function Sale() {
                     <tr
                       key={sale.sale.id}
                       style={modernTableStyles.tableRow}
-                      onClick={() => setSelectedSale(sale)}
+                      // onClick={() => setSelectedSale(sale)}
                     >
                       <td style={modernTableStyles.tableCell}>
                         {sale.sale.id || "Não informado"}

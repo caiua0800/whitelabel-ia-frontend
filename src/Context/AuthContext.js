@@ -8,6 +8,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [enterprise, setEnterprise] = useState(null);
   const [credentials, setCredentials] = useState(null);
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ const AuthProvider = ({ children }) => {
         setUser(authData.user);
         setEnterprise(authData.enterprise);
         setCredentials(authData);
+        setSubscriptionInfo(response.data.subscription_info)
         
         sessionStorage.setItem("authData", JSON.stringify(authData));
         sessionStorage.setItem(
@@ -148,7 +150,8 @@ const AuthProvider = ({ children }) => {
         enterprise,
         setUser,
         setEnterprise,
-        logout
+        logout,
+        subscriptionInfo
       }}
     >
       {children}

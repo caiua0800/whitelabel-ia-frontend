@@ -6,7 +6,7 @@ import { AuthContext } from "../../../../Context/AuthContext";
 
 export default function CriarCategoria({ actualTags, onClose }) {
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState("descricao");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { credentials } = useContext(AuthContext);
@@ -95,7 +95,7 @@ export default function CriarCategoria({ actualTags, onClose }) {
           </div>
           {error && <div style={style.errorMessage}>{error}</div>}
 
-          <div style={style.tagDescriptionArea}>
+          {/* <div style={style.tagDescriptionArea}>
             <span style={style.tagDescriptionAreaTitle}>Descreva a categoria</span>
             <textarea
               onChange={(e) => setDescription(e.target.value)}
@@ -106,7 +106,7 @@ export default function CriarCategoria({ actualTags, onClose }) {
               disabled={isSubmitting}
               onKeyDown={handleKeyDown}
             />
-          </div>
+          </div> */}
 
           <button
             onClick={createTag}

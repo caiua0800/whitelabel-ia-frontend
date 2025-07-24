@@ -21,6 +21,7 @@ export const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
   const [chatsDb, setChatsDb] = useState([]);
+  // O loading agora tem um estado específico para as mensagens
   const [loading, setLoading] = useState({
     chats: true,
     messages: false,
@@ -138,11 +139,17 @@ const ChatProvider = ({ children }) => {
         chat.id === chatId ? { ...chat, ...updates } : chat
       )
     );
+     // Atualiza também a lista de busca se ela existir
+    setChats((prevChats) =>
+      prevChats 
+        ? prevChats.map((chat) => chat.id === chatId ? { ...chat, ...updates } : chat)
+        : null
+    );
   }, []);
 
   const handleNewMessage = useCallback(
     (data) => {
-      // Update messages if active chat matches
+      // Atualiza as mensagens se o chat ativo corresponder
       if (activeChat?.id === data.chatId) {
         setMessages((prev) =>
           prev.some((msg) => msg.id === data.message.id)
@@ -151,7 +158,7 @@ const ChatProvider = ({ children }) => {
         );
       }
 
-      // Update chat list
+      // Atualiza a lista de chats com a última mensagem
       updateChatInList(data.chatId, {
         lastMessageText: data.message.text,
         lastMessageDate: data.message.dateCreated,
@@ -159,12 +166,12 @@ const ChatProvider = ({ children }) => {
         lastMessageIsSeen: data.chatId === activeChat?.id,
       });
 
-      // Show notification if not from active chat and not a reply
+      // Mostra notificação se não for do chat ativo e não for uma resposta
       if (data.chatId !== activeChat?.id && !data.message.isReply) {
         setNotification(data.message);
       }
     },
-    [activeChat?.id]
+    [activeChat?.id, updateChatInList]
   );
 
   const connectWebSocket = useCallback(() => {
@@ -173,39 +180,28 @@ const ChatProvider = ({ children }) => {
       return;
     }
 
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      console.log("WebSocket: Já conectado");
-      return;
+    // Desconecta qualquer conexão existente antes de criar uma nova
+    if (ws.current) {
+        ws.current.close(1000, "Changing agent or logging out");
     }
 
-    // Limpa o token removendo 'Bearer ' se existir
     const rawToken = credentials.accessToken.replace("Bearer ", "").trim();
     const agentNum = selectedAgent.number;
-
-    // Constrói a URL de forma segura
-    const wsUrl = new URL(
-      process.env.REACT_APP_WS_URL || "wss://servidordotnet.demelloagent.app/ws"
-    );
+    const wsUrl = new URL(process.env.REACT_APP_WS_URL || "wss://servidordotnet.demelloagent.app/ws");
     wsUrl.searchParams.append("access_token", rawToken);
     wsUrl.searchParams.append("agent_number", agentNum);
 
     console.log(`WebSocket: Conectando em ${wsUrl.toString()}`);
-
     ws.current = new WebSocket(wsUrl.toString());
+    ws.current.reconnectAttempts = 0;
 
     ws.current.onopen = () => {
       console.log("WebSocket: Conexão estabelecida");
       setSocketStatus("connected");
-
-      // Envia mensagem de heartbeat inicial
-      const heartbeat = JSON.stringify({
-        type: "heartbeat",
-        timestamp: new Date().toISOString(),
-      });
-      ws.current.send(heartbeat);
+      ws.current.reconnectAttempts = 0; // Reseta tentativas de reconexão
     };
 
-    ws.current.onmessage = async (event) => {
+    ws.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         console.log("WebSocket: Mensagem recebida", data);
@@ -214,212 +210,173 @@ const ChatProvider = ({ children }) => {
           handleNewMessage(data);
         } else if (data.type === "chat_update") {
           updateChatInList(data.chatId, data.updates);
-        } else if (data.type === "heartbeat") {
-          // Responde ao heartbeat do servidor
-          ws.current.send(
-            JSON.stringify({
-              type: "heartbeat_response",
-              timestamp: new Date().toISOString(),
-            })
-          );
         }
       } catch (error) {
-        console.error(
-          "WebSocket: Erro ao processar mensagem",
-          error,
-          event.data
-        );
+        console.error("WebSocket: Erro ao processar mensagem", error, event.data);
       }
     };
 
     ws.current.onclose = (event) => {
-      if (!ws.current) return; // Adicione esta verificação
-
-      console.log(
-        `WebSocket: Desconectado (código: ${event.code}, motivo: ${
-          event.reason || "não especificado"
-        })`
-      );
+      console.log(`WebSocket: Desconectado (código: ${event.code}, motivo: ${event.reason || "não especificado"})`);
       setSocketStatus("disconnected");
-
-      // Reconecta com backoff exponencial
-      const delay = Math.min(5000 * (ws.current.reconnectAttempts || 1), 30000);
-      console.log(`WebSocket: Tentando reconectar em ${delay}ms`);
-
-      setTimeout(() => {
-        if (ws.current) {
-          // Adicione esta verificação
-          ws.current.reconnectAttempts =
-            (ws.current.reconnectAttempts || 0) + 1;
-          connectWebSocket();
-        }
-      }, delay);
+      
+      // Evita reconectar se a desconexão foi intencional (código 1000)
+      if (event.code !== 1000 && ws.current) {
+        const delay = Math.min(5000 * (ws.current.reconnectAttempts + 1), 30000);
+        console.log(`WebSocket: Tentando reconectar em ${delay}ms`);
+        
+        setTimeout(() => {
+            if (ws.current) {
+                ws.current.reconnectAttempts = (ws.current.reconnectAttempts || 0) + 1;
+                connectWebSocket();
+            }
+        }, delay);
+      }
     };
 
     ws.current.onerror = (error) => {
       console.error("WebSocket: Erro na conexão", error);
       setSocketStatus("error");
-
-      // Fecha a conexão para limpar qualquer estado inválido
-      if (ws.current) {
-        ws.current.close();
-      }
+      ws.current?.close(); // Tenta fechar em caso de erro para acionar o onclose
     };
-
-    // Adiciona flag de reconexão
-    ws.current.reconnectAttempts = 0;
-  }, [
-    credentials?.accessToken,
-    selectedAgent?.number,
-    handleNewMessage,
-    updateChatInList,
-  ]);
+  }, [credentials?.accessToken, selectedAgent?.number, handleNewMessage, updateChatInList]);
 
   const disconnectWebSocket = useCallback(() => {
     if (ws.current) {
-      ws.current.onopen = null;
-      ws.current.onmessage = null;
-      ws.current.onerror = null;
+      console.log("WebSocket: Desconectando intencionalmente.");
+      // Remove os listeners para evitar que a lógica de reconexão seja acionada
       ws.current.onclose = null;
-
-      ws.current.close();
+      ws.current.onerror = null;
+      ws.current.close(1000, "User logout or component unmount");
       ws.current = null;
       setSocketStatus("disconnected");
     }
   }, []);
-
+  
   const fetchChats = async () => {
+    if (!credentials?.accessToken || !selectedAgent?.number) return;
     try {
-      setLoading(true);
-      startLoading();
-      if (credentials?.accessToken) {
-        const data = await obterChats(
-          selectedAgent.number,
-          credentials.accessToken
-        );
-        setChatsDb((prevChats) => {
-          if (JSON.stringify(prevChats) !== JSON.stringify(data)) {
-            return data;
-          }
-          return prevChats;
-        });
-        setError(null);
-      }
+      setLoading(prev => ({ ...prev, chats: true }));
+      const data = await obterChats(selectedAgent.number, credentials.accessToken);
+      setChatsDb(data || []);
+      setError(null);
     } catch (error) {
       console.error("Erro ao obter chats:", error);
       setError("Falha ao carregar chats");
+      setChatsDb([]);
     } finally {
-      setLoading(false);
-      stopLoadingDelay();
+      setLoading(prev => ({ ...prev, chats: false }));
     }
   };
 
   const handleSetActiveChatByNotification = (chatId) => {
     const chat = chatsDb.find((c) => c.id === chatId);
     if (chat) {
-      handleSelectChat(chat); // Reutilize a função existente que já faz todo o tratamento
+      handleSelectChat(chat);
     }
   };
 
   const fetchNewChat = async (id) => {
+    if (!credentials?.accessToken) return;
     try {
-      setLoading(true);
       startLoading();
-      if (credentials?.accessToken) {
-        const data = await obterChat(credentials.accessToken, id);
-        setChatsDb([...chatsDb, data]);
-        setActiveChat(data);
-        setError(null);
-      }
+      const data = await obterChat(credentials.accessToken, id);
+      setChatsDb((prev) => [...prev, data]);
+      handleSelectChat(data);
+      setError(null);
     } catch (error) {
-      console.error("Erro ao obter chats:", error);
-      setError("Falha ao carregar chats");
+      console.error("Erro ao obter novo chat:", error);
+      setError("Falha ao carregar chat");
     } finally {
-      setLoading(false);
       stopLoadingDelay();
     }
   };
 
   const fetchMessages = async (id, agentNumber) => {
+    if (!credentials?.accessToken) return [];
     try {
-      startLoading();
-      if (credentials?.accessToken) {
-        const data = await obterMensagens(
-          id,
-          agentNumber,
-          credentials.accessToken
-        );
-        stopLoadingDelay();
-        return data;
-      }
-      stopLoadingDelay();
-      return [];
+      const data = await obterMensagens(id, agentNumber, credentials.accessToken);
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error("Erro ao obter mensagens:", error);
-      stopLoadingDelay();
-      console.log(error);
+      return [];
     }
   };
 
-  const handleSelectChat = async (chat) => {
-    if (!chat) {
-      setActiveChat(null);
-      setMessages([]);
-      return;
+  const handleSelectChat = useCallback(async (chat) => {
+    if (!chat || activeChat?.id === chat.id) {
+      return; // Não faz nada se o chat já estiver selecionado
     }
-
     setActiveChat(chat);
+    setMessages([]);
+    setLoading(prev => ({ ...prev, messages: true })); 
 
-    var resHiHi = await axios.put(
-      `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`
-    );
-
-    var chatsAux = chatsDb;
-    var auxQttNotSeen = notSeenChats;
-
-    if (auxQttNotSeen > 0) auxQttNotSeen = notSeenChats - 1;
-
-    setNotSeenChats(auxQttNotSeen);
-
-    chatsAux.forEach((ch) => {
-      if (ch.id === chat.id) {
-        chat.lastMessageIsSeen = true;
-      }
-    });
-
-    setChatsDb(chatsAux);
-
+    
+    // 3. Atualiza a lista de chats de forma imutável para refletir o status "visto"
+    if (!chat.lastMessageIsSeen) {
+      setChatsDb(prevChats => 
+        prevChats.map(c => 
+          c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c
+        )
+      );
+      setChats(prevChats => 
+        prevChats 
+        ? prevChats.map(c => c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c)
+        : null
+      );
+    }
+    startLoading()
     try {
+    axios.put(`${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`);
+
       const agentNumber = selectedAgent?.number || "";
       const chatMessages = await fetchMessages(chat.id, agentNumber);
-      setMessages(Array.isArray(chatMessages) ? chatMessages : []);
+      setActiveChat(currentActiveChat => {
+        if (currentActiveChat?.id === chat.id) {
+          setMessages(chatMessages);
+          return currentActiveChat;
+        }
+        return currentActiveChat; // Outro chat foi selecionado enquanto este carregava
+      });
     } catch (error) {
       console.error("Erro ao carregar mensagens:", error);
-      setMessages([]);
-    }
-  };
+      setMessages([]); // Limpa as mensagens em caso de erro
+    } finally {
+      // Garante que o loading só será desativado para o chat ativo
+      setActiveChat(currentActiveChat => {
+        if (currentActiveChat?.id === chat.id) {
+            setLoading(prev => ({ ...prev, messages: false }));
+        }
+        return currentActiveChat;
+      });
+    stopLoading()
 
-  // Efeito para gerenciar conexão WebSocket quando o usuário loga/desloga
+    }
+  }, [activeChat?.id, credentials?.accessToken, selectedAgent?.number]);
+
+  // Efeito para gerenciar a conexão WebSocket
   useEffect(() => {
-    if (user && credentials?.accessToken) {
+    if (user && credentials?.accessToken && selectedAgent?.number) {
       connectWebSocket();
     } else {
       disconnectWebSocket();
-      setMessages([]);
-      setActiveChat(null);
-      setChatsDb([]);
     }
-
+    
+    // Função de limpeza para desconectar quando o componente for desmontado ou as dependências mudarem
     return () => {
       disconnectWebSocket();
     };
-  }, [user, credentials?.accessToken, connectWebSocket, disconnectWebSocket]);
+  }, [user, credentials?.accessToken, selectedAgent?.number, connectWebSocket, disconnectWebSocket]);
 
+  // Efeito para buscar chats quando o agente selecionado mudar
   useEffect(() => {
-    if (user && credentials?.accessToken) {
+    if (user && credentials?.accessToken && selectedAgent?.number) {
+      setActiveChat(null); // Limpa o chat ativo ao trocar de agente
+      setMessages([]);
       fetchChats();
     }
-  }, [user, credentials?.accessToken]);
+  }, [user, credentials, selectedAgent]);
+
 
   const handleUpdateActiveTagsChat = useCallback(
     (newTags) => {

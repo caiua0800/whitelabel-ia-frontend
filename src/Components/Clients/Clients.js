@@ -106,6 +106,7 @@ export default function Clients() {
         term,
         page,
         ITEMS_PER_PAGE,
+        chosenAgent.number,
         credentials.accessToken,
         order,
         formattedStartDate,

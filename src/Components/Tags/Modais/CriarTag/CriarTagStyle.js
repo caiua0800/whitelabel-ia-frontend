@@ -45,24 +45,21 @@ const style = {
     position: "relative"
   },
   tagImage: {
-    width: "100%"
+    width: "100%",
+    opacity: 0,
   },
   tagNameInput: {
     outline: "none",
-    width: "60%",
+    width: "100%",
     border: 0,
     boxSizing: "border-box",
-    position: "absolute",
-    top: "50%",
-    left: "40%",
     height: 40,
-    background: "rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,1)",
     padding: 0,
     textAlign: "center",
     fontSize: 22,
     fontWeight: 800,
     color: "white",
-    transform: "translate(-50%, -50%)"
   },
   tagDescriptionArea: {
     display: "flex",

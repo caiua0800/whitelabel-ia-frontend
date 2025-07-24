@@ -6,7 +6,7 @@ import { AuthContext } from "../../../../Context/AuthContext";
 
 export default function CriarTag({ actualTags, onClose }) {
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState("descricao");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { credentials } = useContext(AuthContext);
@@ -83,12 +83,6 @@ export default function CriarTag({ actualTags, onClose }) {
           <span style={style.title}>Criar Nova Tag</span>
 
           <div style={style.tagNameArea}>
-            <img
-              className="tag-image"
-              style={style.tagImage}
-              src="./icons/tag-icon2.png"
-              alt="Ícone de Tag"
-            />
             <input
               onChange={(e) => setName(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -101,7 +95,7 @@ export default function CriarTag({ actualTags, onClose }) {
           </div>
           {error && <div style={style.errorMessage}>{error}</div>}
 
-          <div style={style.tagDescriptionArea}>
+          {/* <div style={style.tagDescriptionArea}>
             <span style={style.tagDescriptionAreaTitle}>Descreva a tag</span>
             <textarea
               onChange={(e) => setDescription(e.target.value)}
@@ -112,7 +106,7 @@ export default function CriarTag({ actualTags, onClose }) {
               disabled={isSubmitting}
               onKeyDown={handleKeyDown}
             />
-          </div>
+          </div> */}
 
           <button
             onClick={createTag}

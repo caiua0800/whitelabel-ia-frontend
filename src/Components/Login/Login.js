@@ -8,8 +8,8 @@ export default function Login() {
   const { login, credentials, loading } = useContext(AuthContext);
   // const [id, setId] = useState("72295318");
   // const [password, setPassword] = useState("GoldenPass");
-  const [id, setId] = useState("72295318");
-  const [password, setPassword] = useState("GoldenPass");
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useContext(LoadingContext);
 

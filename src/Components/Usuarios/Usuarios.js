@@ -3,7 +3,12 @@ import style from "./UsuariosStyle";
 import { AuthContext } from "../../Context/AuthContext";
 import formatHelpers from "../helpers/formatHelpers";
 import func from "../../Services/fotmatters";
-import { getPrompt, obterAdmins, updatePrompt } from "../../Services/dbservice";
+import {
+  editarStatusTodosOsAgentes,
+  getPrompt,
+  obterAdmins,
+  updatePrompt,
+} from "../../Services/dbservice";
 import ChangePass from "./ChangePass/ChangePass";
 import { ChatContext } from "../../Context/ChatContext";
 import { LoadingContext } from "../../Context/LoadingContext";
@@ -39,7 +44,7 @@ export default function Usuarios() {
 
   const getAdmins = async () => {
     try {
-      startLoading()
+      startLoading();
       const response = await obterAdmins(credentials.accessToken);
 
       if (response) {
@@ -51,14 +56,14 @@ export default function Usuarios() {
     } catch (error) {
       console.log("Erro ao obter admins");
       console.log(error);
-    } finally{
-      stopLoading()
+    } finally {
+      stopLoading();
     }
   };
 
   const obterPrompt = async () => {
     try {
-      startLoading()
+      startLoading();
       var res = await getPrompt(credentials.accessToken, chosenAgent.number);
       if (res) {
         setPrompt(res);
@@ -66,8 +71,8 @@ export default function Usuarios() {
     } catch (error) {
       console.log("Erro ao obter Prompt");
       console.log(error);
-    } finally{
-      stopLoading()
+    } finally {
+      stopLoading();
     }
   };
 
@@ -77,7 +82,7 @@ export default function Usuarios() {
         alert("Selecione um agente primeiro");
         return;
       }
-      startLoading()
+      startLoading();
       var res = await updatePrompt(
         credentials.accessToken,
         prompt,
@@ -93,8 +98,8 @@ export default function Usuarios() {
       console.log("Erro ao editar Prompt");
       console.log(error);
       alert("Erro ao editar prompt");
-    } finally{
-      stopLoading()
+    } finally {
+      stopLoading();
     }
   };
 
@@ -109,6 +114,29 @@ export default function Usuarios() {
     }
   }, [chosenAgent]);
 
+  const handleBlockAGENT = async () => {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja bloquear a IA? Esta ação irá parar todas as interações do agente."
+    );
+    if (!confirmar) return;
+
+    try {
+      startLoading();
+      var res = await editarStatusTodosOsAgentes(credentials.accessToken);
+
+      if (res.status === 200) {
+        // ← PROBLEMA AQUI
+        alert("Agente de IA parado com sucesso.");
+      }
+    } catch (error) {
+      console.log("Erro ao editar status do agente:");
+      console.log(error);
+      alert("Erro ao editar status do agente de IA.");
+    } finally {
+      stopLoading();
+    }
+  };
+
   return (
     <>
       {modalChangePass && (
@@ -120,6 +148,9 @@ export default function Usuarios() {
         <span style={style.title}>Usuários</span>
 
         <div style={style.loggedUserContainer}>
+          <div onClick={handleBlockAGENT} style={style.disableEnableIa}>
+            <img style={style.disableEnableIaIcon} src="./icons/off-icon.svg" />
+          </div>
           <div style={style.loggedUserBox}>
             <div style={style.loggedUserBoxFirst}>
               <div style={style.profileBox}>
@@ -154,7 +185,13 @@ export default function Usuarios() {
                 >
                   Alterar senha
                 </button>
-                <button onClick={() => {disconnectWebSocket(); logout()}} style={style.exit}>
+                <button
+                  onClick={() => {
+                    disconnectWebSocket();
+                    logout();
+                  }}
+                  style={style.exit}
+                >
                   Sair
                 </button>
               </div>

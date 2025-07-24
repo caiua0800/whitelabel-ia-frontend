@@ -158,7 +158,7 @@ export default function EditarContato({ onClose, chat }) {
     try {
       await axios
         .put(
-          `${process.env.REACT_APP_BASE_ROUTE}chat/${chat.id}`,
+          `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/${chat.id}`,
           {
             ...chat,
             street,

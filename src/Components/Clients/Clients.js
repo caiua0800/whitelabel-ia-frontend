@@ -94,24 +94,26 @@ export default function Clients() {
         term,
         1,
         1, 
-        chosenAgent.number,
+        "752931221232617",
         credentials.accessToken,
         order,
         formattedStartDate,
         formattedEndDate,
-        tagIds
+        tagIds,
+        false
       );
 
       await getChats(
         term,
         page,
         ITEMS_PER_PAGE,
-        chosenAgent.number,
+        "752931221232617",
         credentials.accessToken,
         order,
         formattedStartDate,
         formattedEndDate,
-        tagIds
+        tagIds,
+        false
       );
 
       setSearchResults({ items: chats, totalCount: countResponse.totalCount });

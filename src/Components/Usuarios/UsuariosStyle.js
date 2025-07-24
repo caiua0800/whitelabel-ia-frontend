@@ -24,8 +24,28 @@ const style = {
     boxShadow: "3px 3px 4px rgba(0,0,0,0.2)",
     display: "flex",
     justifyContent:  "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "relative"
   },
+  disableEnableIa: {
+    width: 40,
+    height: 40,
+    borderRadius: "50%",
+    background: "rgba(200, 30, 20, 1)",
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    cursor: "pointer",
+    border: "2px solid black",
+    boxSHadow: "3px 3px 4px rgba(0,0,0,0.4)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden"
+  },
+  disableEnableIaIcon: {
+    width: "80%"
+  },  
   loggedUserBox: {
     width: "100%",
     display: "grid",

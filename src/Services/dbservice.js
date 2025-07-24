@@ -366,6 +366,17 @@ export async function editarStatusAgente(chatId, newStatus, token) {
   return res;
 }
 
+export async function editarStatusTodosOsAgentes(token) {
+  const res = await axios.put(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/status/all?newStatus=2`,
+    {},  // 
+    {   
+      headers: { Authorization: token },
+    }
+  );
+  return res;
+}
+
 export async function editarStatusVenda(saleId, newStatus, token) {
   console.log(saleId, newStatus, token)
   const res = await axios.put(

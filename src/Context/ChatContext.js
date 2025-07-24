@@ -305,8 +305,9 @@ const ChatProvider = ({ children }) => {
 
   const handleSelectChat = useCallback(async (chat) => {
     if (!chat || activeChat?.id === chat.id) {
-      return; // Não faz nada se o chat já estiver selecionado
+      return; 
     }
+    startLoading()
     setActiveChat(chat);
     setMessages([]);
     setLoading(prev => ({ ...prev, messages: true })); 

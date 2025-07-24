@@ -10,7 +10,6 @@ const ChatBox = ({ chat }) => {
   const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const handleSelect = () => {
-    startLoading()
     handleSelectChat(chat);
   };
 
@@ -27,7 +26,6 @@ const ChatBox = ({ chat }) => {
     <>
       <div
         onClick={handleSelect}
-        onDoubleClick={() => handleSelectChat(null)}
         className={activeChat && chat.id == activeChat.id ? "" : "chat-box"}
         style={{
           ...style.chatContainer,

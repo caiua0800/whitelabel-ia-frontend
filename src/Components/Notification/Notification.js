@@ -18,13 +18,15 @@ export default function Notification() {
     const limitarText0 = (t) => {
         var aux = ""
         if(t && t.length > 20){
-            for(let i = 0; i < 20; i++){
+            for(let i = 0; i < t.length && i < 20; i++){
                 aux += t[i];
             }
             aux += "..."
         }else{
             if(!t) aux = "";
+            else aux = t;
         }
+        console.log(aux)
         return aux;
     }
 

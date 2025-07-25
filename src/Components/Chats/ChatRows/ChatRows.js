@@ -6,6 +6,7 @@ import StartChat from "../Chat/StartChat/StartChat";
 import { AuthContext } from "../../../Context/AuthContext";
 import { ChatContext } from "../../../Context/ChatContext";
 import { LoadingContext } from "../../../Context/LoadingContext";
+import { searchChats } from "../../../Services/dbservice";
 
 const ChatsRows = ({ selectChat }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,12 +21,26 @@ const ChatsRows = ({ selectChat }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
-  const [paginatedChats, setPaginatedChats] = useState([]);
+
 
   const fetchChats = async (page = 1) => {
     try {
       startLoading();
       setLoading(true);
+
+      const countResponse = await searchChats(
+        searchTerm,
+        page,
+        itemsPerPage,
+        selectedAgent ? (selectedAgent ? selectedAgent.number : null) : null,
+        credentials.accessToken,
+        sortOrder,
+        null,
+        null,
+        null,
+        true
+      );
+
       await getChats(
         searchTerm,
         page,
@@ -38,46 +53,26 @@ const ChatsRows = ({ selectChat }) => {
         null,
         true
       );
+      
       setCurrentPage(page);
+      setTotalPages(Math.ceil(countResponse.totalCount / itemsPerPage));
       setLoading(false);
     } catch (error) {
       console.error("Erro ao buscar chats:", error);
       setLoading(false);
-    } finally{
-      stopLoading()
+    } finally {
+      stopLoading();
     }
   };
 
   useEffect(() => {
     fetchChats(1);
-  }, [selectedAgent]);
-
-  useEffect(() => {
-    if (!chats) return;
-
-    const total = chats.length;
-    const pages = Math.ceil(total / itemsPerPage);
-    setTotalPages(pages > 0 ? pages : 1);
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setPaginatedChats(chats.slice(startIndex, endIndex));
-  }, [chats, currentPage, itemsPerPage]);
-
-  useEffect(() => {
-    const loadChats = async () => {
-      if (selectedAgent) {
-        await fetchChats(1);
-      }
-    };
-    loadChats();
   }, [selectedAgent, searchTerm, sortOrder]);
 
   const handleFilterClick = () => {
     startLoading();
     const newOrder = sortOrder === "desc" ? "asc" : "desc";
     setSortOrder(newOrder);
-    fetchChats(1);
     stopLoading();
   };
 
@@ -93,7 +88,7 @@ const ChatsRows = ({ selectChat }) => {
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      fetchChats(page);
     }
   };
 
@@ -167,15 +162,13 @@ const ChatsRows = ({ selectChat }) => {
               </button>
             </div>
             <div style={style.chatsRows}>
-              {paginatedChats.length > 0 ? (
-                paginatedChats.map((chat) => (
-                  <>
-                    <ChatBox
-                      key={chat.id}
-                      chat={chat}
-                      onClick={() => selectChat(chat)}
-                    />
-                  </>
+              {chats && chats.length > 0 ? (
+                chats.map((chat) => (
+                  <ChatBox
+                    key={chat.id}
+                    chat={chat}
+                    onClick={() => selectChat(chat)}
+                  />
                 ))
               ) : (
                 <div style={style.noChatsMessage}>
@@ -227,7 +220,7 @@ const ChatsRows = ({ selectChat }) => {
       </div>
       {startChat && (
         <StartChat
-          reload={() => fetchChats(1)}
+          reload={() => fetchChats(currentPage)}
           onClose={() => setStartChat(false)}
         />
       )}

@@ -257,7 +257,7 @@ export default function NewShot({ onClose, shot }) {
       return alert("Selecione um agente para enviar as mensagens")
     }
     
-
+    startLoading()
     try {
       const response = await enviarDisparo(
         credentials.accessToken,
@@ -275,6 +275,8 @@ export default function NewShot({ onClose, shot }) {
     } catch (error) {
       alert("Ocorreu um erro ao enviar.");
       console.error(error);
+    } finally{
+      stopLoading();
     }
   };
 

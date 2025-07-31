@@ -6,8 +6,8 @@ import { LoadingContext } from "../../Context/LoadingContext";
 
 export default function Login() {
   const { login, credentials, loading } = useContext(AuthContext);
-  const [id, setId] = useState("607630");
-  const [password, setPassword] = useState("M2W#647b");
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { startLoading, stopLoading } = useContext(LoadingContext);
 

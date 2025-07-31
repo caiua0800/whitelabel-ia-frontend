@@ -23,6 +23,7 @@ const style = {
         position: "absolute",
         bottom: -20,
         // right: 0,
+        textAlign:"start",
         fontSize: 12,
         fontWeight: 600,
         color: "rgba(255, 255, 255, 1)"

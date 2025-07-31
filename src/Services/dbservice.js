@@ -11,7 +11,7 @@ export async function obterChats(agentNumber, token) {
 }
 
 export async function obterShots(token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`, {
+  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/dto`, {
     headers: { Authorization: token },
   });
   return res.data;
@@ -98,17 +98,17 @@ export async function criarShot2(token, shot) {
   return res.data;
 }
 
+export async function obterModelos(token) {
+  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}MessageModel`, {
+    headers: { Authorization: token },
+  });
+  return res.data;
+}
+
+
 export async function enviarDisparo(token, agentNumber, shotId, clients) {
   console.log(agentNumber)
   const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/send/${shotId}?agentNumber=${agentNumber}`, clients, {
-    headers: { Authorization: token },
-  });
-  return res.status;
-}
-
-export async function enviarDisparo2(token, agentNumber, shotId, clients) {
-  console.log(agentNumber)
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/send2/${shotId}?agentNumber=${agentNumber}`, clients, {
     headers: { Authorization: token },
   });
   return res.status;

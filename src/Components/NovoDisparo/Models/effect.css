@@ -1,0 +1,9 @@
+
+
+.model-box:hover{
+    background: rgba(95, 167, 249, 0.626) !important;
+}
+
+.model-box-selected{
+    background: rgba(100, 220, 0, 1) !important;
+}

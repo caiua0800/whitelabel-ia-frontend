@@ -1,3 +1,5 @@
+import React from "react";
+
 function formatarData(dataISO) {
   const data = new Date(dataISO);
 
@@ -58,12 +60,37 @@ function formatarMoeda(valor) {
   return `R$${parteInteira},${parteDecimal}`;
 }
 
+const textFormatter = (text) => {
+  if (!text) return '';
+  
+  // Passo 1: Substituir enumerações (1., 2., etc.) por quebras de linha
+  let formatted = text.replace(/(\d+)\./g, '\n$1. ');
+  
+  // Passo 2: Adicionar quebras após frases completas
+  formatted = formatted.replace(/([.!?])\s+(?=[A-ZÀ-Ú])/g, '$1\n\n');
+  
+  // Passo 3: Formatar seções especiais
+  formatted = formatted.replace(/(Imagine só:|Veja como:|Quer que eu)/g, '\n\n$1');
+  
+  // Passo 4: Remover espaços extras
+  formatted = formatted.replace(/\s+/g, ' ').trim();
+  
+  // Passo 5: Converter quebras de linha em elementos React
+  return formatted.split('\n').map((paragraph, i) => (
+    <React.Fragment key={i}>
+      {paragraph}
+      <br />
+    </React.Fragment>
+  ));
+};
+
 const func = {
   formatarData,
   formatarContato,
   formatarDataCompleta,
   formatPermission,
   formatarMoeda,
+  textFormatter
 };
 
 export default func;

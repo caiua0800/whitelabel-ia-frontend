@@ -283,36 +283,36 @@ export default function Disparos() {
                 {paginatedShots.items.map((shot) => (
                   <div
                     onClick={() => setSelectedShot(shot)}
-                    key={shot.id}
+                    key={shot.shot.id}
                     style={tableStyle.row}
                   >
                     <span style={tableStyle.cell}>
-                      <strong>{shot.name}</strong>
+                      <strong>{shot.shot.name}</strong>
                     </span>
                     <span style={{ ...tableStyle.cell, color: "#64748b" }}>
-                      {shot.description || "Sem descrição"}
+                      {shot.shot.description || "Sem descrição"}
                     </span>
                     <span style={tableStyle.cell}>
-                      {func.formatarDataCompleta(shot.dateCreated)}
+                      {func.formatarDataCompleta(shot.shot.dateCreated)}
                     </span>
                     <span style={tableStyle.cell}>
                       {shot.activationDate
-                        ? func.formatarDataCompleta(shot.activationDate)
+                        ? func.formatarDataCompleta(shot.shot.activationDate)
                         : "-"}
                     </span>
                     <span
                       style={{
                         ...tableStyle.status,
-                        ...(shot.status === 2
+                        ...(shot.shot.status === 2
                           ? tableStyle.statusActive
-                          : shot.status === 1
+                          : shot.shot.status === 1
                           ? tableStyle.statusPending
                           : tableStyle.statusInactive),
                       }}
                     >
-                      {shot.status === 2
+                      {shot.shot.status === 2
                         ? "Ativo"
-                        : shot.status === 1
+                        : shot.shot.status === 1
                         ? "Pendente"
                         : "Inativo"}
                     </span>

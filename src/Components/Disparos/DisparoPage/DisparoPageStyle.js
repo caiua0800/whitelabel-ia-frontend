@@ -43,7 +43,6 @@ const style = {
   firstRow: {
     width: "100%",
     display: "grid",
-    gridTemplateColumns: "4fr 4fr",
     gap: 10,
   },
   firstRow1: {

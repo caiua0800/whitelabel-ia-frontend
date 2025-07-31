@@ -4,19 +4,20 @@ import ModalDefault from "../../../ModalDefault/ModalDefault";
 import { AuthContext } from "../../../../Context/AuthContext";
 import {
   enviarDisparo,
-  enviarDisparo2,
   searchChats,
 } from "../../../../Services/dbservice";
 import { ChatContext } from "../../../../Context/ChatContext";
 import func from "../../../../Services/fotmatters";
 import TagsModal from "../../../Clients/Tag/TagsModal";
 import AgentModal from "./AgentModal/AgentModal";
+import { LoadingContext } from "../../../../Context/LoadingContext";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function NewShot({ onClose, shot }) {
   const { credentials } = useContext(AuthContext);
   const { getChats, chats, selectedAgent } = useContext(ChatContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,6 +34,7 @@ export default function NewShot({ onClose, shot }) {
   const handleSearch = async (page = 1) => {
     try {
       setIsSearching(true);
+      startLoading()
 
       const countResponse = await searchChats(
         searchTerm,
@@ -67,6 +69,7 @@ export default function NewShot({ onClose, shot }) {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
+      stopLoading()
     }
   };
 
@@ -253,13 +256,13 @@ export default function NewShot({ onClose, shot }) {
     if(!chosenAgent){
       return alert("Selecione um agente para enviar as mensagens")
     }
+    
 
     try {
-      const chosenFunction = shot.id === 4 ? enviarDisparo2 : enviarDisparo;
-      const response = await chosenFunction(
+      const response = await enviarDisparo(
         credentials.accessToken,
         chosenAgent.number,
-        shot.id,
+        shot.shot.id,
         selectedClients
       );
 
@@ -275,7 +278,6 @@ export default function NewShot({ onClose, shot }) {
     }
   };
 
-  // Busca inicial quando o componente é montado
   useEffect(() => {
     handleSearch(1);
   }, []);

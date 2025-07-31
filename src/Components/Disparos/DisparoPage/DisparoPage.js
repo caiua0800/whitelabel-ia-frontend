@@ -5,6 +5,7 @@ import Model1 from "../../NovoDisparo/Models/Model1";
 import func from "../../../Services/fotmatters";
 import NewShot from "./NewShot/NewShot";
 import Model2 from "../../NovoDisparo/Models/Model2";
+import ShotModel from "../../ShotModel/ShotModel";
 
 export default function DisparoPage({ onClose, shot }) {
   const [newShotModal, setNewShotModal] = useState(false);
@@ -23,6 +24,7 @@ export default function DisparoPage({ onClose, shot }) {
     }
     return 0;
   };
+
   return (
     <>
       <ModalDefault zIndex={10}>
@@ -33,16 +35,12 @@ export default function DisparoPage({ onClose, shot }) {
             style={style.closeBtn}
           />
           <span style={style.title}>
-            Seu modelo de disparo ID #{shot ? shot.id : "0"}
+            Seu modelo de disparo ID #{(shot && shot.shot) ? shot.shot.id : "0"}
           </span>
 
-          {/* <div style={style.modelContainer}>
-            <Model2
-              text={
-                shot && shot.shotFields.length > 0 && shot.shotFields[0].value
-              }
-            />
-          </div> */}
+          <div style={style.modelContainer}>
+            <ShotModel data={shot} />
+          </div>
 
           <div style={style.info}>
             <div style={style.firstRow}>
@@ -51,16 +49,7 @@ export default function DisparoPage({ onClose, shot }) {
                   <span style={style.firstRow1BoxTitle}>Nome do Modelo</span>
                   <input
                     style={style.firstRow1BoxInput}
-                    value={shot && shot.name}
-                  />
-                </div>
-                <div style={style.firstRow1Box}>
-                  <span style={style.firstRow1BoxTitle}>
-                    Descrição do Modelo
-                  </span>
-                  <textarea
-                    style={style.firstRow1BoxTextarea}
-                    value={shot && shot.description}
+                    value={shot && shot.shot && shot.shot.name}
                   />
                 </div>
               </div>
@@ -73,7 +62,7 @@ export default function DisparoPage({ onClose, shot }) {
                     <input
                       style={style.firstRow2BoxInput}
                       value={
-                        shot && shot.shotHistory ? shot.shotHistory.length : 0
+                        shot && shot.shot && shot.shot.shotHistory ? shot.shot.shotHistory.length : 0
                       }
                     />
                   </div>
@@ -100,9 +89,9 @@ export default function DisparoPage({ onClose, shot }) {
                       <span style={style.historyTableHeaderCell}>Status</span>
                     </div>
 
-                    {shot &&
-                      shot.shotHistory &&
-                      shot.shotHistory.map((h, key) => (
+                    {shot && shot.shot &&
+                      shot.shot.shotHistory &&
+                      shot.shot.shotHistory.map((h, key) => (
                         <>
                           <div style={style.historyTableRow}>
                             <span style={style.historyTableCell}>

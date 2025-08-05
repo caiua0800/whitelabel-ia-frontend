@@ -261,12 +261,12 @@ export default function Disparos() {
                   {informacoesDisparos.avaliableShots}
                 </span>
               )}
-              <span
+              {/* <span
                 onClick={handleGoToBuyShots}
                 style={style.obterDisparosButton}
               >
                 Obter mais
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
@@ -443,7 +443,9 @@ const tableStyle = {
   container: {
     width: "100%",
     borderRadius: "12px",
-    overflow: "hidden",
+    overflowX: "hidden",
+    overflowY: "auto",
+    maxHeight: 250,
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
     marginTop: "24px",
   },

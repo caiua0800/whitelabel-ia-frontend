@@ -9,7 +9,7 @@ export const menuItems = [
     {name: "TAGS", icon: "./icons/tag-icon.svg", route: "/tags"},
     {name: "CATEGORIAS", icon: "./icons/tag-icon.svg", route: "/categorias"},
     {name: "DISPAROS", icon: "./icons/airplane2-icon.svg", route: "/disparos"},
-    {name: "ASSINATURA", icon: "./icons/airplane2-icon.svg", route: "/assinatura"},
+    // {name: "ASSINATURA", icon: "./icons/airplane2-icon.svg", route: "/assinatura"},
     {name: "CONFIGURAÇÕES", icon: "./icons/airplane2-icon.svg", route: "/usuarios"},
 ]
 

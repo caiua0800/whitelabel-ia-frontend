@@ -23,7 +23,7 @@ export default function SubscriptionNotification() {
     if (
       subscriptionInfo &&
       subscriptionInfo.block_days_remaining &&
-      subscriptionInfo.block_days_remaining < 20
+      subscriptionInfo.block_days_remaining < 3
     ) {
       // if (subscriptionInfo.block_days_remaining <= 2) {
       const shouldShow = verifyIfOpen();

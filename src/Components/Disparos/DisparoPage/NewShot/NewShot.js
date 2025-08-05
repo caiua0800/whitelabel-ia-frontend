@@ -2,10 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import style from "./NewShotStyle";
 import ModalDefault from "../../../ModalDefault/ModalDefault";
 import { AuthContext } from "../../../../Context/AuthContext";
-import {
-  enviarDisparo,
-  searchChats,
-} from "../../../../Services/dbservice";
+import { enviarDisparo, searchChats } from "../../../../Services/dbservice";
 import { ChatContext } from "../../../../Context/ChatContext";
 import func from "../../../../Services/fotmatters";
 import TagsModal from "../../../Clients/Tag/TagsModal";
@@ -27,14 +24,15 @@ export default function NewShot({ onClose, shot }) {
   const [totalCount, setTotalCount] = useState(0);
   const [showTagsModal, setShowTagsModal] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
-
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [chosenAgent, setChosenAgent] = useState(null);
   const [selectAgentModal, setSelectAgentModal] = useState(false);
 
   const handleSearch = async (page = 1) => {
     try {
       setIsSearching(true);
-      startLoading()
+      startLoading();
 
       const countResponse = await searchChats(
         searchTerm,
@@ -43,8 +41,8 @@ export default function NewShot({ onClose, shot }) {
         selectedAgent.number,
         credentials.accessToken,
         "desc",
-        null,
-        null,
+        startDate || null,
+        endDate || null,
         null
       );
 
@@ -59,8 +57,8 @@ export default function NewShot({ onClose, shot }) {
         selectedAgent.number,
         credentials.accessToken,
         "desc",
-        null,
-        null,
+        startDate || null,
+        endDate || null,
         tagIds
       );
 
@@ -69,7 +67,7 @@ export default function NewShot({ onClose, shot }) {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
-      stopLoading()
+      stopLoading();
     }
   };
 
@@ -252,12 +250,12 @@ export default function NewShot({ onClose, shot }) {
 
   const handleSend = async () => {
     if (selectedClients.length === 0) return;
-
-    if(!chosenAgent){
-      return alert("Selecione um agente para enviar as mensagens")
+  
+    if (!chosenAgent) {
+      return alert("Selecione um agente para enviar as mensagens");
     }
-    
-    startLoading()
+  
+    startLoading();
     try {
       const response = await enviarDisparo(
         credentials.accessToken,
@@ -265,17 +263,17 @@ export default function NewShot({ onClose, shot }) {
         shot.shot.id,
         selectedClients
       );
-
+  
       if (response === 200) {
         alert("Mensagens enviadas com sucesso.");
-        onClose();
+        onClose(); // Isso vai fechar o modal e atualizar os dados
       } else {
         alert("Ocorreu um erro ao enviar.");
       }
     } catch (error) {
       alert("Ocorreu um erro ao enviar.");
       console.error(error);
-    } finally{
+    } finally {
       stopLoading();
     }
   };
@@ -310,29 +308,24 @@ export default function NewShot({ onClose, shot }) {
                 onKeyPress={handleKeyPress}
               />
             </div>
+
             <div style={style.filterBox}>
-              <span style={style.filterName}>Já são efetivados?</span>
-              <select style={style.input}>
-                <option>Selecione</option>
-                <option>Não</option>
-                <option>Sim</option>
-              </select>
+              <span style={style.filterName}>Data de criação entre</span>
+              <input
+                value={startDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                style={style.input}
+                type="date"
+              />
             </div>
             <div style={style.filterBox}>
-              <span style={style.filterName}>Entraram em contato em</span>
-              <select style={style.input}>
-                <option>Janeiro/2025</option>
-                <option>Fevereiro/2025</option>
-                <option>Março/2025</option>
-                <option>Abril/2025</option>
-                <option>Maio/2025</option>
-                <option>Junho/2025</option>
-                <option>Julho/2025</option>
-                <option>Agosto/2025</option>
-                <option>Setembro/2025</option>
-                <option>Novembro/2025</option>
-                <option>Dezembro/2025</option>
-              </select>
+              <span style={style.filterName}>até</span>
+              <input
+                onChange={(e) => setEndDate(e.target.value)}
+                value={endDate}
+                style={style.input}
+                type="date"
+              />
             </div>
 
             <div style={style.filterBox}>
@@ -447,7 +440,7 @@ export default function NewShot({ onClose, shot }) {
 
             <div style={style.selectNumberPart}>
               <span style={style.selectNumberPartText}>
-                Selecione o número do agente: 
+                Selecione o número do agente:
               </span>
               {!chosenAgent ? (
                 <>
@@ -461,8 +454,15 @@ export default function NewShot({ onClose, shot }) {
               ) : (
                 <>
                   <div style={style.selectedAgentBox}>
-                      <span style={style.selectedAgentBoxMessage}>{`${chosenAgent && chosenAgent.name} selecionado`}</span>
-                      <button style={style.selectedAgentBoxUnselectButton} onClick={() => setChosenAgent(null)}>Remover</button>
+                    <span style={style.selectedAgentBoxMessage}>{`${
+                      chosenAgent && chosenAgent.name
+                    } selecionado`}</span>
+                    <button
+                      style={style.selectedAgentBoxUnselectButton}
+                      onClick={() => setChosenAgent(null)}
+                    >
+                      Remover
+                    </button>
                   </div>
                 </>
               )}
@@ -494,7 +494,10 @@ export default function NewShot({ onClose, shot }) {
 
         {selectAgentModal && (
           <>
-            <AgentModal setSelectedAgent={setChosenAgent} onClose={() => setSelectAgentModal(false)} />
+            <AgentModal
+              setSelectedAgent={setChosenAgent}
+              onClose={() => setSelectAgentModal(false)}
+            />
           </>
         )}
       </ModalDefault>

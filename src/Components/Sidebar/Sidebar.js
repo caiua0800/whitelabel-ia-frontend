@@ -8,13 +8,13 @@ import { ChatContext } from "../../Context/ChatContext";
 
 export default function Sidebar({ state, onClose }) {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, enterprise } = useContext(AuthContext);
   const { disconnectWebSocket } = useContext(ChatContext);
-  
+
   const handleSelect = (r) => {
-    onClose()
-    navigate(r)
-  }
+    onClose();
+    navigate(r);
+  };
   return (
     <>
       <div
@@ -31,7 +31,11 @@ export default function Sidebar({ state, onClose }) {
         <div style={style.companyLogo}>
           <img
             style={style.companyLogoImage}
-            src="./images/logo-golden-ouro.png"
+            src={
+              enterprise && enterprise.logoUrl
+                ? enterprise.logoUrl
+                : ""
+            }
           />
         </div>
 

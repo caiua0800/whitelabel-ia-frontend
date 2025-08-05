@@ -6,7 +6,7 @@ const style = {
     top: 0,
     left: 0,
     zIndex: 11,
-    background: "rgba(0,0,0,0.6)",
+    background: "rgba(0,0,0,0.8)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -15,7 +15,7 @@ const style = {
     width: "70%",
     height: "70%",
     borderRadius: 4,
-    background: "rgba(210, 210, 210, 1)",
+    // background: "rgba(210, 210, 210, 1)",
     padding: "40px 50px",
     boxSizing: "border-box",
     display: "grid",
@@ -36,7 +36,8 @@ const style = {
   containerContentTitle: {
     fontSize: 28,
     fontWeight: 800,
-    color: "rgba(80, 80, 80, 1)",
+    // color: "rgba(80, 80, 80, 1)",
+    color: "white"
   },
   signatureBoxInfo: {
     width: "80%",
@@ -49,7 +50,7 @@ const style = {
     borderRadius: 4,
     boxShadow: "4px 4px 6px rgba(0,0,0,0.4)",
     padding: "30px",
-    fontFamily: "sans",
+    // fontFamily: "sans",
     gap: 5,
   },
   infoContentBox: {
@@ -62,7 +63,7 @@ const style = {
     fontSize: 16,
     color: "rgba(20, 20, 20, 1)",
     fontWeight: 800,
-    textDecoration: "underline",
+    // textDecoration: "underline",
   },
   infoContentBoxValue: {
     fontSize: 16,
@@ -155,6 +156,57 @@ const style = {
     fontWeight: 600,
     outline: "none",
     color: "rgba(0, 0, 0, 1)"
+  },
+  containerPixOption: {
+    width: "100%",
+    height: "100%",
+    background: "rgba(235, 235, 235, 1)",
+    borderRadius: 4,
+    boxSizing: "border-box",
+    padding: 30,
+    display: "flex",
+    flexDirection:  "column",
+    alignItems: "center"
+  },
+  title: {
+    fontSize: 22,
+    color: "rgba(80, 80, 80, 1)",
+    fontWeight: 600
+  },
+  qrCodeContainer: {
+    marginTop: 20,
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    position: "relative",
+  },
+  qrCode: {
+    boxShadow: "3px 3px 10px rgba(0,0,0,0.4)",
+    borderRadius: 4,
+  },
+  buttonPaid: {
+    width: "100%",
+    height: 35,
+    marginTop: 10,
+    borderRadius: 4,
+    border: 0,
+    boxShadow: "3px 3px 5px rgba(0,0,0,0.4)",
+    background: "rgba(100, 220, 0, 1)",
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: "pointer"
+  },
+  buttonExit: {
+    width: "100%",
+    height: 35,
+    marginTop: 10,
+    borderRadius: 4,
+    border: 0,
+    boxShadow: "3px 3px 5px rgba(0,0,0,0.4)",
+    background: "rgba(210, 210, 210, 1)",
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: "pointer"
   }
 };
 

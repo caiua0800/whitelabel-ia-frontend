@@ -39,15 +39,63 @@ const style = {
     fontWeight: 800,
     color: "rgba(80, 80, 80, 1)",
   },
+  disparosHeaderContainer: {
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: "2fr 2fr",
+    gap: 10,
+    height: 150,
+  },
   disparosHeader: {
     width: "100%",
     padding: "10px 30px",
     display: "flex",
+    height: "100%",
     justifyContent: "center",
     alignItems: "start",
     background: "rgba(210, 210, 210, 1)",
     boxSizing: "border-box",
     flexDirection: "column",
+  },
+  disparosHeaderInfoPart: {
+    width: "100%",
+    height: "100%",
+    // background: "rgba(210, 210, 210, 1)",
+    display: "grid",
+    gridTemplateColumns: "2fr 2fr",
+    gridTemplateRows: "2fr 2fr",
+    gap: 10,
+  },
+  whiteViewInfo: {
+    width: "100%",
+    height: "100%",
+    background: "white",
+    borderRadius: 4,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative"
+  },
+  obterDisparosButton: {
+    fontSize: 14,
+    fontWeight: 500,
+    color: "rgba(0, 50, 255, 0.5)",
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    textDecoration: "underline",
+    cursor: "pointer"
+  },
+  whiteViewInfoTitle: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)"
+  },
+  whiteViewInfoValue: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 140, 140, 1)"
   },
   disparosHeaderText: {
     textAlign: "start",
@@ -269,7 +317,7 @@ const style = {
     height: "100%",
     display: "grid",
     gridTemplateColumns: "2fr 2fr",
-    gap: 10
+    gap: 10,
   },
   filterConfigs: {
     width: "100%",
@@ -288,7 +336,7 @@ const style = {
   shotsQttText: {
     fontSize: 16,
     fontWeight: 500,
-    color: "rgba(80, 80, 80, 1)"
+    color: "rgba(80, 80, 80, 1)",
   },
   shotsQttInput: {
     fontSize: 16,
@@ -361,7 +409,7 @@ const style = {
     padding: "20px 0",
     fontSize: 16,
     color: "rgba(200, 80, 80, 1)",
-    fontWeight: 600
+    fontWeight: 600,
   },
   radioBox: {
     display: "flex",
@@ -428,7 +476,7 @@ const style = {
     boxSizing: "border-box",
     outline: "none",
     border: 0,
-    boxShadow: "3px 3px 3px rgba(0,0,0,0.4)"
+    boxShadow: "3px 3px 3px rgba(0,0,0,0.4)",
   },
   createButton: {
     width: "100%",
@@ -441,12 +489,12 @@ const style = {
     marginTop: 10,
     borderRadius: 4,
     cursor: "pointer",
-    transition: ".3s"
+    transition: ".3s",
   },
   shotTypeContainer: {
     display: "flex",
     gap: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   shotTypeContainerButton: {
     width: 200,
@@ -458,7 +506,7 @@ const style = {
     color: "rgba(80, 80, 80, 1)",
     border: 0,
     boxShadow: "3px 3px 2px rgba(0,0,0,0.1)",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   //fim modal novo disparo
   //começo modal novo disparo remarketing
@@ -583,7 +631,7 @@ const style = {
     height: "100%",
     display: "grid",
     gridTemplateColumns: "2fr 2fr",
-    gap: 10
+    gap: 10,
   },
   filterConfigs2: {
     width: "100%",
@@ -602,7 +650,7 @@ const style = {
   shotsQttText2: {
     fontSize: 16,
     fontWeight: 500,
-    color: "rgba(80, 80, 80, 1)"
+    color: "rgba(80, 80, 80, 1)",
   },
   shotsQttInput2: {
     fontSize: 16,
@@ -675,7 +723,7 @@ const style = {
     padding: "20px 0",
     fontSize: 16,
     color: "rgba(200, 80, 80, 1)",
-    fontWeight: 600
+    fontWeight: 600,
   },
   radioBox2: {
     display: "flex",
@@ -742,7 +790,7 @@ const style = {
     boxSizing: "border-box",
     outline: "none",
     border: 0,
-    boxShadow: "3px 3px 3px rgba(0,0,0,0.4)"
+    boxShadow: "3px 3px 3px rgba(0,0,0,0.4)",
   },
   createButton2: {
     width: "100%",
@@ -755,20 +803,20 @@ const style = {
     marginTop: 10,
     borderRadius: 4,
     cursor: "pointer",
-    transition: ".3s"
+    transition: ".3s",
   },
   models: {
     width: "100%",
     display: "flex",
     gap: 20,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   modelBox: {
     width: 150,
     height: 200,
     background: "rgba(230, 230, 230, 1)",
-    borderRadius: 4
+    borderRadius: 4,
   },
   paginationButton1: {
     width: 30,
@@ -781,7 +829,7 @@ const style = {
     justifyContent: "center",
     alignItems: "center",
     border: 0,
-    cursor: "pointer"
+    cursor: "pointer",
   },
   paginationView: {
     width: 40,
@@ -794,73 +842,73 @@ const style = {
     color: "rgba(80, 80, 80, 1)",
   },
   paginationContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '8px',
-    marginTop: '20px',
-    marginBottom: '20px'
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px",
+    marginTop: "20px",
+    marginBottom: "20px",
   },
   paginationButton: {
-    padding: '8px 12px',
-    border: '1px solid #e2e8f0',
-    borderRadius: '6px',
-    background: 'white',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f8fafc'
+    padding: "8px 12px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "6px",
+    background: "white",
+    cursor: "pointer",
+    "&:hover": {
+      background: "#f8fafc",
     },
-    '&:disabled': {
+    "&:disabled": {
       opacity: 0.5,
-      cursor: 'not-allowed'
-    }
+      cursor: "not-allowed",
+    },
   },
   paginationButtonActive: {
-    background: '#3b82f6',
-    color: 'white',
-    borderColor: '#3b82f6',
-    '&:hover': {
-      background: '#2563eb'
-    }
+    background: "#3b82f6",
+    color: "white",
+    borderColor: "#3b82f6",
+    "&:hover": {
+      background: "#2563eb",
+    },
   },
   paginationEllipsis: {
-    padding: '8px 12px'
+    padding: "8px 12px",
   },
   loadingState: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '40px',
-    color: '#64748b'
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "40px",
+    color: "#64748b",
   },
   emptyState: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px',
-    color: '#64748b'
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "40px",
+    color: "#64748b",
   },
   emptyIcon: {
-    fontSize: '40px',
-    marginBottom: '16px'
+    fontSize: "40px",
+    marginBottom: "16px",
   },
   searchButton: {
     width: "100%",
     height: 35,
-    background: '#3b82f6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#2563eb'
+    background: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    "&:hover": {
+      background: "#2563eb",
     },
-    '&:disabled': {
-      background: '#94a3b8',
-      cursor: 'not-allowed'
-    }
-  }
+    "&:disabled": {
+      background: "#94a3b8",
+      cursor: "not-allowed",
+    },
+  },
   //fim do modal de remarketing
 };
 

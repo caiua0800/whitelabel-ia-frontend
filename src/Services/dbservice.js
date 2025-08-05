@@ -10,8 +10,16 @@ export async function obterChats(agentNumber, token) {
   return res.data;
 }
 
+
 export async function obterShots(token) {
   const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/dto`, {
+    headers: { Authorization: token },
+  });
+  return res.data;
+}
+
+export async function obterInformacoesDisparos(token, month, year) {
+  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/monthly-stats?month=${month}&year=${year}`, {
     headers: { Authorization: token },
   });
   return res.data;
@@ -137,12 +145,29 @@ export async function iniciarChatLeads(token, agentNumber, client_shot_dto) {
   return res.status;
 }
 
-
 export async function criarProduto(token, product) {
   const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}product`, product, {
     headers: { Authorization: token },
   });
   return res.data;
+}
+
+export async function gerarPix(token, identificationType) {
+  console.log(identificationType)
+  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/signature-pix`, {
+    identificationType,
+    description: "Pagamento da assinatura."
+  }, {
+    headers: { Authorization: token },
+  });
+  return res.data;
+}
+
+export async function verificarPagamento(token, paymentId) {
+  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/verify/${paymentId}`, {
+    headers: { Authorization: token },
+  });
+  return res;
 }
 
 export async function editarProduto(token, product) {

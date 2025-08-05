@@ -2,7 +2,11 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import func from "../../Services/fotmatters";
 import style from "./DisparosStyle";
 import { useNavigate } from "react-router-dom";
-import { searchShots } from "../../Services/dbservice";
+import {
+  informacoesDisparos,
+  obterInformacoesDisparos,
+  searchShots,
+} from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
 import DisparoPage from "./DisparoPage/DisparoPage";
 import { LoadingContext } from "../../Context/LoadingContext";
@@ -12,13 +16,14 @@ const ITEMS_PER_PAGE = 5;
 export default function Disparos() {
   const [novoDisparoModal, setNovoDisparoModal] = useState(false);
   const navigate = useNavigate();
+  const [informacoesDisparos, setInformacoesDisparos] = useState(null);
   const [paginatedShots, setPaginatedShots] = useState({
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: ITEMS_PER_PAGE,
   });
-  const { credentials } = useContext(AuthContext);
+  const { credentials, subscriptionInfo } = useContext(AuthContext);
   const [selectedShot, setSelectedShot] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -26,7 +31,7 @@ export default function Disparos() {
   const [order, setOrder] = useState("desc");
   const [statusFilter, setStatusFilter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {startLoading, stopLoading} = useContext(LoadingContext)
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const handleGoToNewShot = () => {
     navigate("/novo-disparo");
@@ -34,7 +39,7 @@ export default function Disparos() {
 
   const fetchShots = useCallback(
     async (page = 1) => {
-      startLoading()
+      startLoading();
       try {
         setIsLoading(true);
         const response = await searchShots(
@@ -52,15 +57,43 @@ export default function Disparos() {
         console.error("Erro ao buscar disparos:", error);
       } finally {
         setIsLoading(false);
-        stopLoading()
+        stopLoading();
       }
     },
     [searchTerm, order, startDate, endDate, statusFilter, credentials]
   );
 
+  const handleGetInformacoesDisparos = async () => {
+    const dataAtual = new Date();
+    const mesAtual = dataAtual.getMonth() + 1;
+    const anoAtual = dataAtual.getFullYear();
+
+    try {
+      startLoading();
+      const res = await obterInformacoesDisparos(
+        credentials.accessToken,
+        mesAtual,
+        anoAtual
+      );
+      setInformacoesDisparos(res);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.error("Erro ao buscar informações de disparos:", error);
+    } finally {
+      setTimeout(() => {
+        stopLoading();
+      }, 500);
+    }
+  };
+
   useEffect(() => {
     fetchShots();
   }, [fetchShots]);
+
+  useEffect(() => {
+    handleGetInformacoesDisparos();
+  }, []);
 
   const handleSearch = () => {
     fetchShots(1);
@@ -167,6 +200,10 @@ export default function Disparos() {
     );
   };
 
+  const handleGoToBuyShots = () => {
+    navigate("/comprar-disparos");
+  };
+
   return (
     <>
       <div style={style.container}>
@@ -178,18 +215,60 @@ export default function Disparos() {
             src="/icons/add-icon2.svg"
           />
         </div>
+        <div style={style.disparosHeaderContainer}>
+          <div style={style.disparosHeader}>
+            <span style={style.disparosHeaderText}>
+              Aqui você pode fazer seu negócio acontecer 🚀
+            </span>
+            <span style={style.disparosHeaderText}>
+              Faça seus disparos de maneira segura 🔐 e automatica 🦾.
+            </span>
+            <span style={style.disparosHeaderText}>
+              Se atente as regras de disparos para não cair na malha fina do
+              whatsapp.
+            </span>
+          </div>
 
-        <div style={style.disparosHeader}>
-          <span style={style.disparosHeaderText}>
-            Aqui você pode fazer seu negócio acontecer 🚀
-          </span>
-          <span style={style.disparosHeaderText}>
-            Faça seus disparos de maneira segura 🔐 e automatica 🦾.
-          </span>
-          <span style={style.disparosHeaderText}>
-            Se atente as regras de disparos para não cair na malha fina do
-            whatsapp.
-          </span>
+          <div style={style.disparosHeaderInfoPart}>
+            <div style={style.whiteViewInfo}>
+              <span style={style.whiteViewInfoTitle}>Disparos Efetuados</span>
+              {informacoesDisparos && (
+                <span style={style.whiteViewInfoValue}>
+                  {informacoesDisparos.totalShotsAllTime}
+                </span>
+              )}{" "}
+            </div>
+            <div style={style.whiteViewInfo}>
+              <span style={style.whiteViewInfoTitle}>Clientes Alcançados</span>
+              {informacoesDisparos && (
+                <span style={style.whiteViewInfoValue}>
+                  {informacoesDisparos.uniqueClientsReached}
+                </span>
+              )}
+            </div>
+            <div style={style.whiteViewInfo}>
+              <span style={style.whiteViewInfoTitle}>Disparos Este Mês</span>
+              {informacoesDisparos && (
+                <span style={style.whiteViewInfoValue}>
+                  {informacoesDisparos.totalShots}
+                </span>
+              )}{" "}
+            </div>
+            <div style={style.whiteViewInfo}>
+              <span style={style.whiteViewInfoTitle}>Disparos Disponíveis</span>
+              {informacoesDisparos && (
+                <span style={style.whiteViewInfoValue}>
+                  {informacoesDisparos.avaliableShots}
+                </span>
+              )}
+              <span
+                onClick={handleGoToBuyShots}
+                style={style.obterDisparosButton}
+              >
+                Obter mais
+              </span>
+            </div>
+          </div>
         </div>
 
         <div style={style.disparosPart}>
@@ -253,7 +332,9 @@ export default function Disparos() {
               </select>
             </div>
             <div style={style.searchItem}>
-              <span style={{...style.searchItemTitle, opacity: 0}}>Ordem</span>
+              <span style={{ ...style.searchItemTitle, opacity: 0 }}>
+                Ordem
+              </span>
 
               <button
                 style={style.searchButton}
@@ -334,12 +415,23 @@ export default function Disparos() {
         </div>
       </div>
 
+      {/* {selectedShot != null && (
+        <DisparoPage
+          shot={selectedShot}
+          onClose={() => {
+            setSelectedShot(null);
+            fetchShots(paginatedShots.pageNumber);
+          }}
+        />
+      )} */}
+
       {selectedShot != null && (
         <DisparoPage
           shot={selectedShot}
           onClose={() => {
             setSelectedShot(null);
             fetchShots(paginatedShots.pageNumber);
+            handleGetInformacoesDisparos();
           }}
         />
       )}

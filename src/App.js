@@ -16,6 +16,7 @@ import NovoDisparo from "./Components/NovoDisparo/NovoDisparo";
 import Categorias from "./Components/Categorias/Categorias";
 import Sale from "./Components/Sale/Sale";
 import Signature from "./Components/Signature/Signature";
+import ComprarDisparos from "./Components/ComprarDisparos/ComprarDisparos";
 
 const navigation = [
   {
@@ -61,6 +62,10 @@ const navigation = [
   {
     path: "/assinatura",
     element: <Signature />,
+  },
+  {
+    path: "/comprar-disparos",
+    element: <ComprarDisparos />,
   },
 ];
 

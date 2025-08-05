@@ -1,5 +1,21 @@
 
 .signature-box:hover{
-    transform: scale(1.02);
+    transform: scale(1.04) !important;
     box-shadow: 7px 5px 5px rgba(0,0,0,0.2);
+    z-index: 9;
+    /* margin: 10px; */
+}
+
+.signature-box2:hover{
+    box-shadow: 7px 5px 5px rgba(0,0,0,0.2);
+    z-index: 9;
+}
+
+
+.signature-box{
+    z-index: 2;
+}
+
+.signature-box2{
+    z-index: 3;
 }

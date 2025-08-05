@@ -9,6 +9,7 @@ import { LoadingContext } from "../../../Context/LoadingContext";
 import OpcoesModal from "./OpcoesModal/OpcoesModal";
 import Perfil from "./OpcoesModal/Perfil/Perfil";
 import func from "../../../Services/fotmatters";
+import LoadingCircle from "../../Loading/LoadingCircle";
 
 export default function Chat({ chat }) {
   const { messages, activeChat, handleEditChatStatus, selectedAgent } =
@@ -23,6 +24,7 @@ export default function Chat({ chat }) {
   const [popUpIcon2, setPopUpIcon2] = useState(false);
   const [opcoesModal, setOpcoesModal] = useState(false);
   const [seeProfile, setSeeProfile] = useState(false);
+  const [loadCircle, setLoadCircle] = useState(false);
   const { startLoading, stopLoading, stopLoadingDelay } =
     useContext(LoadingContext);
 
@@ -47,26 +49,36 @@ export default function Chat({ chat }) {
     if (!messageInput.trim()) return;
 
     try {
+      setLoadCircle(true);
       var aux = messageInput;
       setMessageInput("");
-      await sendWhatsapp(aux, selectedAgent.number ,true, activeChat.id, credentials.accessToken);
+      await sendWhatsapp(
+        aux,
+        selectedAgent.number,
+        true,
+        activeChat.id,
+        credentials.accessToken
+      );
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       alert("Erro ao enviar mensagem.");
+    } finally{
+      setLoadCircle(false);
     }
   };
 
   const handleBlockAndUnblockAgent = async () => {
+    if (!activeChat || !activeChat.status) return;
     var newStatus = activeChat.status === 1 ? 2 : 1;
 
     try {
+      setLoadCircle(true);
       startLoading();
       var res = await editarStatusAgente(
         activeChat.id,
         newStatus,
         credentials.accessToken
       );
-      console.log(res);
 
       if (res.status === 200) {
         handleEditChatStatus(newStatus);
@@ -80,6 +92,8 @@ export default function Chat({ chat }) {
       console.log(error);
       stopLoadingDelay();
       alert("Erro ao editar status do agente.");
+    } finally {
+      setLoadCircle(false);
     }
   };
 
@@ -142,61 +156,73 @@ export default function Chat({ chat }) {
     <>
       <div style={style.chatContainer}>
         <div style={style.chatHeader}>
-          <div style={style.clientInfo}>
-            <div
-              onClick={() => setSeeProfile(true)}
-              style={style.clientPictureBox}
-            >
-              <img style={style.clientPicture} src="./icons/user-icon2.png" />
-            </div>
-            <span onClick={() => setSeeProfile(true)} style={style.clientName}>
-              {clientChat
-                ? clientChat.clientName
-                  ? clientChat.clientName
-                  : clientChat.id
-                : ""}
-            </span>
-          </div>
-          <div style={style.chatOptionMenu}>
-            <div
-              onMouseEnter={() => setPopUpIcon(true)}
-              onMouseOut={() => setPopUpIcon(false)}
-              onClick={handleBlockAndUnblockAgent}
-              className="chat-options-button"
-              style={style.chatOptionsButton}
-            >
-              <img
-                className="chat-options-button-icon"
-                style={style.optionsIcon}
-                src={
-                  (activeChat && activeChat.status) === 1
-                    ? "./icons/bot2-icon.svg"
-                    : "./icons/block-icon.svg"
-                }
-              />
-              {popUpIcon && (
-                <div style={style.popUpIconButton}>
-                  {(activeChat && activeChat.status) === 1
-                    ? "Agente Ativado"
-                    : "Agente Bloqueado"}
+          {activeChat && activeChat.status && (
+            <>
+              <div style={style.clientInfo}>
+                <div
+                  onClick={() => setSeeProfile(true)}
+                  style={style.clientPictureBox}
+                >
+                  <img
+                    style={style.clientPicture}
+                    src="./icons/user-icon2.png"
+                  />
                 </div>
-              )}
-            </div>
-            <div
-              onClick={() => setOpcoesModal(true)}
-              onMouseEnter={() => setPopUpIcon2(true)}
-              onMouseOut={() => setPopUpIcon2(false)}
-              className="chat-options-button"
-              style={style.chatOptionsButton}
-            >
-              <img
-                className="chat-options-button-icon"
-                style={style.optionsIcon}
-                src="./icons/options-icon.svg"
-              />
-              {popUpIcon2 && <div style={style.popUpIconButton}>Opções</div>}
-            </div>
-          </div>
+                <span
+                  onClick={() => setSeeProfile(true)}
+                  style={style.clientName}
+                >
+                  {clientChat
+                    ? clientChat.clientName
+                      ? clientChat.clientName
+                      : clientChat.id
+                    : ""}
+                </span>
+              </div>
+              <div style={style.chatOptionMenu}>
+                <div
+                  onMouseEnter={() => setPopUpIcon(true)}
+                  onMouseOut={() => setPopUpIcon(false)}
+                  onClick={handleBlockAndUnblockAgent}
+                  className="chat-options-button"
+                  style={style.chatOptionsButton}
+                >
+                  <img
+                    className="chat-options-button-icon"
+                    style={style.optionsIcon}
+                    src={
+                      (activeChat && activeChat.status) === 1
+                        ? "./icons/bot2-icon.svg"
+                        : "./icons/block-icon.svg"
+                    }
+                  />
+                  {popUpIcon && (
+                    <div style={style.popUpIconButton}>
+                      {(activeChat && activeChat.status) === 1
+                        ? "Agente Ativado"
+                        : "Agente Bloqueado"}
+                    </div>
+                  )}
+                </div>
+                <div
+                  onClick={() => setOpcoesModal(true)}
+                  onMouseEnter={() => setPopUpIcon2(true)}
+                  onMouseOut={() => setPopUpIcon2(false)}
+                  className="chat-options-button"
+                  style={style.chatOptionsButton}
+                >
+                  <img
+                    className="chat-options-button-icon"
+                    style={style.optionsIcon}
+                    src="./icons/options-icon.svg"
+                  />
+                  {popUpIcon2 && (
+                    <div style={style.popUpIconButton}>Opções</div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div style={style.chatBody} ref={chatBodyRef}>
           <div style={style.bodyContent}>
@@ -207,6 +233,7 @@ export default function Chat({ chat }) {
               ))}
           </div>
         </div>
+        <LoadingCircle loading={loadCircle} />
         <div style={style.sendMessagesBox}>
           {selectedFiles.length > 0 && (
             <div style={style.attachConfirmBox}>

@@ -115,7 +115,8 @@ const style = {
         background: "rgba(200,200,200,1)",
         border: "2px solid rgba(200, 200, 200, 1)",
         fontSize: 16,
-        fontWeight: 600
+        fontWeight: 600,
+        outline: "none"
     },
     searchFilterButton: {
         width: "90%",

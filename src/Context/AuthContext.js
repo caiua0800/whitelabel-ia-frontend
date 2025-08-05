@@ -13,16 +13,12 @@ const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const logout = () => {
-    // Limpa os states
     setUser(null);
     setEnterprise(null);
     setCredentials(null);
-    
     sessionStorage.removeItem("authData");
     sessionStorage.removeItem("enterprise-refresh-token");
-    
     navigate("/login");
-    
   };
 
   const login = async (id, password) => {

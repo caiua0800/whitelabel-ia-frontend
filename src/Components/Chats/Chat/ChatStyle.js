@@ -8,6 +8,7 @@ const style = {
         display: "flex",
         flexDirection: "column",
         background: "white",
+        position: "relative"
         // borderLeft: "2px solid rgba(0,0,0,0.1)"
     },
     chatHeader: {
@@ -144,6 +145,7 @@ const style = {
         paddingLeft: 20,
         fontSize: 16,
         fontWeight: 600,
+        outline: "none",
         color: "rgba(100, 100, 100, 1)"
     },
     sendMessageButton: {

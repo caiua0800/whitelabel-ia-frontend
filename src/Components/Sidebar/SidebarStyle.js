@@ -63,7 +63,7 @@ const style = {
     width: "100%",
     height: "100%",
     display: "grid",
-    gridTemplateRows: "2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr",
+    gridTemplateRows: "2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr",
   },
   routeBox: {
     width: "100%",

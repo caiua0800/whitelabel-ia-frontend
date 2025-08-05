@@ -9,7 +9,6 @@ import SubscriptionNotification from "./SubscriptionNotification/SubscriptionNot
 
 const Container = ({ children }) => {
     const [sidebarState, setSidebarState] = useState(false);
-    const { subscriptionInfo } = useContext(AuthContext)
 
     return (
         <>

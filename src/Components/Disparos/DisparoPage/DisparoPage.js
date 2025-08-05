@@ -10,7 +10,6 @@ import ShotModel from "../../ShotModel/ShotModel";
 export default function DisparoPage({ onClose, shot }) {
   const [newShotModal, setNewShotModal] = useState(false);
 
-
   const handleClientesAlcancados = () => {
     if (shot) {
       if (shot.shotHistory) {
@@ -35,7 +34,7 @@ export default function DisparoPage({ onClose, shot }) {
             style={style.closeBtn}
           />
           <span style={style.title}>
-            Seu modelo de disparo ID #{(shot && shot.shot) ? shot.shot.id : "0"}
+            Seu modelo de disparo ID #{shot && shot.shot ? shot.shot.id : "0"}
           </span>
 
           <div style={style.modelContainer}>
@@ -62,7 +61,9 @@ export default function DisparoPage({ onClose, shot }) {
                     <input
                       style={style.firstRow2BoxInput}
                       value={
-                        shot && shot.shot && shot.shot.shotHistory ? shot.shot.shotHistory.length : 0
+                        shot && shot.shot && shot.shot.shotHistory
+                          ? shot.shot.shotHistory.length
+                          : 0
                       }
                     />
                   </div>
@@ -89,7 +90,8 @@ export default function DisparoPage({ onClose, shot }) {
                       <span style={style.historyTableHeaderCell}>Status</span>
                     </div>
 
-                    {shot && shot.shot &&
+                    {shot &&
+                      shot.shot &&
                       shot.shot.shotHistory &&
                       shot.shot.shotHistory.map((h, key) => (
                         <>
@@ -117,12 +119,24 @@ export default function DisparoPage({ onClose, shot }) {
               </div>
             </div>
           </div>
-          <button onClick={() => setNewShotModal(true)} style={style.sendNew}>Realizar novo envio ✈️</button>
-
+          <button onClick={() => setNewShotModal(true)} style={style.sendNew}>
+            Realizar novo envio ✈️
+          </button>
+          {/* 
           {newShotModal && (
             <>
                 <NewShot shot={shot} onClose={() => {setNewShotModal(false); onClose()}} />
             </>
+          )} */}
+
+          {newShotModal && (
+            <NewShot
+              shot={shot}
+              onClose={() => {
+                setNewShotModal(false);
+                onClose(); // Esta função vai atualizar a lista de disparos
+              }}
+            />
           )}
         </div>
       </ModalDefault>

@@ -389,7 +389,6 @@ const ChatProvider = ({ children }) => {
         };
       });
 
-      // Atualiza também na lista de chats
       setChatsDb((prevChats) =>
         prevChats.map((chat) =>
           chat.id === activeChat?.id ? { ...chat, tags: newTags } : chat

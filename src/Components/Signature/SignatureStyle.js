@@ -8,7 +8,7 @@ const style = {
     alignItems: "start",
     boxSizing: "border-box",
     position: "relative",
-    overflowY: "auto"
+    overflowY: "auto",
   },
   title: {
     fontSize: 38,
@@ -21,28 +21,37 @@ const style = {
     marginTop: 40,
     display: "flex",
     justifyContent: "center",
-    overflow: "hidden"
+    overflow: "hidden",
   },
   signatureBoxes: {
     display: "flex",
     justifyContent: "center",
-    flexDirection: "column",
+    // flexDirection: "column",
     alignItems: "center",
     width: "100%",
     marginTop: 40,
-    gap: 100
+    // gap: 100,
+    position: "relative",
+  },
+  activeMessage: {
+    position: "absolute",
+    top: 20,
+    left: 30,
+    color: "rgba(255, 255, 255, 1)",
+    fontSize: 18,
+    fontWeight: 600,
   },
   signatureBox: {
     boxSizing: "border-box",
-    padding: "30px",
+    padding: "30px 20px",
     display: "flex",
     flexDirection: "column",
     transition: ".3s",
     cursor: "pointer",
     // background: "rgba(210, 210, 210,1)",
-    background: "rgba(80, 200, 0,1)",
+    // background: "rgba(80, 200, 0,1)",
     borderRadius: 4,
-    border: "3px solid white"
+    border: "3px solid white",
   },
   boxTitle: {
     display: "flex",
@@ -51,7 +60,7 @@ const style = {
     // color: "rgba(80, 80, 80, 1)",
     color: "rgba(255, 255, 255, 1)",
     fontWeight: 600,
-    textShadow: "3px 3px 4px rgba(0,0,0,0.2)" 
+    textShadow: "3px 3px 4px rgba(0,0,0,0.2)",
   },
   imageBox: {
     width: "100%",
@@ -60,17 +69,17 @@ const style = {
   },
   image: {
     width: 150,
-    filter: "drop-shadow(6px 6px 4px rgba(0,0,0,0.2))"
+    filter: "drop-shadow(6px 6px 4px rgba(0,0,0,0.2))",
   },
   pricesContainer: {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   lastPrice: {
     fontSize: 20,
     fontWeight: 600,
     color: "rgba(255, 255, 255, 0.8)",
-    textDecoration: "line-through"
+    textDecoration: "line-through",
   },
   actualPrice: {
     fontSize: 24,
@@ -88,7 +97,7 @@ const style = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent:"center"
+    justifyContent: "center",
   },
   item: {
     width: "100%",
@@ -104,7 +113,7 @@ const style = {
     width: 10,
     height: 10,
     border: "2px solid white",
-    borderRadius: "50%"
+    borderRadius: "50%",
   },
   item2: {
     width: "100%",
@@ -121,12 +130,69 @@ const style = {
     display: "grid",
     gridTemplateColumns: "2fr 2fr 2fr",
     borderBottom: "2px solid rgba(255, 255, 255, 1)",
-    marginTop: 20
+    marginTop: 20,
   },
   signatureItemHeaderTitle: {
     fontSize: 18,
     fontWeight: 600,
-    color: "white"
+    color: "white",
+  },
+  signatureInfoBoxContainer: {
+    width: "100%",
+    padding: "20px",
+    background: "rgba(210, 210, 210, 1)",
+    boxSizing: "border-box",
+    display: "grid",
+    gridTemplateColumns: "2fr 2fr 2fr",
+  },
+  leftInfo: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+    gap: 2,
+  },
+  leftInfoItemBox: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+  },
+  leftInfoItemBoxTitle: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "black",
+  },
+  leftInfoItemBoxValue: {
+    fontSize: 16,
+    fontWeight: 600,
+  },
+  payBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+    gap: 3
+  },
+  payBoxTitle: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "black",
+  },
+  payBoxSubTitle: {
+    fontSize: 12,
+    fontWeight: 600,
+    color: "rgba(200, 0, 0, 1)",
+  },
+  payBoxButton: {
+    padding: "5px 20px",
+    boxSizing: "border-box",
+    fontSize: 16,
+    fontWeight: 600,
+    background: "rgba(180, 180, 180, 1)",
+    border: 0,
+    cursor: "pointer",
+    borderRadius: 4
   }
 };
 

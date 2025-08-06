@@ -5,55 +5,38 @@ import "./effect.css";
 import { ChatContext } from "../../../Context/ChatContext";
 import { sendWhatsapp, editarStatusAgente } from "../../../Services/dbservice";
 import { AuthContext } from "../../../Context/AuthContext";
-import { LoadingContext } from "../../../Context/LoadingContext";
 import OpcoesModal from "./OpcoesModal/OpcoesModal";
 import Perfil from "./OpcoesModal/Perfil/Perfil";
-import func from "../../../Services/fotmatters";
 import LoadingCircle from "../../Loading/LoadingCircle";
+import { FiPaperclip, FiSend, FiUserCheck, FiUserX, FiMoreVertical } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
-export default function Chat({ chat }) {
-  const { messages, activeChat, handleEditChatStatus, selectedAgent } =
-    useContext(ChatContext);
+export default function Chat() {
+  const { messages, activeChat, handleEditChatStatus, selectedAgent } = useContext(ChatContext);
   const { credentials } = useContext(AuthContext);
-  const [clientChat, setClientChat] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const fileInputRef = useRef(null);
   const chatBodyRef = useRef(null);
-  const [popUpIcon, setPopUpIcon] = useState(false);
-  const [popUpIcon2, setPopUpIcon2] = useState(false);
   const [opcoesModal, setOpcoesModal] = useState(false);
   const [seeProfile, setSeeProfile] = useState(false);
   const [loadCircle, setLoadCircle] = useState(false);
-  const { startLoading, stopLoading, stopLoadingDelay } =
-    useContext(LoadingContext);
-
-  useEffect(() => {
-    if (activeChat) {
-      setClientChat(activeChat);
-      setTimeout(() => {
-        if (chatBodyRef.current) {
-          chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        }
-      }, 0);
-    }
-  }, [chat]);
 
   useEffect(() => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, activeChat]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
     if (!messageInput.trim()) return;
 
+    const textToSend = messageInput;
+    setMessageInput("");
+    setLoadCircle(true);
+
     try {
-      setLoadCircle(true);
-      var aux = messageInput;
-      setMessageInput("");
       await sendWhatsapp(
-        aux,
+        textToSend,
         selectedAgent.number,
         true,
         activeChat.id,
@@ -61,20 +44,19 @@ export default function Chat({ chat }) {
       );
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
-      alert("Erro ao enviar mensagem.");
-    } finally{
+      toast.error("Falha ao enviar mensagem.");
+    } finally {
       setLoadCircle(false);
     }
   };
 
-  const handleBlockAndUnblockAgent = async () => {
-    if (!activeChat || !activeChat.status) return;
-    var newStatus = activeChat.status === 1 ? 2 : 1;
+  const handleToggleAgentStatus = async () => {
+    if (!activeChat) return;
+    const newStatus = activeChat.status === 1 ? 2 : 1;
 
+    setLoadCircle(true);
     try {
-      setLoadCircle(true);
-      startLoading();
-      var res = await editarStatusAgente(
+      const res = await editarStatusAgente(
         activeChat.id,
         newStatus,
         credentials.accessToken
@@ -82,333 +64,78 @@ export default function Chat({ chat }) {
 
       if (res.status === 200) {
         handleEditChatStatus(newStatus);
-        stopLoadingDelay();
-        // return alert(newStatus === 1 ? "Agente ativado com sucesso." : "Agente bloqueado com sucesso.");
-        return;
+        toast.success(newStatus === 1 ? "Agente Ativado" : "Agente Bloqueado");
       }
-      stopLoadingDelay();
     } catch (error) {
-      console.log("Erro ao editar status do agente:");
-      console.log(error);
-      stopLoadingDelay();
-      alert("Erro ao editar status do agente.");
+      console.error("Erro ao editar status do agente:", error);
+      toast.error("Erro ao alterar status do agente.");
     } finally {
       setLoadCircle(false);
     }
   };
 
-  const handleAttachClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    if (files.length > 5) {
-      alert("Você pode selecionar no máximo 5 arquivos");
-      return;
-    }
-
-    const newFiles = files.slice(0, 5);
-
-    const processedFiles = newFiles.map((file) => {
-      return {
-        file,
-        preview: file.type.match("image.*") ? URL.createObjectURL(file) : null,
-      };
-    });
-
-    setSelectedFiles((prev) => [...prev, ...processedFiles].slice(0, 5));
-  };
-
-  const removeFile = (index) => {
-    setSelectedFiles((prev) => {
-      const newFiles = [...prev];
-      if (newFiles[index].preview) {
-        URL.revokeObjectURL(newFiles[index].preview);
-      }
-      newFiles.splice(index, 1);
-      return newFiles;
-    });
-  };
-
-  const clearAllFiles = () => {
-    selectedFiles.forEach((file) => {
-      if (file.preview) {
-        URL.revokeObjectURL(file.preview);
-      }
-    });
-    setSelectedFiles([]);
-    fileInputRef.current.value = "";
-  };
-
-  useEffect(() => {
-    return () => {
-      selectedFiles.forEach((file) => {
-        if (file.preview) {
-          URL.revokeObjectURL(file.preview);
-        }
-      });
-    };
-  }, [selectedFiles]);
+  if (!activeChat) {
+    return (
+      <div style={style.noChatContainer}>
+        {/* <img src="/images/empty-chat.svg" alt="Selecione um chat" style={style.noChatImage} /> */}
+        <h2 style={style.noChatTitle}>Selecione uma conversa</h2>
+        <p style={style.noChatSubtitle}>Escolha um dos seus contatos para começar a conversar.</p>
+      </div>
+    );
+  }
 
   return (
     <>
       <div style={style.chatContainer}>
         <div style={style.chatHeader}>
-          {activeChat && activeChat.status && (
-            <>
-              <div style={style.clientInfo}>
-                <div
-                  onClick={() => setSeeProfile(true)}
-                  style={style.clientPictureBox}
-                >
-                  <img
-                    style={style.clientPicture}
-                    src="./icons/user-icon2.png"
-                  />
-                </div>
-                <span
-                  onClick={() => setSeeProfile(true)}
-                  style={style.clientName}
-                >
-                  {clientChat
-                    ? clientChat.clientName
-                      ? clientChat.clientName
-                      : clientChat.id
-                    : ""}
-                </span>
-              </div>
-              <div style={style.chatOptionMenu}>
-                <div
-                  onMouseEnter={() => setPopUpIcon(true)}
-                  onMouseOut={() => setPopUpIcon(false)}
-                  onClick={handleBlockAndUnblockAgent}
-                  className="chat-options-button"
-                  style={style.chatOptionsButton}
-                >
-                  <img
-                    className="chat-options-button-icon"
-                    style={style.optionsIcon}
-                    src={
-                      (activeChat && activeChat.status) === 1
-                        ? "./icons/bot2-icon.svg"
-                        : "./icons/block-icon.svg"
-                    }
-                  />
-                  {popUpIcon && (
-                    <div style={style.popUpIconButton}>
-                      {(activeChat && activeChat.status) === 1
-                        ? "Agente Ativado"
-                        : "Agente Bloqueado"}
-                    </div>
-                  )}
-                </div>
-                <div
-                  onClick={() => setOpcoesModal(true)}
-                  onMouseEnter={() => setPopUpIcon2(true)}
-                  onMouseOut={() => setPopUpIcon2(false)}
-                  className="chat-options-button"
-                  style={style.chatOptionsButton}
-                >
-                  <img
-                    className="chat-options-button-icon"
-                    style={style.optionsIcon}
-                    src="./icons/options-icon.svg"
-                  />
-                  {popUpIcon2 && (
-                    <div style={style.popUpIconButton}>Opções</div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-        <div style={style.chatBody} ref={chatBodyRef}>
-          <div style={style.bodyContent}>
-            <div style={style.chatBodyBlackOpacity}></div>
-            {messages &&
-              messages.map((message, key) => (
-                <Message message={message} id={key} />
-              ))}
-          </div>
-        </div>
-        <LoadingCircle loading={loadCircle} />
-        <div style={style.sendMessagesBox}>
-          {selectedFiles.length > 0 && (
-            <div style={style.attachConfirmBox}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "8px",
-                }}
-              >
-                <span style={{ fontSize: "14px", color: "#666" }}>
-                  {selectedFiles.length} arquivo(s) selecionado(s)
-                </span>
-                <button
-                  onClick={clearAllFiles}
-                  style={{
-                    background: "transparent",
-                    color: "#ff4444",
-                    border: "none",
-                    fontSize: "14px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Remover todos
-                </button>
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: "10px",
-                  maxHeight: "200px",
-                  overflowY: "auto",
-                }}
-              >
-                {selectedFiles.map((fileData, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      position: "relative",
-                      border: "1px solid #ddd",
-                      borderRadius: "8px",
-                      padding: "8px",
-                      backgroundColor: "#f9f9f9",
-                    }}
-                  >
-                    {fileData.preview ? (
-                      <>
-                        <img
-                          src={fileData.preview}
-                          alt="Preview"
-                          style={{
-                            width: "100%",
-                            height: "80px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                          }}
-                        />
-                        <div
-                          style={{
-                            fontSize: "12px",
-                            marginTop: "4px",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {fileData.file.name}
-                        </div>
-                      </>
-                    ) : (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            backgroundColor: "#e0e0e0",
-                            borderRadius: "4px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginBottom: "8px",
-                          }}
-                        >
-                          <span style={{ fontSize: "24px" }}>📄</span>
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "12px",
-                            textAlign: "center",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            width: "100%",
-                          }}
-                        >
-                          {fileData.file.name}
-                        </div>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => removeFile(index)}
-                      style={{
-                        position: "absolute",
-                        top: "-8px",
-                        right: "-8px",
-                        background: "#ff4444",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "50%",
-                        width: "20px",
-                        height: "20px",
-                        fontSize: "12px",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
+          <div style={style.clientInfo} onClick={() => setSeeProfile(true)}>
+            <div style={style.clientPictureBox}>
+              <img style={style.clientPicture} src="./icons/user-icon2.png" alt="Avatar"/>
             </div>
-          )}
-          <div style={style.attachFileButton} onClick={handleAttachClick}>
-            <img
-              className="attach-icon icon"
-              style={style.attachIcon}
-              src="./icons/attach-icon.svg"
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              accept="image/*,.pdf,.doc,.docx,.txt"
-              multiple
-            />
+            <div style={style.clientTextInfo}>
+                <span style={style.clientName}>{activeChat.clientName || activeChat.id}</span>
+                <span style={style.clientNumber}>{activeChat.id}</span>
+            </div>
           </div>
+          <div style={style.chatOptionMenu}>
+            <button onClick={handleToggleAgentStatus} style={style.headerButton} title={activeChat.status === 1 ? "Agente Ativado" : "Agente Bloqueado"}>
+              {activeChat.status === 1 ? <FiUserCheck size={20} /> : <FiUserX size={20} />}
+            </button>
+            <button onClick={() => setOpcoesModal(true)} style={style.headerButton} title="Mais Opções">
+              <FiMoreVertical size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div style={style.chatBody} ref={chatBodyRef}>
+          {messages && messages.length > 0 ? (
+             messages.map((message, key) => <Message message={message} key={key} />)
+          ) : (
+            <div style={style.noMessageInfo}>Inicie uma conversa!</div>
+          )}
+        </div>
+        
+        <LoadingCircle loading={loadCircle} />
+        
+        <form style={style.sendMessagesBox} onSubmit={handleSendMessage}>
+          <button type="button" style={style.iconButton} title="Anexar (em breve)">
+            <FiPaperclip size={22} />
+          </button>
           <div style={style.messageInputBox}>
             <input
               placeholder="Digite sua mensagem..."
               style={style.messageInput}
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSendMessage();
-              }}
             />
           </div>
-          <div style={style.sendMessageButton} onClick={handleSendMessage}>
-            <img
-              className="airplane-icon icon"
-              style={style.sendMessageIcon}
-              src="./icons/airplane-icon.svg"
-            />
-          </div>
-        </div>
+          <button type="submit" style={style.iconButton} title="Enviar Mensagem">
+            <FiSend size={22} />
+          </button>
+        </form>
       </div>
 
-      {opcoesModal && (
-        <>
-          <OpcoesModal onClose={() => setOpcoesModal(false)} />
-        </>
-      )}
-
+      {opcoesModal && <OpcoesModal onClose={() => setOpcoesModal(false)} />}
       {seeProfile && <Perfil onClose={() => setSeeProfile(false)} />}
     </>
   );

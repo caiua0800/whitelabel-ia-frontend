@@ -1,121 +1,69 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import style from "./CriarCategoriaStyle";
-import axios from "axios";
-import { criarCategoria, criarTag } from "../../../../Services/dbservice";
+import { criarCategoria } from "../../../../Services/dbservice";
 import { AuthContext } from "../../../../Context/AuthContext";
+import { FiX } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
-export default function CriarCategoria({ actualTags, onClose }) {
+export default function CriarCategoria({ onClose }) {
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("descricao");
-  const [error, setError] = useState("");
+  const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { credentials } = useContext(AuthContext);
 
-  const handleClose = () => {
-    setName("");
-    setDescription("");
-    setError("");
-    onClose();
-  };
-
-  const verifyNames = (tagName) => {
-    if (!actualTags || !tagName) return true;
-
-    return !actualTags.some(
-      (tag) => tag?.name?.trim().toLowerCase() === tagName.trim().toLowerCase()
-    );
-  };
-
-  const createTag = async () => {
-    setError("");
-    const trimmedName = name.trim();
-    const trimmedDescription = description.trim();
-
-    // Validações
-    if (!trimmedName) {
-      setError("O nome da tag é obrigatório");
+  const createCategory = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error("O nome da categoria é obrigatório.");
       return;
     }
-
-    if (!verifyNames(trimmedName)) {
-      setError("Já existe uma tag com este nome");
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
-      const response = await criarCategoria(
-        { name, description },
-        credentials.accessToken
-      );
-
-      if (response) {
-        console.log(response);
-        alert("Categoria criada com sucesso.");
-      } else {
-        console.log("erro ao criar categoria");
-        alert("erro ao criar categoria");
-      }
-
-      handleClose();
+      await criarCategoria({ name, description }, credentials.accessToken);
+      toast.success("Categoria criada com sucesso!");
+      onClose();
     } catch (err) {
-      console.error("Erro ao criar tag:", err);
-      setError("Ocorreu um erro ao criar a tag. Tente novamente.");
+      console.error("Erro ao criar categoria:", err);
+      toast.error("Falha ao criar categoria. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      createTag();
-    }
-  };
-
   return (
-    <div style={style.container}>
-      <div style={style.containerContent}>
-        <div style={style.box}>
-          <span onClick={handleClose} style={style.close}>
-            ×
-          </span>
-          <span style={style.title}>Criar Nova Categoria</span>
-
-          <div style={style.tagNameArea}>
+    <div style={style.overlay} onClick={onClose}>
+      <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
+        <div style={style.modalHeader}>
+          <h2 style={style.modalTitle}>Criar Nova Categoria</h2>
+          <button onClick={onClose} style={style.closeButton}><FiX size={20} /></button>
+        </div>
+        <form onSubmit={createCategory} style={style.form}>
+          <div style={style.inputGroup}>
+            <label style={style.label}>Nome da Categoria</label>
             <input
               onChange={(e) => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
               value={name}
-              maxLength={14}
-              placeholder="Digite aqui"
-              style={style.tagNameInput}
+              maxLength={30}
+              placeholder="Ex: Eletrônicos"
+              style={style.input}
               disabled={isSubmitting}
             />
           </div>
-          {error && <div style={style.errorMessage}>{error}</div>}
-
-          {/* <div style={style.tagDescriptionArea}>
-            <span style={style.tagDescriptionAreaTitle}>Descreva a categoria</span>
+          <div style={style.inputGroup}>
+            <label style={style.label}>Descrição (opcional)</label>
             <textarea
               onChange={(e) => setDescription(e.target.value)}
               value={description}
-              maxLength={80}
-              style={style.descriptionTextarea}
-              placeholder="Descreva sua categoria aqui..."
+              maxLength={100}
+              style={{...style.input, ...style.textarea}}
+              placeholder="Descreva para que serve esta categoria..."
               disabled={isSubmitting}
-              onKeyDown={handleKeyDown}
             />
-          </div> */}
-
-          <button
-            onClick={createTag}
-            style={style.createTagButton}
-            disabled={isSubmitting || !name.trim()}
-          >
-            {isSubmitting ? "Criando..." : "Criar Tag"}
+          </div>
+          <button type="submit" style={style.submitButton} disabled={isSubmitting || !name.trim()}>
+            {isSubmitting ? "Criando..." : "Criar Categoria"}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

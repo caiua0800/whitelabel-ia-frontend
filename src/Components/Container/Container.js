@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import style from "./ContainerStyle";
 import Sidebar from "../Sidebar/Sidebar";
-import { ChatContext } from "../../Context/ChatContext";
 import Notification from "../Notification/Notification";
 import Loading from "../Loading/Loading";
-import { AuthContext } from "../../Context/AuthContext";
 import SubscriptionNotification from "./SubscriptionNotification/SubscriptionNotification";
+import { FiMenu } from "react-icons/fi"; // Importa o ícone mara
+import "./ContainerEffect.css"; // Importa nosso novo arquivo de efeitos
 
 const Container = ({ children }) => {
     const [sidebarState, setSidebarState] = useState(false);
@@ -17,15 +17,22 @@ const Container = ({ children }) => {
                     state={sidebarState}
                     onClose={() => setSidebarState(false)}
                 />
-                {!sidebarState && (
-                    <button
-                        onClick={() => setSidebarState(true)}
-                        style={style.openButton}
-                    >
-                        ☰
-                    </button>
-                )}
-                {children}
+                
+                <button
+                    onClick={() => setSidebarState(true)}
+                    style={{
+                        ...style.openButton,
+                        // Adiciona uma classe para controlar a visibilidade com mais elegância
+                        ...(sidebarState ? style.openButtonHidden : {}),
+                    }}
+                    className="open-sidebar-button" // Classe para o efeito de hover
+                >
+                    <FiMenu size={22} />
+                </button>
+                
+                <main style={style.mainContent}>
+                    {children}
+                </main>
             </div>
             <SubscriptionNotification />
             <Notification />

@@ -1,36 +1,31 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import style from "./HeaderStyle";
-import "./effect.css"
-import { ChatContext } from "../../../Context/ChatContext";
+import { FiMessageSquare, FiEyeOff } from "react-icons/fi";
+import {ChatContext} from "../../../Context/ChatContext"
 
 export default function Header() {
-    const {totalChats, notSeenChats} = useContext(ChatContext);
+    const { totalChats, notSeenChats } = useContext(ChatContext);
+
+    const StatCard = ({ icon, title, value }) => (
+        <div style={style.statCard}>
+            <div style={style.statIconWrapper}>{icon}</div>
+            <div style={style.statTextWrapper}>
+                <span style={style.statTitle}>{title}</span>
+                <span style={style.statValue}>{value}</span>
+            </div>
+        </div>
+    );
 
     return (
-        <>
-            <div style={style.header}>
-                <div></div>
-                <div style={style.boxContainer}>
-                    <div style={style.boxAdd}>
-                        <div className="text-add" style={style.addText}>
-                            Faça um upgrade no nosso plano e ganhe MUITO mais benefícios,
-                            entre eles, DISPAROS DOBRADOS, FUNÇÕES NOVAS, PERSONALIZAÇÃO, e MUITO MAIS!
-                        </div>
-                    </div>
-                </div>
-                <div style={style.boxContainer}>
-                    <div style={style.box}>
-                        <div style={style.boxTitle}>Total de Chats</div>
-                        <div style={style.boxValue}>{totalChats}</div>
-                    </div>
-                </div>
-                <div style={style.boxContainer}>
-                    <div style={style.box}>
-                        <div style={style.boxTitle}>Chats Não Vistos</div>
-                        <div style={style.boxValue}>{notSeenChats}</div>
-                    </div>
-                </div>
+        <div style={style.header}>
+            <div style={style.branding}>
+                {/* <img src="./images/agente-logo-white.png" alt="Logo" style={style.logo} /> */}
+                <h1 style={style.dashboardTitle}>Dashboard</h1>
             </div>
-        </>
-    )
+            <div style={style.statsContainer}>
+                <StatCard icon={<FiMessageSquare size={22} />} title="Total de Chats" value={totalChats} />
+                <StatCard icon={<FiEyeOff size={22} />} title="Chats Não Vistos" value={notSeenChats} />
+            </div>
+        </div>
+    );
 }

@@ -6,9 +6,10 @@ import { AuthContext } from "../../Context/AuthContext";
 import CriarTag from "./Modais/CriarTag/CriarTag";
 import VerTag from "./Modais/VerTag/VerTag";
 import { LoadingContext } from "../../Context/LoadingContext";
+import { FiPlus, FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export default function Tags() {
-  const [itemsPerPage, setItemsPerPage] = useState(16);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [tags, setTags] = useState([]);
   const [filteredTags, setFilteredTags] = useState([]);
@@ -16,19 +17,16 @@ export default function Tags() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const { credentials } = useContext(AuthContext);
-
   const [createTag, setCreateTag] = useState(false);
   const [seeTag, setSeeTag] = useState(null);
 
   const getAllTags = async () => {
+    if (!credentials?.accessToken) return;
     try {
       startLoading();
-      const tags = await obterTags(credentials.accessToken);
-      if (tags) {
-        setTags(tags);
-        setFilteredTags(tags);
-      } else {
-        console.log("Erro ao obter tags");
+      const tagsData = await obterTags(credentials.accessToken);
+      if (tagsData) {
+        setTags(tagsData);
       }
     } catch (error) {
       console.log("Erro ao buscar tags:", error);
@@ -37,55 +35,40 @@ export default function Tags() {
     }
   };
 
-  const closeCreateTag = async () => {
+  const closeCreateTag = () => {
     setCreateTag(false);
-    await getAllTags();
+    getAllTags();
   };
 
-  const closeSeeTag = async () => {
+  const closeSeeTag = () => {
     setSeeTag(null);
-    await getAllTags();
+    getAllTags();
   };
 
   useEffect(() => {
     let result = [...tags];
-
     if (searchTerm) {
       result = result.filter((tag) =>
         tag.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     result.sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
+      if (sortOrder === "asc") return a.name.localeCompare(b.name);
+      return b.name.localeCompare(a.name);
     });
-
     setFilteredTags(result);
     setCurrentPage(1);
   }, [tags, searchTerm, sortOrder]);
 
   useEffect(() => {
     getAllTags();
-  }, []);
+  }, [credentials]);
 
   const totalPages = Math.ceil(filteredTags.length / itemsPerPage);
-
   const getCurrentTags = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredTags.slice(startIndex, endIndex);
+    return filteredTags.slice(startIndex, startIndex + itemsPerPage);
   };
-
-  useEffect(() => {
-    const newTotalPages = Math.ceil(filteredTags.length / itemsPerPage);
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setCurrentPage(newTotalPages);
-    }
-  }, [itemsPerPage, filteredTags.length, currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -98,197 +81,71 @@ export default function Tags() {
       setCurrentPage(currentPage - 1);
     }
   };
-
-  const handleItemsPerPageChange = (e) => {
-    let value = parseInt(e.target.value);
-    if (isNaN(value)) value = 1;
-    if (value < 1) value = 1;
-    if (value > 20) value = 20;
-    setItemsPerPage(value);
-  };
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
-  };
-
-  console.log(filteredTags);
-
+  
   return (
     <>
       <div style={style.container}>
-        <span style={style.title}>TAGS</span>
-        <div style={style.explanationBox}>
-          <div style={style.explanationBoxCenter}>
-            <span style={style.expText}>
-              Com as <span style={style.expTextBold}>📌 #TAGS</span> é possível
-              fazer disparos mais direcionados e separar melhor seus clientes,
-              por{" "}
-              <span style={style.expTextBold}>
-                nichos, características, produtos e muitos outros! 😃
-              </span>
-            </span>
-            <span style={style.expText}>
-              Você pode criar a tag com um nome e descrição, e depois
-              adiciona-las aos seus clientes.
-            </span>
-          </div>
+        <div style={style.header}>
+            <h1 style={style.title}>Gerenciamento de Tags</h1>
+            <button onClick={() => setCreateTag(true)} style={style.newTagButton}>
+                <FiPlus style={{ marginRight: '8px' }}/>
+                Nova Tag
+            </button>
         </div>
 
-        <div style={style.optionsBox}>
-          <button onClick={() => setCreateTag(true)} style={style.optionButton}>
-            Criar nova tag
-          </button>
-          <button style={style.optionButton}></button>
-          <button style={style.optionButton}></button>
+        <div style={style.panel}>
+            <div style={style.searchWrapper}>
+              <FiSearch style={style.searchIcon}/>
+              <input
+                style={style.searchInput}
+                placeholder="Pesquisar por nome..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <select
+              style={style.sortSelect}
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+            >
+              <option value="asc">Nome (A-Z)</option>
+              <option value="desc">Nome (Z-A)</option>
+            </select>
         </div>
-        <div style={style.tagsContainerBox}>
-          <span style={style.tagsContainerBoxTitle}>Suas #TAGS</span>
 
-          <div style={style.tagsContainerBoxFirst}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-              }}
-            >
-              <div style={style.searchFilter}>
-                <span style={style.searchFilterTitle}>Pesquise</span>
-                <input
-                  placeholder="nome da tag..."
-                  style={style.searchFilterInput}
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <div style={style.createOrderFilter}>
-                <span style={style.filterName}>Ordenar por</span>
-                <select
-                  style={style.selectFilter}
-                  value={sortOrder}
-                  onChange={handleSortChange}
-                >
-                  <option value="desc">Nome (Z-A)</option>
-                  <option value="asc">Nome (A-Z)</option>
-                </select>
-              </div>
-              <div style={style.createOrderFilter}>
-                <span style={style.filterName}>Itens por página</span>
-                <select
-                  style={style.selectFilter}
-                  value={itemsPerPage}
-                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                >
-                  <option value={1}>1</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5</option>
-                  <option value={6}>6</option>
-                  <option value={7}>7</option>
-                  <option value={8}>8</option>
-                  <option value={9}>9</option>
-                  <option value={10}>10</option>
-                  <option value={11}>11</option>
-                  <option value={12}>12</option>
-                  <option value={13}>13</option>
-                  <option value={14}>14</option>
-                  <option value={15}>15</option>
-                  <option value={16}>16</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div style={style.tagsContainer}>
+        <div style={style.gridContainer}>
             {getCurrentTags().length > 0 ? (
-              getCurrentTags().map((tag, key) => (
+              getCurrentTags().map((tag) => (
                 <div
                   onClick={() => setSeeTag(tag)}
-                  key={tag.id || key}
-                  className="tagBox"
-                  style={{ ...style.tag }}
+                  key={tag.id}
+                  className="tag-card"
+                  style={style.card}
                 >
-                  <span
-                    className="tag-text"
-                    style={{
-                      ...style.tagText,
-                      background:
-                        tag &&
-                        tag.backgroundColor &&
-                        tag.backgroundColor.trim() != ""
-                          ? tag.backgroundColor
-                          : "rgba(80, 80, 80, 1)",
-                      color:
-                        tag && tag.color && tag.color.trim() != ""
-                          ? tag.color
-                          : "rgba(255, 255, 255, 1)",
-                    }}
-                  >
-                    {tag.name}
-                  </span>
+                  <span style={{...style.cardTag, backgroundColor: tag.backgroundColor || '#3c4257', color: tag.color || '#aeb9c4'}}>#{tag.name}</span>
+                  <p style={style.cardDescription}>{tag.description || 'Sem descrição'}</p>
                 </div>
               ))
             ) : (
-              <div style={{ padding: "20px", textAlign: "center" }}>
-                Nenhuma tag encontrada
-              </div>
+              <div style={style.messageCenter}>Nenhuma tag encontrada.</div>
             )}
-          </div>
-
-          <div style={style.bottom}>
-            <div></div>
+        </div>
+        
+        {totalPages > 1 && (
             <div style={style.paginationContainer}>
-              <button
-                style={style.paginationButton}
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-              >
-                Anterior
+              <button style={{...style.paginationButton, ...(currentPage === 1 ? style.disabledButton : {})}} onClick={handlePrevPage} disabled={currentPage === 1}>
+                <FiChevronLeft/>
               </button>
-              <div style={style.actualPageBox}>
-                <span style={style.actualPageText}>
-                  Página {currentPage} de {totalPages || 1} :{" "}
-                  {filteredTags.length} Tags
-                </span>
-              </div>
-              <button
-                style={style.paginationButton}
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                Próxima
+              <span style={style.paginationView}>Página {currentPage} de {totalPages}</span>
+              <button style={{...style.paginationButton, ...(currentPage === totalPages ? style.disabledButton : {})}} onClick={handleNextPage} disabled={currentPage === totalPages}>
+                <FiChevronRight/>
               </button>
             </div>
-            <div style={style.itemsPerPageContainer}></div>
-          </div>
-        </div>
+        )}
       </div>
 
-      {createTag && (
-        <>
-          <CriarTag actualTags={tags} onClose={closeCreateTag} />
-        </>
-      )}
-
-      {seeTag && (
-        <>
-          <VerTag tag={seeTag} onClose={closeSeeTag} />
-        </>
-      )}
+      {createTag && <CriarTag actualTags={tags} onClose={closeCreateTag} />}
+      {seeTag && <VerTag tag={seeTag} onClose={closeSeeTag} />}
     </>
   );
 }

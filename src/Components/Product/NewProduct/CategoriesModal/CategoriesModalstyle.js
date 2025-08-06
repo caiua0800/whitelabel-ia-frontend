@@ -1,83 +1,42 @@
 const style = {
-  container: {
-    width: "100%",
-    height: "100%",
-    position: "fixed",
-    top: 0,
-    left: 0,
-    background: "rgba(0, 0, 0, 0.6)",
-    zIndex: 11,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+  overlay: {
+    width: "100%", height: "100%", position: "fixed", top: 0, left: 0,
+    background: "rgba(0, 0, 0, 0.6)", zIndex: 12, display: "flex",
+    justifyContent: "center", alignItems: "center", backdropFilter: 'blur(5px)'
   },
   modal: {
-    padding: "30px 40px",
-    background: "rgba(210, 210, 210, 1)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    position: "relative",
-    borderRadius: 4
+    width: '100%', maxWidth: '500px', background: "#1e212b",
+    borderRadius: "16px", border: "1px solid #2a2f3b",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
   },
-  close: {
-    position: "absolute",
-    top: 10,
-    left: 15,
-    fontSize: 22,
-    fontWeight: 600,
-    cursor: "pointer",
-    color: "rgba(80, 80, 80, 1)",
+  modalHeader: {
+    padding: "20px 25px", borderBottom: "1px solid #2a2f3b",
+    display: "flex", justifyContent: "space-between", alignItems: "center",
   },
-  modalTitle: {
-    fontSize: 28,
-    color: "rgba(80, 80, 80, 1)",
-    fontWeight: 600,
-  },
+  modalTitle: { fontSize: "20px", color: "#FFF", fontWeight: 600, margin: 0 },
+  close: { background: "none", border: "none", color: "#aeb9c4", cursor: "pointer" },
   modalContent: {
-    marginTop: 20,
-    display:  "flex",
-    flexDirection: "column",
-    alignItems: "start"
-  },
-  boxTitle: {
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(0, 80, 80, 1)",
-    marginTop: 20,
-    width: "100%",
-    borderBottom: "2px solid rgba(80, 80, 80, 1)"
+    padding: "25px",
   },
   categoriesBox: {
-    width: 500,
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 10,
-    boxSizing: "border-box",
-    justifyContent: "start",
-    paddingTop: 10
+    display: "flex", flexWrap: "wrap", gap: "10px",
   },
   categoryItem: {
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: "pointer",
-    background: "rgba(0, 200, 255, 0.6)",
-    color: "rgba(80, 80, 80, 1)",
-    padding:  "5px 20px",
-    boxSizing: "border-box",
-    boxShadow: "3px 3px 2px rgba(0,0,0,0.2)"
+    fontSize: "14px", fontWeight: 600, cursor: "pointer",
+    background: "#3c4257", color: "#aeb9c4", padding:  "8px 15px",
+    borderRadius: "20px",
   },
-  saveIcon: {
-    width: "100%",
-    height: 35,
-    border: 0,
-    boxShadow: "3px 3px 2px rgba(0,0,0,0.2)",
-    marginTop: 10,
-    borderRadius: 4,
-    background: "rgba(100, 200, 0, 1)",
-    fontSize: 16,
-    fontWeight: 600,
-    cursor: "pointer"
+  categorySelected: {
+    background: '#4ecf78', color: '#1e212b',
+  },
+  modalFooter: {
+    padding: '20px 25px', borderTop: '1px solid #2a2f3b',
+    display: 'flex', justifyContent: 'flex-end',
+  },
+  saveButton: {
+    background: '#4ecf78', color: '#1e212b', border: 'none',
+    borderRadius: '10px', padding: '10px 20px', fontSize: '15px',
+    fontWeight: '600', cursor: 'pointer',
   }
 };
 

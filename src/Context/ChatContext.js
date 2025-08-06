@@ -103,8 +103,10 @@ const ChatProvider = ({ children }) => {
       } else if (response && response.items) {
         chatsData = response.items;
       }
+      setTotalChats(response.totalCount)
 
       setChats(chatsData);
+      return chatsData;
     } catch (error) {
       console.log("Erro ao obter chats");
       console.log(error);

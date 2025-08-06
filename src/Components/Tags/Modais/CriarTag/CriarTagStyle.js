@@ -1,106 +1,89 @@
 const style = {
-  container: {
+  overlay: {
     width: "100vw",
     height: "100vh",
     position: "fixed",
     top: 0,
     left: 0,
-    background: "rgba(0,0,0,0.6)",
-    zIndex: 10,
-  },
-  containerContent: {
-    width: "100%",
-    height: "100%",
+    zIndex: 20,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    background: "rgba(0, 0, 0, 0.6)",
+    backdropFilter: "blur(5px)",
   },
-  box: {
-    width: 600,
-    background: "rgba(210, 210, 210, 1)",
-    borderRadius: 4,
+  modalContainer: {
+    width: "100%",
+    maxWidth: "500px",
+    background: "#2a2f3b",
+    borderRadius: "16px",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+    border: "1px solid #3c4257",
+    color: "#FFF",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    padding: 30,
-    boxSizing: "border-box",
-    position: "relative"
   },
-  close: {
-    position: "absolute",
-    top: 10,
-    left: 25,
-    fontSize: 32,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)",
-    cursor: "pointer"
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 800,
-    color: "rgba(80, 80, 80, 1)"
-  },
-  tagNameArea: {
-    width: 350,
-    position: "relative"
-  },
-  tagImage: {
-    width: "100%",
-    opacity: 0,
-  },
-  tagNameInput: {
-    outline: "none",
-    width: "100%",
-    border: 0,
-    boxSizing: "border-box",
-    height: 40,
-    background: "rgba(255,255,255,1)",
-    padding: 0,
-    textAlign: "center",
-    fontSize: 22,
-    fontWeight: 800,
-    color: "white",
-  },
-  tagDescriptionArea: {
+  modalHeader: {
+    padding: "20px 25px",
+    borderBottom: "1px solid #3c4257",
     display: "flex",
-    width: 350,
-    flexDirection: "column",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 20
   },
-  tagDescriptionAreaTitle: {
-    fontSize: 24,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
+  modalTitle: {
+    fontSize: "20px",
+    fontWeight: "600",
+    margin: 0,
   },
-  descriptionTextarea: {
-    width: "100%",
-    boxSizing: "border-box",
-    padding: 15,
-    height: 100,
-    fontSize: 18,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)",
-    background: "rgba(230, 230, 230, 1)",
-    border: 0,
-    outline: "none"
-  },
-  createTagButton: {
-    width: 350,
-    height: 40,
-    border: 0,
+  closeButton: {
+    background: "none",
+    border: "none",
+    color: "#aeb9c4",
     cursor: "pointer",
-    marginTop: 10,
-    background: "rgba(30, 230, 0, 1)",
-    borderRadius: 4,
-    fontSize: 18,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
+    padding: "5px",
   },
-  errorMessage: {
-    fontWeight: 600,
-    color: "rgba(200, 0, 0, 1)"
-  }
+  form: {
+    padding: "25px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  inputGroup: {},
+  label: {
+    display: "block",
+    fontSize: "14px",
+    fontWeight: "500",
+    marginBottom: "8px",
+    color: "#aeb9c4",
+  },
+  input: {
+    width: "100%",
+    height: "45px",
+    background: "#1e212b",
+    border: "1px solid #3c4257",
+    borderRadius: "12px",
+    padding: "0 20px",
+    boxSizing: "border-box",
+    color: "#FFF",
+    fontSize: "15px",
+    outline: "none",
+  },
+  textarea: {
+    height: "100px",
+    paddingTop: "12px",
+    resize: "vertical",
+  },
+  submitButton: {
+    height: "45px",
+    background: "#4ecf78",
+    color: "#1e212b",
+    fontSize: "16px",
+    fontWeight: "600",
+    border: "none",
+    borderRadius: "12px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
 };
 
 export default style;

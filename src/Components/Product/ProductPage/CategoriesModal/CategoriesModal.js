@@ -2,27 +2,18 @@ import React, { useState, useEffect, useContext } from "react";
 import style from "./CategoriesModalstyle";
 import { ProductContext } from "../../../../Context/ProductContext";
 import { AuthContext } from "../../../../Context/AuthContext";
+import { FiX, FiSearch } from "react-icons/fi";
 
-export default function CategoriesModal({
-  selectedCategories,
-  onClose,
-  handleClick,
-}) {
-  const [selecteds, setSelecteds] = useState([]);
+export default function CategoriesModal({ selectedCategories, onClose, handleClick }) {
+  const [selecteds, setSelecteds] = useState(selectedCategories || []);
   const { getCategories, categories } = useContext(ProductContext);
-  const [databaseCategories, setDatabaseCategories] = useState([]);
   const { credentials } = useContext(AuthContext);
 
   useEffect(() => {
-    if (categories) {
-      setDatabaseCategories(categories);
+    if (!categories || categories.length === 0) {
+        getCategories(credentials.accessToken);
     }
-  }, [categories]);
-
-  useEffect(() => {
-    if (selectedCategories && selectedCategories.length > 0)
-      setSelecteds(selectedCategories || []);
-  }, [selectedCategories]);
+  }, [categories, getCategories, credentials]);
 
   const handleCategory = (c) => {
     if (selecteds.includes(c)) {
@@ -34,60 +25,31 @@ export default function CategoriesModal({
 
   const handleSaveAndExit = () => {
     handleClick(selecteds);
-    handleClose()
-  };
-
-  const handleClose = () => {
-    setDatabaseCategories([]);
-    setSelecteds([])
     onClose();
-  }
-
-  const fetchCategories = async () => {
-    await getCategories(credentials.accessToken);
   };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   return (
-    <div style={style.container}>
-      <div style={style.modal}>
-        <span onClick={handleClose} style={style.close}>
-          x
-        </span>
-        <span style={style.modalTitle}>Categorias</span>
+    <div style={style.overlay} onClick={onClose}>
+      <div style={style.modal} onClick={(e) => e.stopPropagation()}>
+        <div style={style.modalHeader}>
+            <h2 style={style.modalTitle}>Selecionar Categorias</h2>
+            <button onClick={onClose} style={style.close}><FiX size={20}/></button>
+        </div>
         <div style={style.modalContent}>
-          <span style={style.boxTitle}>Categorias Disponíveis</span>
           <div style={style.categoriesBox}>
-            {databaseCategories &&
-              databaseCategories.map((c, key) => (
-                <span
-                  key={key}
-                  style={style.categoryItem}
-                  onClick={() => handleCategory(c.name)}
-                >
-                  {c.name}
-                </span>
-              ))}
+            {categories && categories.map((c) => (
+              <div
+                key={c.id}
+                style={{...style.categoryItem, ...(selecteds.includes(c.name) ? style.categorySelected : {})}}
+                onClick={() => handleCategory(c.name)}
+              >
+                {c.name}
+              </div>
+            ))}
           </div>
-          <span style={style.boxTitle}>Categorias Selecionadas</span>
-          <div style={style.categoriesBox}>
-            {selecteds &&
-              selecteds.map((c, key) => (
-                <span
-                  key={key}
-                  style={style.categoryItem}
-                  onClick={() => handleCategory(c)}
-                >
-                  {c}
-                </span>
-              ))}
-          </div>
-          <button style={style.saveIcon} onClick={handleSaveAndExit}>
-            Salvar
-          </button>
+        </div>
+        <div style={style.modalFooter}>
+            <button style={style.saveButton} onClick={handleSaveAndExit}>Salvar Seleção</button>
         </div>
       </div>
     </div>

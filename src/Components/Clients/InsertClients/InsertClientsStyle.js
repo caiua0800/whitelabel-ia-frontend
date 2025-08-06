@@ -1,206 +1,79 @@
 const style = {
-    modalContainer: {
-      position: "relative",
-      display: "flex",
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    container: {
-      width: "100vw",
-      height: "100vh",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      background: "rgba(0,0,0,0.8)",
-      zIndex: 11,
-    },
-    modal: {
-      padding: "30px 40px",
-      minWidth: 700,
-      background: "rgba(210, 210, 210, 1)",
-      display: "flex",
-      flexDirection: "column",
-      gap: 10,
-      boxSizing: "border-box",
-      alignItems: "center",
-      borderRadius: 4,
-      position: "relative",
-    },
-    closeButtonModal: {
-      fontSize: 18,
-      fontWeight: 600,
-      position: "absolute",
-      top: 10,
-      left: 15,
-      cursor: "pointer",
-      transition: ".5s",
-    },
-    modalTitle: {
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      fontSize: 28,
-      color: "rgba(0,0,0,0.7)",
-      fontWeight: 600,
-    },
-    selectDocBox: {
-      // width: 300,
-      display: "flex",
-      justifyContent: "center",
-      flexDirection: "column",
-      alignItems: "center",
-      marginTop: 10
-    },
-    selectDocBoxTitle: {
-      fontSize: 18,
-      fontWeight: 500,
-      color: "rgba(80, 80, 80, 1)"
-    },
-    selectFileButton: {
-      width: 200,
-      cursor: "pointer"
-    },
-    obsText: {
-      fontSize: 14,
-      color: "rgba(0, 100, 255, 1)"
-    },
-    columnNamesBox: {
-      display: "grid",
-      gridTemplateColumns: "2fr 2fr",
-      gap: 10,
-      marginTop: 20
-    },
-    columnNameBox: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center"
-    },
-    columnName: {
-      fontSize: 16,
-      color: "rgba(80, 80, 80, 1)",
-      fontWeight: 800
-    },
-    columnNameValue: {
-      fontSize: 16,
-      color: "rgba(80, 80, 80, 1)",
-      fontWeight: 800,
-      width: 250,
-      border: 0,
-      padding: 0,
-      textAlign: "center",
-      boxSizing: "border-box",
-      outline: "none",
-      height: 35
-    },
-    extractButton: {
-      width: 250,
-      height: 35,
-      background: "rgba(0, 200, 220, 1)",
-      color: "rgba(80, 80, 80, 1)",
-      border: 0,
-      cursor: "pointer",
-      marginTop: 10,
-      fontSize: 16, 
-      fontWeight: 800
-    },
-    extractErrorMsg: {
-      fontSize: 14,
-      color: "red",
-      fontWeight: 800
-    },
-    extractedTable: {
-      width: 400,
-      background: "rgba(230, 230, 230, 1)",
-      borderRadius: 4,
-      maxHeight: 200,
-      overflowY: "auto",
-      display: "flex",
-      flexDirection: "column",
-      // marginTop: 20
-    },
-    extractedTableHeader: {
-      width: "100%",
-      height: 35,
-      display: "grid",
-      gridTemplateColumns: "3fr 3fr",
-      borderBottom: "2px solid rgba(80, 80, 80, 1)"
-    },
-    extractedTableHeaderCell: {
-      fontSize: 16,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontWeight: 600,
-      color: "rgba(80, 80, 80, 1)"
-    },
-    extractedTableBody: {
-      width: "100%",
-      height: "max-content",
-      display: "flex",
-      flexDirection: "column"
-    },
-    extractedTableBodyRow: {
-      width: "100%",
-      height: 35,
-      display: "grid",
-      gridTemplateColumns: "3fr 3fr",
-    },
-    saveClients: {
-      width: 350,
-      height: 35,
-      border: 0,
-      boxSizing: "border-box",
-      padding: 0,
-      background: "rgba(0, 200, 0, 1)",
-      borderRadius: 4,
-      fontSize: 16,
-      fontWeight: 800,
-      color: "rgba(80, 80, 80, 1)",
-      cursor: "pointer"
-    },
-    createTag: {
-      display: "flex",
-      gap: 10,
-      marginTop: 10
-    },
-    createTagBox: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center"
-    },
-    selectTagButton: {
-      width: 250,
-      height: 35,
-      border: 0,
-      background: "linear-gradient(to bottom, rgba(170, 170, 170, 1), rgba(190, 190, 190, 1))",
-      borderRadius: 4,
-      cursor: "pointer",
-      fontSize: 14,
-      fontWeight: 600,
-      color: "rgba(80, 80, 80, 1)"
-    },
-    createTagBoxTitle: {
-      fontSize: 14,
-      color: "rgba(80, 80, 80, 1)"
-    },
-    createTagBoxInput: {
-      fontSize: 14,
-      width: 150,
-      border: 0,
-      height: 25,
-      outline: "none"
-    },
-    createTagTitle: {
-      fontSize: 16,
-      fontWeight: 600,
-      color: "rgba(80, 80, 80, 1)",
-      marginTop: 10
-    }
-  };
-  
-  export default style;
-  
+  overlay: {
+      width: "100vw", height: "100vh", position: "fixed", top: 0, left: 0,
+      background: "rgba(0,0,0,0.6)", zIndex: 12, display: "flex",
+      justifyContent: "center", alignItems: "center", backdropFilter: "blur(5px)",
+  },
+  modalContainer: {
+      width: '100%', maxWidth: '600px', background: "#1e212b",
+      borderRadius: "16px", border: "1px solid #2a2f3b",
+      boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+  },
+  modalHeader: {
+      padding: "20px 25px", borderBottom: "1px solid #2a2f3b", display: "flex",
+      justifyContent: "space-between", alignItems: "center",
+  },
+  modalTitle: { fontSize: "20px", fontWeight: "600", color: "#FFF", margin: 0 },
+  closeButtonModal: { background: "none", border: "none", color: "#aeb9c4", cursor: "pointer" },
+  modalBody: {
+      padding: '25px', display: 'flex', flexDirection: 'column', gap: '20px',
+  },
+  step: {
+      display: 'flex', gap: '15px', alignItems: 'flex-start'
+  },
+  stepNumber: {
+      background: '#2a2f3b', color: '#aeb9c4', fontWeight: '600',
+      width: '30px', height: '30px', borderRadius: '50%',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexShrink: 0,
+  },
+  stepContent: {
+      flexGrow: 1,
+  },
+  label: {
+      display: "block", fontSize: "14px", fontWeight: "500",
+      marginBottom: "8px", color: "#aeb9c4",
+  },
+  inputGrid: {
+      display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'
+  },
+  input: {
+      width: "100%", height: "45px", background: "#2a2f3b",
+      border: "1px solid #3c4257", borderRadius: "12px", padding: "0 20px",
+      boxSizing: "border-box", color: "#FFF", fontSize: "14px", outline: "none",
+  },
+  selectFileButton: {
+      display: 'flex', alignItems: 'center', justifyContent: 'center', height: "45px",
+      background: "#2a2f3b", border: "1px solid #3c4257", borderRadius: "12px",
+      color: "#aeb9c4", fontSize: "14px", cursor: "pointer", width: '100%'
+  },
+  fileName: {
+      fontSize: '12px', color: '#aeb9c4', marginTop: '8px',
+  },
+  tagButton: {
+      display: 'flex', alignItems: 'center', justifyContent: 'center', height: "45px",
+      background: "#2a2f3b", border: "1px solid #3c4257", borderRadius: "12px",
+      color: "#aeb9c4", fontSize: "14px", cursor: "pointer",
+  },
+  extractButton: {
+      height: "45px", background: '#3b82f6', color: '#FFF', border: 'none',
+      borderRadius: '12px', fontSize: '15px', fontWeight: '600', cursor: 'pointer',
+      width: '100%'
+  },
+  summaryBox: {
+      background: 'rgba(78, 207, 120, 0.1)', border: '1px solid rgba(78, 207, 120, 0.3)',
+      borderRadius: '10px', padding: '15px', display: 'flex', alignItems: 'center',
+      gap: '10px', color: '#4ecf78', fontSize: '14px',
+  },
+  modalFooter: {
+      padding: '20px 25px', borderTop: '1px solid #2a2f3b',
+      display: 'flex', justifyContent: 'flex-end',
+  },
+  saveButton: {
+      background: '#4ecf78', color: '#1e212b', border: 'none',
+      borderRadius: '10px', padding: '10px 20px', fontSize: '15px',
+      fontWeight: '600', cursor: 'pointer',
+  }
+};
+
+export default style;

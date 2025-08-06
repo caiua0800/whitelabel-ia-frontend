@@ -3,7 +3,7 @@ const style = {
     container: {
         width: "100vw",
         height: "100vh",
-        zIndex: 10,
+        zIndex: 13,
         background: "rgba(0,0,0,0.6)",
         position: "fixed",
         top: 0,

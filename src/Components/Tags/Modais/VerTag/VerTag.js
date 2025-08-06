@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import style from "./VerTagStyle";
-import "./effect.css";
 import { AuthContext } from "../../../../Context/AuthContext";
 import { deleteTag, editTag } from "../../../../Services/dbservice";
+import { FiX, FiTrash2, FiEdit, FiSave, FiXCircle } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
 export default function VerTag({ onClose, tag }) {
   const [editMode, setEditMode] = useState(false);
@@ -11,9 +12,9 @@ export default function VerTag({ onClose, tag }) {
   const { credentials } = useContext(AuthContext);
 
   useEffect(() => {
-    if (tag && tag.name && tag.description) {
-      setTagName(tag.name);
-      setTagDescription(tag.description);
+    if (tag) {
+      setTagName(tag.name || "");
+      setTagDescription(tag.description || "");
     }
   }, [tag]);
 
@@ -27,145 +28,105 @@ export default function VerTag({ onClose, tag }) {
     }
   };
 
-  const handleEditTag = async () => {
-    if (tagName.trim() === "" || tagDescription.trim() === "")
-      return alert("Nenhum campo pode ser vazio.");
+  const handleEditTag = async (e) => {
+    e.preventDefault();
+    if (!tagName.trim()) {
+      toast.error("O nome da tag não pode ser vazio.");
+      return;
+    }
 
-    var newTag = {
-      id: tag.id,
-      dateCreated: tag.dateCreated,
-      name: tagName,
-      description: tagDescription,
-      enterpriseId: tag.enterpriseId,
-    };
-
+    const newTag = { ...tag, name: tagName, description: tagDescription };
     try {
-      var response = await editTag(newTag, credentials.accessToken);
-
-      console.log(response);
-      if (response) {
-        alert("Tag atualizada com sucesso.");
-        onClose();
-        return;
-      } else {
-        alert("Erro ao atualizar tag.");
-      }
+      await editTag(newTag, credentials.accessToken);
+      toast.success("Tag atualizada com sucesso.");
+      onClose();
     } catch (error) {
-      console.log(error);
-      alert("Erro ao atualizar tag.");
+      toast.error("Erro ao atualizar tag.");
     }
   };
 
   const handleDeleteTag = async () => {
-    const isConfirmed = window.confirm(
-      "Tem certeza que deseja excluir esta tag? Esta ação não pode ser desfeita."
-    );
-  
-    if (isConfirmed) {
-      try {
-        var response = await deleteTag(tag.id, credentials.accessToken);
-        console.log(response)
-        if (response) {
-          alert("Tag excluída com sucesso.");
-          onClose();
-        } else {
-          alert("Erro ao excluir tag.");
-        }
-      } catch (error) {
-        console.log(error);
-        alert("Erro ao excluir tag.");
-      }
-    }
-  };
-
-
-  return (
-    <>
-      <div style={style.container}>
-        <div style={style.containerContent}>
-          <div style={style.box}>
-            <span onClick={onClose} style={style.close}>
-              x
-            </span>
-            <span style={style.title}>Sua Tag</span>
-
-            <div style={style.tagNameArea}>
-              <img
-                className="tag-image"
-                style={style.tagImage}
-                src="./icons/tag-icon2.png"
-                alt="Ícone de Tag"
-              />
-              <input
-                disabled={!editMode}
-                maxLength={14}
-                value={tagName}
-                onChange={(e) => setTagName(e.target.value)}
-                placeholder="Digite aqui"
-                style={style.tagNameInput}
-              />
-            </div>
-
-            <div style={style.tagDescriptionArea}>
-              <span style={style.tagDescriptionAreaTitle}>Descreva a tag</span>
-              <textarea
-                disabled={!editMode}
-                value={tagDescription}
-                onChange={(e) => setTagDescription(e.target.value)}
-                style={style.descriptionTextarea}
-                placeholder="Descreva sua tag aqui..."
-              />
-            </div>
-
-            <div style={style.buttonArea}>
-              <button
-                className="btn"
-                onClick={handleTagEditCancelClick}
-                style={{
-                  ...style.button,
-                  background: editMode
-                    ? "rgba(255, 30, 10, 1)"
-                    : "rgba(0, 200, 200, 1)",
-                  color: "white",
-                }}
-              >
-                {editMode ? "Cancelar" : "Editar"}
-              </button>
-
-              {!editMode && (
-                <>
-                  <button
-                    className="btn"
-                    onClick={handleDeleteTag}
-                    style={{
-                      ...style.button,
-                      background: "rgba(255, 30, 10, 1)",
-                      color: "white",
-                    }}
-                  >
-                    Excluir
-                  </button>
-                </>
-              )}
-              {editMode && (
-                <>
-                  <button
-                    onClick={handleEditTag}
-                    className="btn"
-                    style={{
-                      ...style.button,
-                      background: "rgba(100, 220, 10, 1)",
-                      color: "white",
-                    }}
-                  >
-                    Salvar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+    toast((t) => (
+      <div>
+        <p>Tem certeza que quer excluir <b>{tag.name}</b>?</p>
+        <div style={{display: 'flex', gap: '10px', marginTop: '10px'}}>
+          <button style={style.toastButtonConfirm} onClick={() => {
+              deleteConfirmed();
+              toast.dismiss(t.id);
+          }}>
+            Sim, excluir
+          </button>
+          <button style={style.toastButtonCancel} onClick={() => toast.dismiss(t.id)}>
+            Cancelar
+          </button>
         </div>
       </div>
-    </>
+    ), { duration: 6000 });
+  };
+  
+  const deleteConfirmed = async () => {
+     try {
+        const response = await deleteTag(tag.id, credentials.accessToken);
+        if (response) {
+          toast.success("Tag excluída com sucesso.");
+          onClose();
+        } else {
+          toast.error("Erro ao excluir tag.");
+        }
+      } catch (error) {
+        toast.error("Erro ao excluir tag.");
+      }
+  }
+
+  return (
+    <div style={style.overlay} onClick={onClose}>
+      <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
+        <div style={style.modalHeader}>
+          <h2 style={style.modalTitle}>{editMode ? "Editar Tag" : "Detalhes da Tag"}</h2>
+          <button onClick={onClose} style={style.closeButton}><FiX size={20} /></button>
+        </div>
+        <form onSubmit={handleEditTag} style={style.form}>
+          <div style={style.inputGroup}>
+            <label style={style.label}>Nome da Tag</label>
+            <input
+              disabled={!editMode}
+              maxLength={30}
+              value={tagName}
+              onChange={(e) => setTagName(e.target.value)}
+              style={style.input}
+            />
+          </div>
+          <div style={style.inputGroup}>
+            <label style={style.label}>Descrição</label>
+            <textarea
+              disabled={!editMode}
+              value={tagDescription}
+              onChange={(e) => setTagDescription(e.target.value)}
+              style={{...style.input, ...style.textarea}}
+            />
+          </div>
+
+          <div style={style.buttonArea}>
+            <button type="button" onClick={handleDeleteTag} style={{...style.actionButton, ...style.deleteButton}}>
+              <FiTrash2 style={{marginRight: '8px'}}/> Excluir
+            </button>
+            {editMode ? (
+              <>
+                <button type="button" onClick={handleTagEditCancelClick} style={{...style.actionButton, ...style.cancelButton}}>
+                  <FiXCircle style={{marginRight: '8px'}}/> Cancelar
+                </button>
+                <button type="submit" style={{...style.actionButton, ...style.saveButton}}>
+                  <FiSave style={{marginRight: '8px'}}/> Salvar
+                </button>
+              </>
+            ) : (
+              <button type="button" onClick={() => setEditMode(true)} style={{...style.actionButton, ...style.editButton}}>
+                <FiEdit style={{marginRight: '8px'}}/> Editar
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

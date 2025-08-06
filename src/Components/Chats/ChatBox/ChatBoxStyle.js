@@ -1,83 +1,65 @@
-
 const style = {
     chatContainer: {
         width: "100%",
-        height: "70px",
-        boxSizing: "border-box",
-        padding: 5,
-        position: "relative",
-        cursor: "pointer",
-        transition: "background 0.3s ease",
-    },
-    hour: {
-        fontSize: 10,
-        fontWeight: 600,
-        color: "rgba(0, 0, 0, 0.4)",
-        position: "absolute",
-        bottom: 5,
-        right: 5
-    },
-    chatContent: {
-        width: "100%",
-        height: "100%",
         display: "flex",
         alignItems: "center",
+        padding: "15px 20px",
         boxSizing: "border-box",
-        padding: "0 10px",
+        cursor: "pointer",
+        borderBottom: "1px solid #2a2f3b",
+        transition: "background-color 0.2s ease",
+    },
+    activeChat: {
+        background: "#2a2f3b",
     },
     profilePhotoBox: {
-        width: 40,
-        height: 40,
+        width: 50,
+        height: 50,
+        minWidth: 50,
         borderRadius: "50%",
-        boxSizing: "border-box",
-        boxShadow: "2px 2px 4px rgba(0,0,0,0.4)",
         overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+        marginRight: "15px",
     },
     profilePhoto: {
-        width: "150%"
-    },
-    info: {
-        display: "grid",
-        gridTemplateRows: "2fr 2fr",
-        marginLeft: "10px",
-        marginTop: "0px"
-    },
-    clientName: {
         width: "100%",
         height: "100%",
+        objectFit: "cover",
+    },
+    info: {
         display: "flex",
-        justifyContent: "start",
+        flexDirection: "column",
+        width: "100%",
+        overflow: "hidden",
+        gap: "4px",
+    },
+    nameAndTime: {
+        display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
-        fontSize: 14,
+    },
+    clientName: {
+        fontSize: "16px",
         fontWeight: 600,
-        color: "rgba(0, 0, 0, 1)"
+        color: "#FFF",
+    },
+    hour: {
+        fontSize: "12px",
+        color: "#aeb9c4",
     },
     clientLastMessage: {
         width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
         display: "flex",
-        justifyContent: "start",
-        gap: 2,
-        overflow: "hidden"
-    },
-    staticInput: {
-        fontSize: 12,
-        fontWeight: 600,
-        color: "rgba(0, 0, 0, 0.8)"
+        justifyContent: "start"
     },
     message: {
-        fontSize: 12,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)",
-        whiteSpace: "nowrap",      
-        overflow: "hidden",       
-        textOverflow: "ellipsis",  
-        maxWidth: "80px"        
-    }
-}
+        fontSize: "14px",
+        color: "#aeb9c4",
+        whiteSpace: "nowrap",
+        textAlign: "start",
+        width: "100%",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+    },
+};
 
 export default style;

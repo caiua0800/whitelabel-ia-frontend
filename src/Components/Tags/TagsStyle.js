@@ -1,220 +1,148 @@
-
-
 const style = {
     container: {
         width: "100%",
-        height: "100%",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
-        padding: "80px 50px",
-        alignItems: "start",
-        boxSizing: "border-box"
+        background: "#181a20",
+        color: "#FFF",
+        padding: "30px 80px",
+        boxSizing: "border-box",
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: "20px",
     },
     title: {
-        fontSize: 42,
-        fontWeight: 800,
-        color: "rgba(80, 80, 80, 1)"
+        fontSize: "28px",
+        fontWeight: "600",
+        margin: 0,
     },
-    explanationBox: {
-        width: "100%",
-        borderRadius: 4,
-        background: "#9CEC5B",
-        boxShadow: "4px 4px 5px rgba(0,0,0,0.2)",
-        boxSizing: "border-box",
-        padding: 30,
+    newTagButton: {
+        display: 'flex',
+        alignItems: 'center',
+        background: '#4ecf78',
+        color: '#1e212b',
+        border: 'none',
+        borderRadius: '10px',
+        padding: '10px 20px',
+        fontSize: '16px',
+        fontWeight: '600',
+        cursor: 'pointer',
+    },
+    panel: {
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-    },
-    explanationBoxCenter: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "start"   
-    },
-    expText: {
-        fontSize: 19,
-        fontWeight: 500,
-        color: "rgba(80, 80, 80)"
-    },
-    expTextBold: {
-        fontSize: 19,
-        fontWeight: 800,
-        color: "rgba(80, 140, 80)"
-    },
-    optionsBox: {
+        gap: "15px",
         width: "100%",
-        display: "grid",
-        gridTemplateColumns: "2fr 2fr 2fr",
-        gap: 10,
-        marginTop: 20
+        marginBottom: "20px",
     },
-    optionButton: {
-        width: "100%",
-        boxSizing: "border-box",
-        padding: 0,
-        border: 0,
-        cursor: "pointer",
-        height: 40,
-        fontSize: 18,
-        fontWeight: 600,
-        background: "rgba(210, 210, 210, 1)",
-        borderRadius: 4,
-        boxShadow: "2px 2px 3px rgba(0,0,0,0.2)"
-    },
-    tagsContainerBox: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-    },
-    tagsContainerBoxFirst: {
-        width: "100%",
-        marginTop: 10,
-        marginBottom: 20,
-        display: "grid",
-        gridTemplateColumns: "6fr 4fr",
-        alignItems: "end",
-        gap: 10
-    },
-    tagsContainerBoxTitle: {
-        fontSize: 32,
-        width: "100%",
-        marginTop: 30,
-        display: "flex",
-        justifyContent: "start",
-        alignItems: "end",
-        fontWeight: 800,
-        color: "rgba(80, 80, 80, 1)",
-    },
-    createOrderFilter: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-    },
-    filterName: {
-        fontSize: 18,
-        fontWeight: 600
-    },
-    selectFilter: {
-        width: 300,
-        height: 35,
-        border: 0,
-        boxSizing: "border-box",
-        padding: 0,
-        background: "rgba(210, 210, 210, 1)",
-        textAlign: "center",
-        fontWeight: 600,
-        fontSize: 18
-    },
-    searchFilter: {
-        display: "flex",
-        width: "100%",
-        flexDirection: "column",
-        alignItems: "center"
-    },
-    searchFilterTitle: {
-        fontSize: 18,
-        fontWeight: 600
-    },
-    searchFilterInput: {
-        width: "100%",
-        height: 35,
-        boxSizing: "border-box",
-        padding: 0,
-        paddingLeft: 20,
-        background: "rgba(255, 255, 255, 1)",
-        border: 0,
-        outline: 0,
-        fontSize: 18,
-        fontWeight: 600
-    },
-    tagsContainer: {
-        width: "100%",
-        maxHeight: 250,
-        display: "flex",
-        gap: 10,
-        justifyContent: "start"
-    },
-    tag: {
+    searchWrapper: {
         position: "relative",
+        flexGrow: 1,
+    },
+    searchIcon: {
+        position: "absolute",
+        left: "15px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        color: "#aeb9c4",
+    },
+    searchInput: {
+        width: "100%",
+        height: "45px",
+        background: "#2a2f3b",
+        border: "1px solid #3c4257",
+        borderRadius: "12px",
+        padding: "0 20px 0 45px",
+        boxSizing: "border-box",
+        color: "#FFF",
+        fontSize: "14px",
+        outline: "none",
+    },
+    sortSelect: {
+        height: "45px",
+        background: "#2a2f3b",
+        border: "1px solid #3c4257",
+        borderRadius: "12px",
+        padding: "0 15px",
+        boxSizing: "border-box",
+        color: "#FFF",
+        fontSize: "14px",
+        cursor: "pointer",
+        outline: "none",
+    },
+    gridContainer: {
+        flexGrow: 1,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: '20px',
+        overflowY: 'auto',
+        paddingRight: '10px'
+    },
+    card: {
+        background: '#1e212b',
+        border: '1px solid #2a2f3b',
+        borderRadius: '12px',
+        padding: '20px',
+        height: "max-content",
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+    },
+    cardTag: {
+        fontSize: '16px',
+        fontWeight: '600',
+        padding: '4px 12px',
+        borderRadius: '20px',
+        alignSelf: 'flex-start'
+    },
+    cardDescription: {
+        fontSize: '14px',
+        color: '#aeb9c4',
+        marginTop: '10px',
+        flexGrow: 1,
+    },
+    messageCenter: {
+        gridColumn: '1 / -1',
+        color: "#aeb9c4",
+        textAlign: "center",
+        marginTop: "40px",
+    },
+    paginationContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        transition: ".3s",
-        cursor:  "pointer"
-    },
-    tagText: {
-        fontSize: 22,
-        padding: "5px 20px",
-        fontWeight: 800,
-        zIndex: 2,
-        borderRadius: 4,
-        boxShadow: "3px 3px 1px rgba(0,0,0,0.2)",
-        transition: ".3s"
-    },
-    bottom: {
-        width: "100%",
-        display: "grid",
-        gridTemplateColumns: "2fr 2fr 2fr"
-    },
-    paginationContainer: {
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        gap: 10,
-        marginTop: 40
+        padding: "20px 0 0 0",
+        flexShrink: 0,
+        gap: '8px',
     },
     paginationButton: {
-        width: 120,
-        height: 30,
-        borderRadius: 4,
-        background: "rgba(210, 210, 210, 1)",
-        padding: 0,
-        boxSizing: "border-box",
-        border: 0,
+        background: "#2a2f3b",
+        border: "1px solid #3c4257",
+        color: "#aeb9c4",
+        height: '36px',
+        minWidth: '36px',
+        padding: "0 10px",
+        borderRadius: "8px",
         cursor: "pointer",
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '14px',
+        fontWeight: '600'
     },
-    actualPageBox: {
-        height: 30,
-        width: 200,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+    paginationView: {
+        color: "#aeb9c4",
+        fontSize: "14px",
+        fontWeight: '500'
     },
-    actualPageText: {
-        fontSize: 18,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
+    disabledButton: {
+        opacity: 0.5,
+        cursor: 'not-allowed',
     },
-    itemsPerPageContainer: {
-        display: "flex",
-        alignItems: "end",
-        justifyContent: "end",
-        gap: 10
-    },
-    itemsPerPageText: {
-        fontSize: 18,
-        fontWeight: 500,
-        color: "rgba(80, 80, 80, 1)"
-    },
-    itemsPerPageInput: {
-        // width: 60,
-        height: 30,
-        outline: 0,
-        border: 0,
-        boxSizing: "border-box",
-        padding: 5,
-        textAlign: "center",
-        fontSize: 16,
-        fontWeight: 600,
-        borderRadius: 4,
-        background: "rgba(210, 210, 210, 1)"
-    }
-}
+};
 
 export default style;

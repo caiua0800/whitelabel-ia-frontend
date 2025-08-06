@@ -1,44 +1,28 @@
 import React, { useState, useEffect, useContext } from "react";
 import style from "./UsuariosStyle";
 import { AuthContext } from "../../Context/AuthContext";
-import formatHelpers from "../helpers/formatHelpers";
 import func from "../../Services/fotmatters";
-import {
-  editarStatusTodosOsAgentes,
-  getPrompt,
-  obterAdmins,
-  updatePrompt,
-} from "../../Services/dbservice";
+import { editarStatusTodosOsAgentes, getPrompt, obterAdmins, updatePrompt } from "../../Services/dbservice";
 import ChangePass from "./ChangePass/ChangePass";
 import { ChatContext } from "../../Context/ChatContext";
 import { LoadingContext } from "../../Context/LoadingContext";
+import { FiUser, FiBriefcase, FiKey, FiLogOut, FiPower, FiSave, FiEdit2 } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function Usuarios() {
-  const {
-    user = {},
-    enterprise = {},
-    credentials,
-    logout,
-  } = useContext(AuthContext);
+  const { user = {}, enterprise = {}, credentials, logout } = useContext(AuthContext);
   const { avaliableAgents, disconnectWebSocket } = useContext(ChatContext);
   const { startLoading, stopLoading } = useContext(LoadingContext);
   const [admins, setAdmins] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [modalChangePass, setModalChangePass] = useState(false);
-  const userName = user?.name || "Nome não disponível";
-  const userLoginId = user?.loginId || "Usuário não definido";
-  const enterpriseName = enterprise?.name || "Empresa não definida";
-  const createdDate = user?.dateCreated
-    ? func.formatarDataCompleta(user.dateCreated)
-    : "Data não disponível";
-  const enterpriseId = enterprise?.id ? enterprise?.id : "ID não disponível";
+  const userName = user?.name || "Usuário";
+  const enterpriseName = enterprise?.name || "Empresa";
   const [chosenAgent, setChosenAgent] = useState(null);
 
   useEffect(() => {
-    if (avaliableAgents) {
-      if (avaliableAgents[0]) {
+    if (avaliableAgents && avaliableAgents.length > 0) {
         setChosenAgent(avaliableAgents[0]);
-      }
     }
   }, [avaliableAgents]);
 
@@ -46,67 +30,53 @@ export default function Usuarios() {
     try {
       startLoading();
       const response = await obterAdmins(credentials.accessToken);
-
-      if (response) {
-        setAdmins(response);
-      } else {
-        console.log("Erro ao obter admins");
-        console.log(response);
-      }
+      if (response) setAdmins(response);
     } catch (error) {
-      console.log("Erro ao obter admins");
-      console.log(error);
+      console.error("Erro ao obter admins", error);
     } finally {
       stopLoading();
     }
   };
 
   const obterPrompt = async () => {
+    if (!chosenAgent) return;
     try {
       startLoading();
-      var res = await getPrompt(credentials.accessToken, chosenAgent.number);
-      if (res) {
-        setPrompt(res);
-      }
+      const res = await getPrompt(credentials.accessToken, chosenAgent.number);
+      if (res) setPrompt(res);
     } catch (error) {
-      console.log("Erro ao obter Prompt");
-      console.log(error);
+      console.error("Erro ao obter Prompt", error);
     } finally {
       stopLoading();
     }
   };
 
   const editarPrompt = async () => {
+    if (!chosenAgent) {
+      toast.error("Selecione um agente primeiro.");
+      return;
+    }
+    startLoading();
     try {
-      if (!chosenAgent) {
-        alert("Selecione um agente primeiro");
-        return;
-      }
-      startLoading();
-      var res = await updatePrompt(
-        credentials.accessToken,
-        prompt,
-        chosenAgent.number
-      );
-
+      const res = await updatePrompt(credentials.accessToken, prompt, chosenAgent.number);
       if (res) {
-        alert("Prompt editado com sucesso.");
+        toast.success("Prompt atualizado com sucesso.");
       } else {
-        alert("Erro ao editar prompt");
+        toast.error("Erro ao atualizar prompt.");
       }
     } catch (error) {
-      console.log("Erro ao editar Prompt");
-      console.log(error);
-      alert("Erro ao editar prompt");
+      console.error("Erro ao editar Prompt", error);
+      toast.error("Erro ao atualizar prompt.");
     } finally {
       stopLoading();
     }
   };
 
   useEffect(() => {
-    getAdmins();
-    obterPrompt();
-  }, []);
+    if (credentials?.accessToken) {
+        getAdmins();
+    }
+  }, [credentials?.accessToken]);
 
   useEffect(() => {
     if (chosenAgent) {
@@ -115,193 +85,119 @@ export default function Usuarios() {
   }, [chosenAgent]);
 
   const handleBlockAGENT = async () => {
-    const confirmar = window.confirm(
-      "Tem certeza que deseja bloquear a IA? Esta ação irá parar todas as interações do agente."
-    );
-    if (!confirmar) return;
-
+    toast((t) => (
+      <div>
+        <p>Tem certeza que deseja <b>parar a IA</b>?</p>
+        <div style={{display: 'flex', gap: '10px', marginTop: '10px'}}>
+          <button style={{background: '#ef4444', color: '#FFF', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer'}} 
+            onClick={() => {
+              confirmBlockAgent();
+              toast.dismiss(t.id);
+            }}>
+            Sim, Parar
+          </button>
+          <button style={{background: '#4b5563', color: '#FFF', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer'}} 
+            onClick={() => toast.dismiss(t.id)}>
+            Cancelar
+          </button>
+        </div>
+      </div>
+    ), { duration: 6000 });
+  };
+  
+  const confirmBlockAgent = async () => {
+    startLoading();
     try {
-      startLoading();
       var res = await editarStatusTodosOsAgentes(credentials.accessToken);
-
       if (res.status === 200) {
-        // ← PROBLEMA AQUI
-        alert("Agente de IA parado com sucesso.");
+        toast.success("Agente de IA parado com sucesso.");
       }
     } catch (error) {
-      console.log("Erro ao editar status do agente:");
-      console.log(error);
-      alert("Erro ao editar status do agente de IA.");
+      console.error("Erro ao editar status do agente:", error);
+      toast.error("Erro ao parar o agente de IA.");
     } finally {
       stopLoading();
     }
-  };
+  }
 
   return (
     <>
-      {modalChangePass && (
-        <>
-          <ChangePass onClose={() => setModalChangePass(false)} />
-        </>
-      )}
+      {modalChangePass && <ChangePass onClose={() => setModalChangePass(false)} />}
       <div style={style.container}>
-        <span style={style.title}>Usuários</span>
-
-        <div style={style.loggedUserContainer}>
-          <div onClick={handleBlockAGENT} style={style.disableEnableIa}>
-            <img style={style.disableEnableIaIcon} src="./icons/off-icon.svg" />
-          </div>
-          <div style={style.loggedUserBox}>
-            <div style={style.loggedUserBoxFirst}>
-              <div style={style.profileBox}>
-                <div style={style.profilePicture}>
-                  <img
-                    style={style.profilePictureImage}
-                    src="./icons/user-icon3.png"
-                    alt="Foto do perfil"
-                  />
-                </div>
-                <span style={style.name}>{userName}</span>
-              </div>
-              <div style={style.loginInfo}>
-                <span style={style.usernameBoxTitle}>Usuário</span>
-                <input
-                  style={style.usernameInput}
-                  value={userLoginId}
-                  readOnly
-                />
-              </div>
-              <div style={style.loginInfo}>
-                <span style={style.usernameBoxTitle}>Senha</span>
-                <input
-                  style={style.usernameInput}
-                  type="password"
-                  value="••••••••"
-                  readOnly
-                />
-                <button
-                  onClick={() => setModalChangePass(true)}
-                  style={style.changePass}
-                >
-                  Alterar senha
-                </button>
-                <button
-                  onClick={() => {
-                    disconnectWebSocket();
-                    logout();
-                  }}
-                  style={style.exit}
-                >
-                  Sair
-                </button>
-              </div>
-            </div>
-            <div style={style.loggedUserBoxSecond}>
-              <div style={style.loggedUserBoxSecondFirst}>
-                <div style={style.infoBox}>
-                  <span style={style.infoBoxTitle}>Criado em</span>
-                  <span style={style.infoBoxValue}>{createdDate}</span>
-                </div>
-                <div style={style.infoBox}>
-                  <span style={style.infoBoxTitle}>Empresa cadastrada</span>
-                  <span style={style.infoBoxValue}>{enterpriseName}</span>
-                </div>
-                <div style={style.infoBox}>
-                  <span style={style.infoBoxTitle}>ID da empresa</span>
-                  <span style={style.infoBoxValue}>{enterpriseId}</span>
-                </div>
-              </div>
-              <div style={style.loggedUserBoxSecondSecond}>
-                <span style={style.loggedUserBoxSecondSecondTitle}>
-                  Permissões do usuário
-                </span>
-                <div style={style.permissions}>
-                  {user &&
-                    user.permissions &&
-                    user.permissions.map((p, key) => (
-                      <>
-                        <span
-                          style={{
-                            ...style.permissionName,
-                            color: p.allowed
-                              ? "rgba(0, 200, 0, 1)"
-                              : "rgba(230, 50, 20, 1)",
-                          }}
-                        >
-                          {func.formatPermission(p.name)}
-                        </span>
-                      </>
-                    ))}
-                </div>
-              </div>
-            </div>
-          </div>
+        <div style={style.header}>
+            <h1 style={style.title}>Configurações</h1>
         </div>
 
-        <div style={style.promptContainer}>
-          <span style={style.promptContainerTitle}>Prompt da empresa:</span>
-          <select
-            style={style.agentNumberSelect}
-            value={chosenAgent?.number || ""}
-            onChange={(e) => {
-              const selected = avaliableAgents.find(
-                (a) => a.number === e.target.value
-              );
-              setChosenAgent(selected);
-            }}
-          >
-            {avaliableAgents &&
-              avaliableAgents.map((agent) => (
-                <option key={agent.number} value={agent.number}>
-                  {agent.name}
-                </option>
-              ))}
-          </select>
-
-          <span style={style.promptContainerSubTitle}>
-            Editar o prompt de maneira incorreta irá influenciar imediatamente
-            no desempenho do agente de IA.
-          </span>
-          <textarea
-            onChange={(e) => setPrompt(e.target.value)}
-            value={prompt}
-            style={style.promptInput}
-          />
-          <button onClick={editarPrompt} style={style.editPromptButton}>
-            Salvar Prompt
-          </button>
-        </div>
-
-        <div style={style.anotherUsersContainer}>
-          <span style={style.anotherUsersContainerTitle}>
-            Todos os usuários
-          </span>
-
-          <div style={style.usersTable}>
-            <div style={style.usersTableHeader}>
-              <span style={style.usersTableHeaderCell}>Nome</span>
-              <span style={style.usersTableHeaderCell}>Usuário</span>
-              <span style={style.usersTableHeaderCell}>Criado em</span>
-            </div>
-            <div style={style.usersTableBody}>
-              {admins &&
-                admins.map((admin, key) => (
-                  <>
-                    <div key={key} style={style.usersTableBodyRow}>
-                      <span style={style.usersTableBodyRowCell}>
-                        {admin.name}
-                      </span>
-                      <span style={style.usersTableBodyRowCell}>
-                        {admin.loginId}
-                      </span>
-                      <span style={style.usersTableBodyRowCell}>
-                        {func.formatarDataCompleta(admin.dateCreated)}
-                      </span>
+        <div style={style.grid}>
+            <div style={style.profileCard}>
+                <div style={style.profileHeader}>
+                    <div style={style.profilePicture}>
+                        <img style={style.profilePictureImage} src="./icons/user-icon3.png" alt="Foto do perfil" />
                     </div>
-                  </>
-                ))}
+                    <div style={style.profileInfo}>
+                        <span style={style.name}>{userName}</span>
+                        <span style={style.enterpriseName}>{enterpriseName}</span>
+                    </div>
+                </div>
+                <div style={style.profileActions}>
+                    <button onClick={() => setModalChangePass(true)} style={style.actionButton}>
+                        <FiKey style={{marginRight: '8px'}}/> Alterar Senha
+                    </button>
+                    <button onClick={() => { disconnectWebSocket(); logout(); }} style={{...style.actionButton, ...style.logoutButton}}>
+                        <FiLogOut style={{marginRight: '8px'}}/> Sair
+                    </button>
+                </div>
             </div>
-          </div>
+
+            <div style={style.promptCard}>
+                <div style={style.cardHeader}>
+                    <h2 style={style.cardTitle}>Inteligência Artificial (IA)</h2>
+                    <button onClick={handleBlockAGENT} style={style.stopIAButton} title="Parar IA">
+                        <FiPower size={16}/> Parar IA
+                    </button>
+                </div>
+                <div style={style.promptContent}>
+                    <label style={style.label}>Selecione o Agente</label>
+                    <select style={style.agentSelect} value={chosenAgent?.number || ""}
+                        onChange={(e) => {
+                          const selected = avaliableAgents.find((a) => a.number === e.target.value);
+                          setChosenAgent(selected);
+                        }}
+                    >
+                        {avaliableAgents && avaliableAgents.map((agent) => (
+                            <option key={agent.id} value={agent.number}>{agent.name}</option>
+                        ))}
+                    </select>
+
+                    <label style={style.label}>Prompt do Agente (Personalidade da IA)</label>
+                    <textarea onChange={(e) => setPrompt(e.target.value)} value={prompt} style={style.promptInput}/>
+                    <button onClick={editarPrompt} style={style.savePromptButton}>
+                        <FiSave style={{marginRight: '8px'}}/> Salvar Prompt
+                    </button>
+                </div>
+            </div>
+
+            <div style={style.usersCard}>
+                <div style={style.cardHeader}>
+                    <h2 style={style.cardTitle}>Usuários da Empresa</h2>
+                </div>
+                <div style={style.usersTable}>
+                    <div style={style.usersTableHeader}>
+                        <span style={style.usersTableHeaderCell}>Nome</span>
+                        <span style={style.usersTableHeaderCell}>Login</span>
+                        <span style={style.usersTableHeaderCell}>Criado em</span>
+                    </div>
+                    <div style={style.usersTableBody}>
+                      {admins && admins.map((admin) => (
+                        <div key={admin.id} style={style.usersTableBodyRow}>
+                          <span style={style.usersTableBodyRowCell}>{admin.name}</span>
+                          <span style={{...style.usersTableBodyRowCell, color: '#aeb9c4'}}>{admin.loginId}</span>
+                          <span style={{...style.usersTableBodyRowCell, color: '#aeb9c4'}}>{func.formatarDataCompleta(admin.dateCreated)}</span>
+                        </div>
+                      ))}
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     </>

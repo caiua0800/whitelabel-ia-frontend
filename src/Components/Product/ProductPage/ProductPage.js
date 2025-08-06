@@ -1,317 +1,142 @@
 import React, { useState, useEffect, useContext } from "react";
 import style from "./ProductPageStyle";
 import { AuthContext } from "../../../Context/AuthContext";
-import { criarProduto, editarProduto } from "../../../Services/dbservice";
+import { editarProduto } from "../../../Services/dbservice";
 import func from "../../../Services/fotmatters";
 import CategoriesModal from "./CategoriesModal/CategoriesModal";
+import { FiX, FiTag, FiSave, FiTrash2 } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
 export default function ProductPage({ onClose, product, reload }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("");
   const [status, setStatus] = useState(1);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoriesModal, setShowCategoriesModal] = useState(false);
   const { credentials } = useContext(AuthContext);
 
   useEffect(() => {
-    if (
-      product &&
-      product.name &&
-      product.description &&
-      product.unityPrice &&
-      product.status
-    ) {
-      setName(product.name);
-      setDescription(product.description);
-      setPrice(product.unityPrice);
-      setSelectedCategories(product.categoryNames);
-      setStatus(product.status);
+    if (product) {
+      setName(product.name || "");
+      setDescription(product.description || "");
+      setPrice(product.unityPrice?.toString().replace('.', ',') || "");
+      setSelectedCategories(product.categoryNames || []);
+      setStatus(product.status || 1);
     }
   }, [product]);
 
-  const formatLetter = (e) => {
-    return e.target.value.toUpperCase();
-  };
-
-  const valueFormat = (e) => {
-    if (e.target.value.trim().length === 2) return "";
-    if (e.target.value.includes(","))
-      return e.target.value
-        .replace("R$ ", "")
-        .replace(".", ",")
-        .replace(",", "");
-    return e.target.value.replace("R$ ", "").replace(".", ",");
-  };
-
-  const handleCategory = (c) => {
-    if (selectedCategories.includes(c)) {
-      setSelectedCategories(selectedCategories.filter((r) => r != c));
-    } else {
-      setSelectedCategories([selectedCategories, c]);
-    }
-  };
-
-  const handleChangeCategoryArray = (newArray) => {
-    setSelectedCategories(newArray);
-  };
-
-  const handleDoubleClick = (c) => {
-    const confirmDelete = window.confirm(
-      `Deseja realmente remover a categoria "${c}"?`
-    );
-    if (confirmDelete) {
-      handleCategory(c);
-    }
-  };
-
-  const handleEditProduct = async () => {
+  const handleEditProduct = async (e) => {
+    e.preventDefault();
     try {
-      if (!product || !product.id) {
-        throw new Error("Produto inválido para edição");
-      }
-
       const updatedProduct = {
-        id: product.id,
+        ...product,
         name: name.trim(),
         description: description.trim(),
-        status: status,
-        unityPrice: parseFloat(
-          price.toString().replace("R$ ", "").replace(",", ".")
-        ),
+        status: parseInt(status),
+        unityPrice: parseFloat(price.replace(",", ".")),
         categoryNames: selectedCategories,
       };
-
-      const response = await editarProduto(
-        credentials.accessToken,
-        updatedProduct
-      );
-
+      const response = await editarProduto(credentials.accessToken, updatedProduct);
       if (response) {
-        alert("Produto atualizado com sucesso.");
+        toast.success("Produto atualizado com sucesso.");
         await reload();
-        handleClose();
-      } else {
-        alert("Erro ao atualizar produto");
-        return;
+        onClose();
       }
     } catch (error) {
-      console.error("Erro ao editar produto:", error);
-      alert(`Erro ao editar produto: ${error.message}`);
+      toast.error(`Erro ao editar produto: ${error.message}`);
     }
   };
-
+  
   const handleDeleteProduct = async () => {
-    const confirmDelete = window.confirm(
-      `Deseja realmente excluir o produto?`
-    );
-    if (confirmDelete) {
-
-      try {
-        if (!product || !product.id) {
-          throw new Error("Produto inválido para edição");
-        }
-
-        const updatedProduct = {
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          status: 4,
-          unityPrice: product.unityPrice,
-          categoryNames: product.categoryNames,
-        };
-
-        const response = await editarProduto(
-          credentials.accessToken,
-          updatedProduct
-        );
-
-        if (response) {
-          alert("Produto excluído com sucesso.");
-          await reload();
-          handleClose();
-        } else {
-          alert("Erro ao excluir produto");
-          return;
-        }
-      } catch (error) {
-        console.error("Erro ao editar produto:", error);
-        alert(`Erro ao editar produto: ${error.message}`);
-      }
-    }
-    return;
-  };
-
-  const handleClose = () => {
-    onClose();
-    setName("");
-    setDescription("");
-    setPrice(0);
-    setSelectedCategories([]);
-    onClose();
-  };
-
-  const priceFormatter = (val) => {
-    return val;
-    // return parseFloat(val.replace("R$ ", "").replace(",", ".").trim());
-  };
-
-  return (
-    <>
-      <div style={style.containerGeneral}>
-        <div style={style.modal}>
-          <span onClick={onClose} style={style.closeBtn}>
-            x
-          </span>
-          <span onClick={handleDeleteProduct} style={style.deleteButton}>
-            Excluir Produto
-          </span>
-          <span style={style.title}>Página do Produto</span>
-
-          <div style={{ ...style.content, gridTemplateRows: "auto auto auto" }}>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "6fr 2fr 2fr",
-              }}
-            >
-              <div style={style.inputBox}>
-                <span style={style.inputBoxTitle}>Nome</span>
-                <input
-                  style={style.inputBoxInput}
-                  value={product && name}
-                  onChange={(e) => setName(formatLetter(e))}
-                />
-              </div>
-              <div style={style.inputBox}>
-                <span style={style.inputBoxTitle}>Valor</span>
-                <input
-                  style={style.inputBoxInput}
-                  value={`R$ ${product && price}`}
-                  onChange={(e) => setPrice(valueFormat(e))}
-                />
-              </div>
-              <div style={style.inputBox}>
-                <span style={style.inputBoxTitle}>Status</span>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  style={style.inputBoxInput}
-                >
-                  <option value={1}>Ativo</option>
-                  <option value={2}>Esgotado</option>
-                  <option value={3}>Indisponível</option>
-                </select>
-              </div>
-            </div>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "auto",
-              }}
-            >
-              <div style={style.inputBox}>
-                <span style={style.inputBoxTitle}>Descrição</span>
-                <textarea
-                  value={product && description}
-                  style={style.inputBoxTextarea}
-                  onChange={(e) => setDescription(formatLetter(e))}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "auto",
-              }}
-            >
-              <button
-                onClick={() => setShowCategoriesModal(true)}
-                style={style.selectCategoriesButton}
-              >
-                Selecionar Categorias
-              </button>
-            </div>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "auto",
-              }}
-            >
-              <span style={style.categoriesBoxTitle}>
-                Categorias selecionadas
-              </span>
-              <span style={style.categoriesBoxSubTitle}>
-                Clique duas vezes sobre uma categoria para remove-la.
-              </span>
-            </div>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "auto",
-              }}
-            >
-              <div style={style.categoryBoxes}>
-                {selectedCategories &&
-                  selectedCategories.map((c, key) => (
-                    <span
-                      key={key}
-                      onDoubleClick={() => handleDoubleClick(c)}
-                      style={style.category}
-                    >
-                      {c}
-                    </span>
-                  ))}
-              </div>
-            </div>
-            <div
-              style={{
-                ...style.row,
-                display: "grid",
-                gridTemplateColumns: "auto",
-              }}
-            >
-              {(product && product.name != name.trim()) ||
-              product.description != description.trim() ||
-              product.unityPrice != priceFormatter(price) ||
-              product.status != status ||
-              JSON.stringify(product.categoryNames) !==
-                JSON.stringify(selectedCategories) ? (
-                <button
-                  style={{ ...style.saveButton, cursor: "pointer" }}
-                  onClick={handleEditProduct}
-                >
-                  Salvar
-                </button>
-              ) : (
-                <>
-                  <button style={{ ...style.saveButton, opacity: "0.6" }}>
-                    Salvar
-                  </button>
-                  <span style={style.underSavebuttonText}>
-                    Nenhuma alteração feita.
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
+     toast((t) => (
+      <div>
+        <p>Tem certeza que quer excluir <b>{product.name}</b>?</p>
+        <div style={{display: 'flex', gap: '10px', marginTop: '10px'}}>
+          <button style={{background: '#ef4444', color: '#FFF', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer'}} 
+            onClick={() => {
+              deleteConfirmed();
+              toast.dismiss(t.id);
+            }}>
+            Sim, excluir
+          </button>
+          <button style={{background: '#4b5563', color: '#FFF', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer'}} 
+            onClick={() => toast.dismiss(t.id)}>
+            Cancelar
+          </button>
         </div>
       </div>
+    ), { duration: 6000 });
+  };
+  
+  const deleteConfirmed = async () => {
+    try {
+        const deletedProduct = { ...product, status: 4 };
+        const response = await editarProduto(credentials.accessToken, deletedProduct);
+        if (response) {
+            toast.success("Produto excluído com sucesso.");
+            await reload();
+            onClose();
+        }
+    } catch (error) {
+        toast.error(`Erro ao excluir produto: ${error.message}`);
+    }
+  }
 
-      {showCategoriesModal && (
-        <>
-          <CategoriesModal
-            handleClick={handleChangeCategoryArray}
-            selectedCategories={selectedCategories}
-            onClose={() => setShowCategoriesModal(false)}
-          />
-        </>
-      )}
+  const handlePriceChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2).toString().replace('.', ',');
+    setPrice(value);
+  };
+  
+  return (
+    <>
+      <div style={style.overlay} onClick={onClose}>
+        <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
+            <div style={style.modalHeader}>
+                <h2 style={style.title}>Editar Produto</h2>
+                <button onClick={onClose} style={style.closeBtn}><FiX size={22} /></button>
+            </div>
+            <form onSubmit={handleEditProduct} style={style.form}>
+                <div style={style.inputGrid}>
+                    <div style={{...style.inputGroup, gridColumn: '1 / 3'}}>
+                        <label style={style.label}>Nome do Produto</label>
+                        <input value={name} onChange={(e) => setName(e.target.value)} style={style.input}/>
+                    </div>
+                    <div style={style.inputGroup}>
+                        <label style={style.label}>Valor (R$)</label>
+                        <input value={price} onChange={handlePriceChange} style={style.input} placeholder="0,00"/>
+                    </div>
+                    <div style={style.inputGroup}>
+                        <label style={style.label}>Status</label>
+                        <select value={status} onChange={(e) => setStatus(e.target.value)} style={style.input}>
+                            <option value={1}>Ativo</option>
+                            <option value={2}>Esgotado</option>
+                            <option value={3}>Indisponível</option>
+                        </select>
+                    </div>
+                </div>
+                <div style={style.inputGroup}>
+                    <label style={style.label}>Descrição</label>
+                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} style={{...style.input, ...style.textarea}}/>
+                </div>
+                <div style={style.inputGroup}>
+                    <label style={style.label}>Categorias</label>
+                    <button type="button" onClick={() => setShowCategoriesModal(true)} style={style.categoryButton}><FiTag style={{marginRight: '8px'}}/> Selecionar Categorias</button>
+                    <div style={style.selectedCategories}>
+                      {selectedCategories.map((c, key) => (
+                        <span key={key} style={style.selectedCategory}>{c}</span>
+                      ))}
+                    </div>
+                </div>
+                <div style={style.footer}>
+                    <button type="button" onClick={handleDeleteProduct} style={{...style.actionButton, ...style.deleteButton}}><FiTrash2 style={{marginRight: '8px'}}/> Excluir</button>
+                    <button type="submit" style={{...style.actionButton, ...style.saveButton}}><FiSave style={{marginRight: '8px'}}/> Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+      </div>
+      {showCategoriesModal && <CategoriesModal selectedCategories={selectedCategories} onClose={() => setShowCategoriesModal(false)} handleClick={setSelectedCategories} />}
     </>
   );
 }

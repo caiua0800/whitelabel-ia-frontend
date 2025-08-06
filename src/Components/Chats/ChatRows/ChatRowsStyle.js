@@ -1,175 +1,142 @@
-
-
 const style = {
-    chatsContainer: {
-        width: "100%",
-        height: "100%",
-        background: "rgba(30, 80, 80, 1)"
-    },
-    chatsContent: {
-        width: "100%",
-        height: "84vh",
-        display: "grid",
-        gridTemplateRows: "auto auto auto auto"
-    },
-    chatsHeader: {
-        width: "100%",
-        height: "3vh",
-        background: "rgba(30, 80, 80, 1)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-    },
-    filterIconBox: {
-        width: 20,
-        height: 20,
-        position: "absolute",
-        top: "50%",
-        left: 30,
-        transform: "translateY(-50%)",
-        overflow: "hidden",
-        opacity: 0.6,
-        transition: ".5s",
-        cursor: "pointer"
-    },
-    filterIconBox2: {
-        width: 20,
-        height: 20,
-        position: "absolute",
-        top: "50%",
-        right: 30,
-        transform: "translateY(-50%)",
-        overflow: "hidden",
-        opacity: 0.6,
-        transition: ".5s",
-        cursor: "pointer"
-    },
-    alternateAgentBox: {
-        width: "100%",
-        height: "7vh",
-        display: "flex",
-        justifyContent: "center",
-        padding: "10px 0",
-        boxSizing: "border-box"
-    },
-    alternateAgentBoxSelect: {
-        width: "80%",
-        height: 30,
-        border: 0,
-        borderRadius: 4,
-        background: "rgba(210, 210, 210, 1)",
-        color: "rgba(80, 80, 80, 1)",
-        outline: "none",
-        fontSize: 16,
-        fontWeight:  600,
-        cursor: "pointer"
-    },
-    popUpIconButton: {
-        position: "absolute",
-        bottom: -50,
-        left: -80,
-        fontSize: 16,
-        color: "black",
-        background: "white",
-        opacity: 0.6,
-        borderRadius: 8,
-        padding: 5,
-        zIndex: 9,
-        boxShadow: "2px 2px 3px rgba(0,0,0,0.6)"
-    },
-    filterIcon: {
-        width: "100%"
-    },
-    chatsHeaderTitle: {
-        fontSize: 18,
-        fontWeight: 600,
-        color: "rgba(255, 255, 255, 1)"
-    },
-    chatsBody: {
-        width: "100%",
-        height: "69vh",
-        display: "flex",
-        flexDirection: "column",
-        overflowY: "auto",
-        boxSizing: "border-box"
-    },
-    chatsInputBoxFilter: {
-        width: "100%",
-        background: "rgba(30, 100, 100, 1)",
-        display: "flex",
-        boxSizing: "border-box",
-        padding: "14px 10px",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        gap: 10
-    },
-    searchFilter: {
-        width: "90%",
-        height: "35px",
-        boxSizing: "border-box",
-        borderRadius: 20,
-        border: 0,
-        paddingLeft: 20,
-        background: "rgba(200,200,200,1)",
-        border: "2px solid rgba(200, 200, 200, 1)",
-        fontSize: 16,
-        fontWeight: 600,
-        outline: "none"
-    },
-    searchFilterButton: {
-        width: "90%",
-        height: 25,
-        borderRadius: 4,
-        border: 0,
-        background: "rgba(210, 210, 210, 1)",
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)",
-        cursor: "pointer"
-    },
-    chatsRows: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        maxHeight: "max-content",
-        boxSizing: "border-box"
-    },
-    paginationContainer: {
-        width: "100%",
-        background: "rgba(230, 230, 230, 1)",
-        height: "5vh",
-        display: "grid",
-        gridTemplateColumns: "1fr 4fr 3fr 4fr 1fr",
-        padding: 5,
-        gap: 5,
-        boxSizing: "border-box"
-    },
-    paginationButton: {
-        width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
-        padding: 0,
-        border: 0,
-        fontSize: "0.8rem",
-        fontWeight: 600,
-        background: "rgba(180, 180, 180, 1)",
-        cursor: "pointer",
-        borderRadius: 4,
-        border: "2px solid black"
-    },
-    paginationView: {
-        width: "100%",
-        height: "100%",
-        background: "rgba(180, 180, 180, 1)",
-        cursor: "pointer",
-        borderRadius: 4,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontWeight: 600,
-        fontSize: 12
-    }
-}
+  chatsContainer: {
+    width: "100%",
+    height: "100%",
+    background: "#1e212b",
+    borderRight: "1px solid #2a2f3b",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden"
+  },
+  chatsHeader: {
+    padding: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexShrink: 0,
+    borderBottom: "1px solid #2a2f3b",
+  },
+  headerTitleWrapper: {},
+  chatsHeaderTitle: {
+    fontSize: "22px",
+    fontWeight: "600",
+    color: "#FFFFF",
+    margin: "0",
+  },
+  chatsHeaderSubtitle: {
+    fontSize: "14px",
+    color: "#aeb9c4",
+  },
+  headerActions: {
+    display: "flex",
+    gap: "10px",
+  },
+  iconButton: {
+    background: "#2a2f3b",
+    border: "1px solid #3c4257",
+    color: "#aeb9c4",
+    width: "40px",
+    height: "40px",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+  panel: {
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+    flexShrink: 0,
+  },
+  searchWrapper: {
+    position: "relative",
+  },
+  searchIcon: {
+    position: "absolute",
+    left: "15px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    color: "#aeb9c4",
+  },
+  searchInput: {
+    width: "100%",
+    height: "45px",
+    background: "#2a2f3b",
+    border: "1px solid #3c4257",
+    borderRadius: "12px",
+    padding: "0 20px 0 45px",
+    boxSizing: "border-box",
+    color: "#FFF",
+    fontSize: "14px",
+    outline: "none",
+  },
+  agentSelect: {
+    width: "100%",
+    height: "45px",
+    background: "#2a2f3b",
+    border: "1px solid #3c4257",
+    borderRadius: "12px",
+    padding: "0 15px",
+    boxSizing: "border-box",
+    color: "#FFF",
+    fontSize: "14px",
+    cursor: "pointer",
+    outline: "none",
+  },
+  chatsBody: {
+    flexGrow: 1,
+    overflowY: "auto",
+  },
+  messageCenter: {
+    color: "#aeb9c4",
+    textAlign: "center",
+    marginTop: "40px",
+  },
+  paginationContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "15px 20px",
+    boxSizing: "border-box",
+    borderTop: "1px solid #2a2f3b",
+    flexShrink: 0,
+  },
+  paginationButton: {
+    background: "#2a2f3b",
+    border: "1px solid #3c4257",
+    color: "#aeb9c4",
+    boxSizing: "border-box",
+    padding: "8px 12px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+  },
+  disabledButton: {
+    opacity: 0.5,
+    cursor: "not-allowed",
+  },
+  paginationView: {
+    color: "#aeb9c4",
+    fontSize: "14px",
+    fontWeight: "500",
+  },
+  activeButton: {
+    background: "#3c4257",
+    border: "1px solid #4a5268",
+    color: "#FFF",
+  },
+  ellipsis: {
+    color: "#aeb9c4",
+    padding: "8px 12px",
+    
+    boxSizing: "border-box",
+    display: "flex",
+    alignItems: "center",
+  },
+};
 
 export default style;

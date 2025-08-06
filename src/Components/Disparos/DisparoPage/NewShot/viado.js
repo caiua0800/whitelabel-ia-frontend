@@ -8,8 +8,6 @@ import func from "../../../../Services/fotmatters";
 import TagsModal from "../../../Clients/Tag/TagsModal";
 import AgentModal from "./AgentModal/AgentModal";
 import { LoadingContext } from "../../../../Context/LoadingContext";
-import { FiX, FiSearch, FiTag, FiUsers, FiSend } from "react-icons/fi";
-import toast from "react-hot-toast";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -252,11 +250,11 @@ export default function NewShot({ onClose, shot }) {
 
   const handleSend = async () => {
     if (selectedClients.length === 0) return;
-
+  
     if (!chosenAgent) {
       return alert("Selecione um agente para enviar as mensagens");
     }
-
+  
     startLoading();
     try {
       const response = await enviarDisparo(
@@ -265,7 +263,7 @@ export default function NewShot({ onClose, shot }) {
         shot.shot.id,
         selectedClients
       );
-
+  
       if (response === 200) {
         alert("Mensagens enviadas com sucesso.");
         onClose(); // Isso vai fechar o modal e atualizar os dados
@@ -292,126 +290,115 @@ export default function NewShot({ onClose, shot }) {
     <>
       <ModalDefault zIndex={11}>
         <div style={style.modal}>
-          <div style={style.modalHeader}>
-            <h2 style={style.title}>Realizar Novo Envio</h2>
-            <button style={style.closeBtn} onClick={onClose}>
-              <FiX size={22} />
-            </button>
+          <img
+            onClick={onClose}
+            src="./icons/left-arrow-icon.svg"
+            style={style.closeBtn}
+          />
+          <span style={style.title}>Execute um novo envio</span>
+
+          <div style={style.filters}>
+            <div style={style.filterBox}>
+              <span style={style.filterName}>Filtre</span>
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Nome ou Número do cliente..."
+                style={style.input}
+                onKeyPress={handleKeyPress}
+              />
+            </div>
+
+            <div style={style.filterBox}>
+              <span style={style.filterName}>Data de criação entre</span>
+              <input
+                value={startDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                style={style.input}
+                type="date"
+              />
+            </div>
+            <div style={style.filterBox}>
+              <span style={style.filterName}>até</span>
+              <input
+                onChange={(e) => setEndDate(e.target.value)}
+                value={endDate}
+                style={style.input}
+                type="date"
+              />
+            </div>
+
+            <div style={style.filterBox}>
+              <span style={style.filterName}>Tags</span>
+              <button
+                onClick={() => setShowTagsModal(true)}
+                style={style.tagButton}
+              >
+                Selecionar Tags
+              </button>
+            </div>
+            <div style={style.filterBox}>
+              <span style={{ ...style.filterName, opacity: 0 }}>s</span>
+              <button
+                onClick={() => handleSearch(1)}
+                style={style.searchButton}
+                disabled={isSearching}
+              >
+                {isSearching ? "Buscando..." : "Pesquisar"}
+              </button>
+            </div>
           </div>
 
-          <div style={style.modalBody}>
-            <div style={style.filters}>
-              <div style={style.filterBox}>
-                <label style={style.filterName}>Pesquisar Cliente</label>
-                <div style={style.inputWrapper}>
-                  <FiSearch style={style.inputIcon} />
-                  <input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Nome ou Número..."
-                    style={style.input}
-                  />
+          <div style={style.tableContainer}>
+            <div style={style.tableHeaderRow}>
+              <div style={style.tableCheckbox}>
+                <span style={style.tableTitle}>
+                  Resultados {totalCount > 0 && `(${totalCount})`}
+                </span>
+                {chats.length > 0 && (
+                  <div style={style.selectAllBox}>
+                    <span style={style.selectAllBoxTitle}>
+                      Selecionar Todos os Resultados
+                    </span>
+                    <input
+                      type="checkbox"
+                      style={style.selectAllBoxCheckbox}
+                      checked={selectAll}
+                      onChange={toggleSelectAll}
+                    />
+                  </div>
+                )}
+                <div style={style.paginationContainer}>
+                  {renderPagination()}
                 </div>
-              </div>
-
-              <div style={style.filterBox}>
-                <label style={style.filterName}>Criado entre</label>
-                <input
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  style={style.input}
-                  type="date"
-                />
-              </div>
-
-              <div style={style.filterBox}>
-                <label style={style.filterName}>Até</label>
-                <input
-                  onChange={(e) => setEndDate(e.target.value)}
-                  value={endDate}
-                  style={style.input}
-                  type="date"
-                />
-              </div>
-
-              <div style={style.filterBox}>
-                <label style={style.filterName}>Tags</label>
-                <button
-                  onClick={() => setShowTagsModal(true)}
-                  style={style.tagButton}
-                >
-                  <FiTag style={{ marginRight: "8px" }} />
-                  Selecionar Tags ({selectedTags.length})
-                </button>
-              </div>
-
-              <div style={style.filterBox}>
-                <label style={{ ...style.filterName, opacity: 0 }}>s</label>
-                <button
-                  onClick={() => handleSearch(1)}
-                  style={style.searchButton}
-                  disabled={isSearching}
-                >
-                  {isSearching ? "Buscando..." : "Pesquisar"}
-                </button>
               </div>
             </div>
 
-            <div style={style.tableContainer}>
-              <div style={style.tableHeaderRow}>
-                <div style={style.tableTitleWrapper}>
-                  <FiUsers style={{ marginRight: "8px" }} />
-                  <span style={style.tableTitle}>
-                    Resultados ({totalCount})
-                  </span>
-                </div>
+            {selectedClients.length > 0 && (
+              <div style={style.selectedCounter}>
+                {selectedClients.length} cliente(s) selecionado(s)
+              </div>
+            )}
 
-                <div style={style.selectAllAndPagination}>
-                  {chats && chats.length > 0 && (
-                    <div style={style.selectAllBox}>
-                      <input
-                        type="checkbox"
-                        style={style.checkbox}
-                        checked={selectAll}
-                        onChange={toggleSelectAll}
-                        id="selectAllCheck"
-                      />
-                      <label
-                        htmlFor="selectAllCheck"
-                        style={style.selectAllBoxTitle}
-                      >
-                        Selecionar todos na página
-                      </label>
-                    </div>
-                  )}
-
-                  <div style={style.paginationContainer}>
-                    {renderPagination()}
-                  </div>
-                </div>
+            <div style={style.table}>
+              <div style={style.tableHeader}>
+                <span style={style.tableHeaderCell}>Nome</span>
+                <span style={style.tableHeaderCell}>Contato</span>
+                <span style={style.tableHeaderCell}>Criado em</span>
+                <span style={style.tableHeaderCell}>Selecionar</span>
               </div>
 
-              {selectedClients.length > 0 && (
-                <div style={style.selectedCounter}>
-                  {selectedClients.length} cliente(s) selecionado(s)
+              {isSearching ? (
+                <div style={style.emptyState}>
+                  <span>Carregando...</span>
                 </div>
-              )}
-
-              <div style={style.tableBody}>
-                {isSearching && chats.length === 0 ? (
-                  <div style={style.emptyState}>Carregando...</div>
-                ) : chats && chats.length > 0 ? (
-                  chats.map((chat) => (
+              ) : chats.length > 0 ? (
+                chats.map((chat) => {
+                  const isSelected = selectedClients.some(
+                    (c) => c.number === chat.id
+                  );
+                  return (
                     <div key={chat.id} style={style.tableRow}>
-                      <input
-                        type="checkbox"
-                        style={style.checkbox}
-                        checked={selectedClients.some(
-                          (c) => c.number === chat.id
-                        )}
-                        onChange={() => toggleClientSelection(chat)}
-                      />
                       <span style={{ ...style.tableCell, ...style.clientName }}>
                         {chat.clientName || "Sem nome"}
                       </span>
@@ -423,82 +410,97 @@ export default function NewShot({ onClose, shot }) {
                       <span style={{ ...style.tableCell, ...style.dateCell }}>
                         {func.formatarDataCompleta(chat.dateCreated)}
                       </span>
+                      <div style={style.tableCell}>
+                        <input
+                          style={style.inputCheckboxCell}
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleClientSelection(chat)}
+                        />
+                      </div>
                     </div>
-                  ))
-                ) : (
-                  <div style={style.emptyState}>
-                    {searchTerm ||
-                    selectedTags.length > 0 ||
-                    startDate ||
-                    endDate
-                      ? "Nenhum resultado encontrado com esses filtros"
-                      : "Nenhum cliente encontrado"}
-                  </div>
-                )}
+                  );
+                })
+              ) : (
+                <div style={style.emptyState}>
+                  <span style={style.emptyIcon}>📭</span>
+                  <span>Nenhum resultado encontrado</span>
+                  <span style={{ fontSize: "13px", marginTop: "8px" }}>
+                    Tente alterar seus filtros de busca
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {totalPages > 1 && (
+              <div style={style.paginationContainerBottom}>
+                {renderPagination()}
               </div>
-            </div>
-          </div>
+            )}
 
-          <div style={style.modalFooter}>
-            <div style={style.selectionInfo}>
-              <FiUsers style={{ marginRight: "8px" }} />
-              <span>
-                {selectedClients.length} cliente(s) selecionado(s) no total
+            <div style={style.selectNumberPart}>
+              <span style={style.selectNumberPartText}>
+                Selecione o número do agente:
               </span>
-            </div>
-
-            <div style={style.agentAndSend}>
-              <div style={style.selectNumberPart}>
-                <span style={style.selectNumberPartText}>Enviar com:</span>
-                {!chosenAgent ? (
+              {!chosenAgent ? (
+                <>
                   <button
                     onClick={() => setSelectAgentModal(true)}
                     style={style.selectNumberPartButton}
                   >
-                    Selecione o Agente
+                    Selecione
                   </button>
-                ) : (
+                </>
+              ) : (
+                <>
                   <div style={style.selectedAgentBox}>
-                    <span style={style.selectedAgentBoxMessage}>
-                      {chosenAgent.name}
-                    </span>
+                    <span style={style.selectedAgentBoxMessage}>{`${
+                      chosenAgent && chosenAgent.name
+                    } selecionado`}</span>
                     <button
                       style={style.selectedAgentBoxUnselectButton}
                       onClick={() => setChosenAgent(null)}
                     >
-                      <FiX size={14} />
+                      Remover
                     </button>
                   </div>
-                )}
-              </div>
-              {chosenAgent && (
-                <button
-                  style={style.sendMessagesButton}
-                  onClick={handleSend}
-                  disabled={selectedClients.length === 0 || !chosenAgent}
-                >
-                  <FiSend style={{ marginRight: "8px" }} />
-                  Enviar Disparo
-                </button>
+                </>
               )}
             </div>
+
+            <button
+              style={{
+                ...style.sendMessages,
+                opacity: selectedClients.length > 0 ? 1 : 0.6,
+                cursor: selectedClients.length > 0 ? "pointer" : "not-allowed",
+              }}
+              onClick={handleSend}
+              disabled={selectedClients.length === 0}
+            >
+              Enviar Mensagens
+            </button>
           </div>
         </div>
+
         {showTagsModal && (
-          <TagsModal
-            currentTagsAdded={selectedTags}
-            onClose={() => setShowTagsModal(false)}
-            handleSelect={handleSelectTags}
-          />
+          <>
+            <TagsModal
+              currentTagsAdded={selectedTags}
+              onClose={() => setShowTagsModal(false)}
+              handleSelect={handleSelectTags}
+            />
+          </>
+        )}
+
+        {selectAgentModal && (
+          <>
+            <AgentModal
+              setSelectedAgent={setChosenAgent}
+              onClose={() => setSelectAgentModal(false)}
+            />
+          </>
         )}
       </ModalDefault>
-
-      {selectAgentModal && (
-        <AgentModal
-          setSelectedAgent={setChosenAgent}
-          onClose={() => setSelectAgentModal(false)}
-        />
-      )}
     </>
   );
 }

@@ -1,0 +1,5 @@
+.open-sidebar-button:hover {
+    background: #4ecf78;
+    color: #1e212b;
+    transform: scale(1.1) rotate(15deg);
+}

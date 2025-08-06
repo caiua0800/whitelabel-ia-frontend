@@ -1,94 +1,44 @@
-
 const style = {
-    container: {
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        background: "rgba(0,0,0,0.6)",
-        zIndex: 10,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+    overlay: {
+        width: "100vw", height: "100vh", position: "fixed", top: 0, left: 0,
+        background: "rgba(0,0,0,0.6)", zIndex: 11, display: "flex",
+        justifyContent: "center", alignItems: "center", backdropFilter: "blur(5px)",
     },
-    modal: {
-        padding: "30px 40px",
-        boxSizing: "border-box",
-        background: "rgba(210, 210, 210, 1)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        borderRadius: 4,
-        position: "relative"
+    modalContainer: {
+        width: '100%', maxWidth: '450px', background: "#1e212b",
+        borderRadius: "16px", border: "1px solid #2a2f3b",
+        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
     },
-    close: {
-        fontSize: 18,
-        fontWeight: 600,
-        position: "absolute",
-        top: 20,
-        left: 25,
-        cursor: "pointer",
-        color: "rgba(80, 80, 80, 1)"
+    modalHeader: {
+        padding: "20px 25px", borderBottom: "1px solid #2a2f3b", display: "flex",
+        justifyContent: "space-between", alignItems: "center",
     },
-    title: {
-        fontSize: 22,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
+    title: { fontSize: "20px", fontWeight: "600", color: "#FFF", margin: 0 },
+    close: { background: "none", border: "none", color: "#aeb9c4", cursor: "pointer" },
+    form: {
+        padding: "25px", display: "flex", flexDirection: "column", gap: 15,
     },
-    inputs: {
-        marginTop: 20,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
+    inputGroup: {},
+    label: {
+        display: "block", fontSize: "14px", fontWeight: "500",
+        marginBottom: "8px", color: "#aeb9c4",
     },
-    inputBox: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "start"
-    },
-    inputBoxTitle: {
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
+    inputWrapper: { position: "relative" },
+    inputIcon: {
+        position: "absolute", left: "15px", top: "50%",
+        transform: "translateY(-50%)", color: "#aeb9c4",
     },
     input: {
-        width: 250,
-        height: 30,
-        outline: "none",
-        boxSizing: "border-box",
-        border: 0,
-        fontSize: 16,
-        padding: 0,
-        paddingLeft: 20,
-        boxShadow: "3px 3px 3px rgba(0,0,0,0.2)"
+        width: "100%", height: "45px", background: "#2a2f3b",
+        border: "1px solid #3c4257", borderRadius: "12px",
+        padding: "0 20px 0 45px", boxSizing: "border-box", color: "#FFF",
+        fontSize: "15px", outline: "none",
     },
     confirmButton: {
-        width: 250,
-        height: 30,
-        outline: "none",
-        fontWeight: 600,
-        border: 0,
-        fontSize: 16,
-        padding: 0,
-        paddingLeft: 20,
-        boxShadow: "3px 3px 3px rgba(0,0,0,0.2)",
-        background: "rgba(100, 220, 0, 1)",
-        color: "rgba(80, 80, 80, 1)",
-        cursor: "pointer"
-    },
-    obsContainer: {
-        display: "flex",
-        flexDirection: "column",
-        gap: 5,
-        marginTop: 10
-    },
-    obsText: {
-        fontSize: 12,
-        fontWeight: 500,
-        color: "rgba(0,0,0,0.5)"
+        height: "45px", background: '#4ecf78', color: '#1e212b', border: 'none',
+        borderRadius: '12px', fontSize: '15px', fontWeight: '600',
+        cursor: 'pointer', marginTop: '10px'
     }
-}
+};
 
 export default style;

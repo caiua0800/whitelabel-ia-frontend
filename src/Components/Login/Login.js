@@ -3,87 +3,86 @@ import styles from "./LoginStyle";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LoadingContext } from "../../Context/LoadingContext";
+import { FiUser, FiLock, FiArrowRight, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
 export default function Login() {
-  const { login, credentials, loading } = useContext(AuthContext);
-  // const [id, setId] = useState("DanielMors");
-  // const [password, setPassword] = useState("GoldenPass");
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const { login, credentials } = useContext(AuthContext);
+  const [id, setId] = useState("DanielMors");
+  const [password, setPassword] = useState("GoldenPass");
   const navigate = useNavigate();
-  const { startLoading, stopLoading } = useContext(LoadingContext);
+  const { loading, startLoading, stopLoading } = useContext(LoadingContext);
 
-  const handleLogin = async () => {
-    startLoading();
-
+  const handleLogin = async (e) => {
+    e.preventDefault();
     if (id.trim() === "" || password.trim() === "") {
-      alert("Insira corretamente suas credenciais.");
-      startLoading();
+      toast.error("Preencha todos os campos, gata!");
       return;
     }
+    startLoading();
     try {
-      await login(id, password);
-      navigate("/", { replace: true });
+      const result = await login(id, password);
+
+      if (result.success) {
+        toast.success(result.message);
+        navigate("/", { replace: true });
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.error("Ocorreu um erro inesperado. Tente de novo.");
     } finally {
       stopLoading();
     }
   };
 
   useEffect(() => {
-    if (!loading && credentials?.isAuthenticated) {
+    if (credentials?.isAuthenticated) {
       navigate("/", { replace: true });
     }
-  }, [credentials, loading]);
+  }, [credentials, navigate]);
 
   return (
-    <div style={styles.container}>
-      <img
-        style={styles.background}
-        src="./images/background.png"
-        alt="Background"
-      />
-      <div style={styles.content}>
-        <div style={styles.contentContent}>
-          <div style={styles.header}>
-            <div style={styles.firstHeaderPart}>
-              <img src="./images/agente-logo.png" style={styles.agentLogo} />
-            </div>
-            <div style={styles.secondHeaderPart}>
-              <div style={styles.seLoko}>
-                <span style={styles.seLokoTitle}>ID</span>
-                <input
-                  value={id}
-                  type="text"
-                  onChange={(e) => setId(e.target.value)}
-                  style={styles.inputBox}
-                  placeholder=""
-                />
-              </div>
-              <div style={styles.seLoko}>
-                <span style={styles.seLokoTitle}>Senha</span>
-                <input
-                  value={password}
-                  type="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={styles.inputBox}
-                  placeholder=""
-                />
-              </div>
-              <div style={styles.seLoko}>
-                <span style={{ ...styles.seLokoTitle, opacity: 0 }}>s</span>
-                <button onClick={() => {startLoading(); handleLogin()}} style={styles.loginButton}>
-                  Login
-                </button>
-              </div>
-            </div>
+    <div style={styles.page}>
+      <div style={styles.leftPanel}>
+        <img src="./images/agente-logo.png" style={styles.logo} alt="Logo" />
+        <h1 style={styles.title}>Bem-vinda de volta ao futuro.</h1>
+        <p style={styles.subtitle}>
+          Automação e inteligência para atendimentos e vendas automáticas.
+        </p>
+      </div>
+
+      <div style={styles.rightPanel}>
+        <form style={styles.loginContainer} onSubmit={handleLogin}>
+          <h2 style={styles.formTitle}>Acesse sua Conta</h2>
+
+          <div style={styles.inputGroup}>
+            <FiUser style={styles.inputIcon} />
+            <input
+              type="text"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              style={styles.input}
+              placeholder="Seu ID de Agente"
+            />
           </div>
 
-          <div style={styles.wallpaperContainer}>
-            <img src="./images/wallpaper1.webp" style={styles.wallpaperImage} />
+          <div style={styles.inputGroup}>
+            <FiLock style={styles.inputIcon} />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+              placeholder="Sua Senha Secreta"
+            />
           </div>
-        </div>
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Entrando..." : "Login"}
+            {!loading && <FiArrowRight style={styles.buttonIcon} />}
+          </button>
+        </form>
       </div>
     </div>
   );

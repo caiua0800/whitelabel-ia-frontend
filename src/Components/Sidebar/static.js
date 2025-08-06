@@ -1,15 +1,12 @@
-
+import { FiMessageSquare, FiPackage, FiShoppingCart, FiUsers, FiTag, FiGrid, FiSend, FiSettings } from "react-icons/fi";
 
 export const menuItems = [
-    // {name: "HOME", icon: "./icons/home-icon.svg", route: "/home"},
-    {name: "CHATS", icon: "./icons/chat-icon.svg", route: "/"},
-    {name: "PRODUTOS", icon: "./icons/product-icon.svg", route: "/produtos"},
-    {name: "VENDAS", icon: "./icons/sale-icon.svg", route: "/vendas"},
-    {name: "CLIENTES", icon: "./icons/clients-icon.svg", route: "/clientes"},
-    {name: "TAGS", icon: "./icons/tag-icon.svg", route: "/tags"},
-    {name: "CATEGORIAS", icon: "./icons/tag-icon.svg", route: "/categorias"},
-    {name: "DISPAROS", icon: "./icons/airplane2-icon.svg", route: "/disparos"},
-    // {name: "ASSINATURA", icon: "./icons/airplane2-icon.svg", route: "/assinatura"},
-    {name: "CONFIGURAÇÕES", icon: "./icons/airplane2-icon.svg", route: "/usuarios"},
-]
-
+    { name: "CHATS", icon: <FiMessageSquare size={22} />, route: "/" },
+    { name: "PRODUTOS", icon: <FiPackage size={22} />, route: "/produtos" },
+    { name: "VENDAS", icon: <FiShoppingCart size={22} />, route: "/vendas" },
+    { name: "CLIENTES", icon: <FiUsers size={22} />, route: "/clientes" },
+    { name: "TAGS", icon: <FiTag size={22} />, route: "/tags" },
+    { name: "CATEGORIAS", icon: <FiGrid size={22} />, route: "/categorias" },
+    { name: "DISPAROS", icon: <FiSend size={22} />, route: "/disparos" },
+    { name: "CONFIGURAÇÕES", icon: <FiSettings size={22} />, route: "/usuarios" },
+];

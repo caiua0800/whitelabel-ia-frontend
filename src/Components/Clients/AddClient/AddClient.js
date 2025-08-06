@@ -1,25 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import style from "./AddClientStyle";
 import { LoadingContext } from "../../../Context/LoadingContext";
-import { ChatContext } from "../../../Context/ChatContext";
 import axios from "axios";
 import { AuthContext } from "../../../Context/AuthContext";
+import { FiX, FiMapPin, FiSave } from "react-icons/fi";
+import toast from 'react-hot-toast';
 
 export default function AddClient({ onClose }) {
   const { startLoading, stopLoading } = useContext(LoadingContext);
   const { credentials } = useContext(AuthContext);
-
-  const initialData = useRef({
-    street: "",
-    complement: "",
-    number: "",
-    neighborhood: "",
-    state: "",
-    zipcode: "",
-    country: "Brasil",
-    city: "",
-    clientName: "",
-  });
 
   const [street, setStreet] = useState("");
   const [complement, setComplement] = useState("");
@@ -31,54 +20,14 @@ export default function AddClient({ onClose }) {
   const [country, setCountry] = useState("Brasil");
   const [city, setCity] = useState("");
   const [clientName, setClientName] = useState("");
-  const [chatId, setChatId] = useState("");
-  const [teveAlteracoes, setTeveAlteracoes] = useState(false);
-
-  useEffect(() => {
-    checkForChanges();
-  }, [
-    street,
-    complement,
-    number,
-    neighborhood,
-    state,
-    zipcode,
-    country,
-    city,
-    clientName,
-  ]);
-
-  const checkForChanges = () => {
-    const currentValues = {
-      street,
-      complement,
-      number,
-      neighborhood,
-      state,
-      zipcode,
-      country,
-      city,
-      clientName,
-    };
-
-    const hasChanges = Object.keys(currentValues).some(
-      (key) => currentValues[key] !== initialData.current[key]
-    );
-
-    setTeveAlteracoes(hasChanges);
-  };
 
   const buscarEnderecoPorCEP = async (cep) => {
     startLoading();
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
       const data = response.data;
-
       if (!data.erro) {
-        return {
-          ...data,
-          pais: "Brasil",
-        };
+        return { ...data, pais: "Brasil" };
       }
       return data;
     } catch (error) {
@@ -89,260 +38,103 @@ export default function AddClient({ onClose }) {
     }
   };
 
-  const formatPhone = (n) => {
-    if (n?.trim().length === 13) {
-      return `(${n[0]}${n[1]}) ${n[2]}${n[3]} ${n[4]}${n[5]}${n[6]}${n[7]}${n[8]}${n[9]}${n[10]}${n[11]}${n[12]}`;
-    }
-    return n || "";
-  };
-
-  const handleSairSemSalvar = () => {
-    setClientName("");
-    setClientContact("");
-    setZipcode("");
-    setState("");
-    setStreet("");
-    setCity("");
-    setNeighborhood("");
-    setComplement("");
-    setNumber("");
-    onClose();
-  };
-
   const preencherEndereco = async () => {
     if (zipcode.trim().length === 8) {
       try {
         const endereco = await buscarEnderecoPorCEP(zipcode);
-
         setStreet(endereco.logradouro || "");
         setNeighborhood(endereco.bairro || "");
         setCity(endereco.localidade || "");
         setState(endereco.uf || "");
         setCountry(endereco.pais || "Brasil");
       } catch (error) {
-        console.error("Erro ao buscar CEP:", error);
-        // Não limpa os campos, apenas mantém o que estava
+        toast.error(error.message);
       }
     }
   };
 
-    const handleAddClient = async () => {
-      startLoading();
-
-      try {
-        await axios
-          .post(
-            `${process.env.REACT_APP_BASE_ROUTE}chat`,
-            {
-              id: clientContact,
-              street,
-              zipcode,
-              number,
-              city,
-              neighborhood,
-              country,
-              clientName,
-              complement,
-              state,
-            },
-            {
-              headers: { Authorization: credentials.accessToken },
-            }
-          )
-          .then((res) => {
-            if (res.status === 200) {
-              alert("Contato salvo com sucesso.");
-              onClose();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            alert("Erro ao salvar contato.");
-          });
-      } catch (error) {
-        console.log(error);
-        alert("Erro ao salvar contato.");
-      } finally {
-        stopLoading();
+  const handleAddClient = async (e) => {
+    e.preventDefault();
+    startLoading();
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat`,
+        { id: `55${clientContact.replace(/\D/g, '')}`, street, zipcode, number, city, neighborhood, country, clientName, complement, state },
+        { headers: { Authorization: credentials.accessToken } }
+      );
+      if (response.status === 201) {
+        toast.success("Contato salvo com sucesso.");
+        onClose();
       }
-    };
-
-  
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Erro ao salvar contato.");
+      console.error(error);
+    } finally {
+      stopLoading();
+    }
+  };
 
   return (
-    <>
-      <div style={style.container}>
-        <div style={style.modalContainer}>
-          <div style={style.modal}>
-            <span style={style.closeButtonModal} onClick={handleSairSemSalvar}>x</span>
-            <span style={style.modalTitle}>Cadastre o contato</span>
-
-            <div style={style.clientProfilePictureBox}>
-              <div style={style.clientProfilePictureCircle}>
-                <img
-                  src="./icons/user-icon2.png"
-                  style={style.clientProfilePicture}
-                />
-              </div>
-            </div>
-
-            <div style={style.clientInfoContainer}>
-              <div style={style.infoRowOne}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Nome do cliente</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={clientName}
-                      onChange={(e) => setClientName(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowTwo}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Contato</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={clientContact}
-                      onChange={(e) => setClientContact(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>CEP</span>
-                  <div
-                    style={{
-                      ...style.infoRowBox,
-                      gridTemplateColumns: "70% 30%",
-                      gap: 5,
-                    }}
-                  >
-                    <input
-                      type="number"
-                      value={zipcode}
-                      onChange={(e) => setZipcode(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                    <button
-                      onClick={preencherEndereco}
-                      style={style.searchZipcode}
-                    >
-                      Buscar
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Logradouro</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={street}
-                      onChange={(e) => setStreet(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Número</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={number}
-                      onChange={(e) => setNumber(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Bairro</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={neighborhood}
-                      onChange={(e) => setNeighborhood(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Complemento</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={complement}
-                      onChange={(e) => setComplement(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Cidade</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Estado</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowContainer}>
-                <span style={style.infoTitle}>País</span>
-                <div style={style.infoRowBox}>
-                  <input
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    placeholder=""
-                    style={style.infoRowInput}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div style={style.confirmation}>
-              <div
-                style={{
-                  ...style.containerButtons,
-                  gridTemplateColumns: "100%",
-                }}
-              >
-                <button
-                  onClick={handleAddClient}
-                  style={{
-                    ...style.button,
-                    background: "rgba(30, 230, 0, 1)",
-                  }}
-                >
-                  Salvar
-                </button>
-              </div>
-            </div>
-          </div>
+    <div style={style.overlay} onClick={onClose}>
+      <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
+        <div style={style.modalHeader}>
+            <h2 style={style.title}>Adicionar Novo Contato</h2>
+            <button onClick={onClose} style={style.closeButton}><FiX size={20}/></button>
         </div>
+        <form onSubmit={handleAddClient} style={style.form}>
+            <div style={style.inputGrid}>
+                 <div style={{...style.inputGroup, gridColumn: '1 / 3'}}>
+                    <label style={style.label}>Nome do Cliente</label>
+                    <input value={clientName} onChange={(e) => setClientName(e.target.value)} style={style.input} required/>
+                </div>
+                 <div style={style.inputGroup}>
+                    <label style={style.label}>Contato (DDD + Número)</label>
+                    <input value={clientContact} onChange={(e) => setClientContact(e.target.value)} style={style.input} required/>
+                </div>
+            </div>
+             <div style={style.inputGrid}>
+                <div style={style.inputGroup}>
+                    <label style={style.label}>CEP</label>
+                    <div style={style.cepWrapper}>
+                        <input type="text" value={zipcode} onChange={(e) => setZipcode(e.target.value.replace(/\D/g, ''))} maxLength={8} style={style.input} />
+                        <button type="button" onClick={preencherEndereco} style={style.cepButton}><FiMapPin/></button>
+                    </div>
+                </div>
+                 <div style={{...style.inputGroup, gridColumn: '2 / 4'}}>
+                    <label style={style.label}>Logradouro</label>
+                    <input value={street} onChange={(e) => setStreet(e.target.value)} style={style.input} />
+                </div>
+                <div style={style.inputGroup}>
+                    <label style={style.label}>Número</label>
+                    <input value={number} onChange={(e) => setNumber(e.target.value)} style={style.input} />
+                </div>
+            </div>
+             <div style={style.inputGrid}>
+                <div style={style.inputGroup}>
+                    <label style={style.label}>Bairro</label>
+                    <input value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} style={style.input} />
+                </div>
+                 <div style={style.inputGroup}>
+                    <label style={style.label}>Complemento</label>
+                    <input value={complement} onChange={(e) => setComplement(e.target.value)} style={style.input} />
+                </div>
+                 <div style={style.inputGroup}>
+                    <label style={style.label}>Cidade</label>
+                    <input value={city} onChange={(e) => setCity(e.target.value)} style={style.input} />
+                </div>
+                 <div style={style.inputGroup}>
+                    <label style={style.label}>Estado</label>
+                    <input value={state} onChange={(e) => setState(e.target.value)} style={style.input} />
+                </div>
+            </div>
+            <div style={style.buttonArea}>
+                <button type="button" onClick={onClose} style={{...style.actionButton, ...style.cancelButton}}>Cancelar</button>
+                <button type="submit" style={{...style.actionButton, ...style.saveButton}}>
+                    <FiSave style={{marginRight: '8px'}}/> Salvar Contato
+                </button>
+            </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

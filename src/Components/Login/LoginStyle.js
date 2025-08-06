@@ -1,129 +1,135 @@
-
 const styles = {
-    container: {
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(15, 0, 25, 1)",
-        position: "relative",
+    page: {
+      width: "100vw",
+      height: "100vh",
+      display: "flex",
+      fontFamily: "'Poppins', sans-serif",
     },
-    background: {
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        top: 0,
-        left: 0,
-        zIndex: 1,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-        opacity: 0.6
+    leftPanel: {
+      flex: 1,
+      background: "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
+      backgroundSize: "400% 400%",
+      animation: "gradient 15s ease infinite",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      textAlign: "center",
+      padding: "40px",
+      color: "white",
     },
-    content: {
-        width: "100%",
-        height: "100%",
-        zIndex: 2,
-        position: "absolute",
-        top: 0,
-        left: 0
+    logo: {
+      width: "120px",
+      marginBottom: "40px",
     },
-    contentContent: {
-        width: "100%",
-        height: "100%",
-        display: "grid",
-        gridTemplateRows: "100vh",
-        color: "blue"
+    title: {
+      fontSize: "3em",
+      fontWeight: 700,
+      textShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
     },
-    header: {
-        width: "100%",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 9,
-        display: "flex",
-        padding: "10px 30px",
-        justifyContent: "space-between",
-        alignItems: "center",
-        boxSizing: "border-box"
+    subtitle: {
+      fontSize: "1.2em",
+      marginTop: "10px",
+      maxWidth: "400px",
+      lineHeight: 1.5,
+      opacity: 0.9,
     },
-    agentLogo: {
-        width: 80
+    rightPanel: {
+      flex: 1,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "#f4f7f6",
     },
-    firstHeaderPart: {
-        display: "flex",
-        justifyContent: "start",
-        alignItems: "center",
-        height: "100%",
-        boxSizing: "border-box",
+    loginContainer: {
+      width: "100%",
+      maxWidth: "400px",
+      padding: "50px",
+      background: "rgba(255, 255, 255, 0.9)",
+      borderRadius: "20px",
+      boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+      backdropFilter: "blur(4px)",
+      border: "1px solid rgba(255, 255, 255, 0.18)",
+      display: "flex",
+      flexDirection: "column",
+      gap: "25px",
     },
-    secondHeaderPart: {
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        gap: 10
+    formTitle: {
+      fontSize: "2em",
+      fontWeight: 600,
+      color: "#333",
+      textAlign: "center",
+      margin: 0,
+      marginBottom: "10px",
     },
-    seLoko: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "start"
+    inputGroup: {
+      position: "relative",
     },
-    seLokoTitle: {
-        fontSize: 16,
-        color: "rgba(210, 210, 210, 1)",
-        fontWeight: 600
+    inputIcon: {
+      position: "absolute",
+      left: "15px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      color: "#888",
     },
-    inputBox: {
-        width: 300,
-        height: 35,
-        borderRadius: 4,
-        border: 0,
-        padding: 0,
-        boxSizing: "border-box",
-        paddingLeft: 20,
-        fontSize: 18,
-        background: "rgba(210, 210, 210, 0.6)",
-        outline: "none",
-        fontWeight: 600
+    input: {
+      width: "100%",
+      height: "50px",
+      border: "1px solid #ddd",
+      borderRadius: "10px",
+      padding: "0 20px 0 50px",
+      boxSizing: "border-box",
+      fontSize: "1em",
+      background: "#fff",
+      outline: "none",
+      transition: "all 0.3s ease",
     },
-    loginOrSignUp: {
-        display: "flex",
-        alignItems: "center",
-        gap: 20
+    button: {
+      width: "100%",
+      height: "50px",
+      borderRadius: "10px",
+      border: "none",
+      background: "linear-gradient(90deg, #e73c7e, #23a6d5)",
+      color: "white",
+      fontSize: "1.2em",
+      fontWeight: 600,
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      transition: "all 0.3s ease",
     },
-    loginButton: {
-        width: 150,
-        height: 35,
-        background: "rgba(80, 200, 0, 1)",
-        borderRadius: 4,
-        border: 0,
-        cursor: "pointer",
-        fontSize: 18,
-        color:  'rgba(0,0,0,0.7)',
-        fontWeight: 600,
+    buttonIcon: {
+      marginLeft: "10px",
     },
-    signUpButton: {
-        borderRadius: 8,
-        border: 0,
-        cursor: "pointer",
-        fontSize: 18,
-        fontWeight: 600,
-        display: "flex",
-        color: "rgba(0, 200, 255, 1)",
-        textDecoration: "underline",
-    },
-    wallpaperContainer: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-        // marginTop: 40
-    },
-    wallpaperImage: {
-        width: "60%",
-        borderRadius: 4,
-        opacity: 1
+  };
+  
+  const keyframes = `
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-}
-
-export default styles;
+  `;
+  
+  const styleSheet = document.createElement("style");
+  styleSheet.type = "text/css";
+  styleSheet.innerText = keyframes;
+  document.head.appendChild(styleSheet);
+  
+  styles.input[':focus'] = {
+    borderColor: '#e73c7e',
+    boxShadow: '0 0 0 3px rgba(231, 60, 126, 0.3)',
+  };
+  
+  styles.button[':hover'] = {
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+    transform: 'translateY(-2px)',
+  };
+  
+  styles.button[':disabled'] = {
+    opacity: 0.7,
+    cursor: 'not-allowed',
+  };
+  
+  export default styles;

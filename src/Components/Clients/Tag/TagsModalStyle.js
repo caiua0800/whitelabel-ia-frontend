@@ -1,138 +1,45 @@
-
 const style = {
-    container: {
-        width: "100vw",
-        height: "100vh",
-        zIndex: 10,
-        background: "rgba(0,0,0,0.6)",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+    overlay: {
+        width: "100vw", height: "100vh", zIndex: 12, background: "rgba(0,0,0,0.6)",
+        position: "fixed", top: 0, left: 0, display: "flex", justifyContent: "center", alignItems: "center",
+        backdropFilter: "blur(5px)",
     },
-    containerModal: {
-        padding: "30px",
-        boxSizing: "border-box",
-        background: "rgba(210, 210, 210, 1)",
-        borderRadius: 4,
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
+    modalContainer: {
+        width: '100%', maxWidth: '600px', background: "#1e212b", borderRadius: "16px",
+        display: "flex", flexDirection: "column", border: "1px solid #2a2f3b",
+        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
     },
-    closeBtn: {
-        fontSize: 18,
-        fontWeight: 600,
-        cursor: "pointer",
-        color: "rgba(80, 80, 80, 1)",
-        position: "absolute",
-        top: 25,
-        left: 25
+    modalHeader: {
+        padding: "20px 25px", borderBottom: "1px solid #2a2f3b", display: "flex",
+        justifyContent: "space-between", alignItems: "center",
     },
-    title: {
-        fontSize: 26,
-        fontWeight: "600",
-        color: "rgba(80, 80, 80, 1)"
-    },
-    searchBoxContainer: {
-        width: 400,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "start",
-        marginTop: 20
-    },
-    searchBarTitle: {
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
-    },
-    searchBox: {
-        width: "100%",
-        height: 40,
-        display: "grid",
-        gridTemplateColumns: "80% 20%",
-        gap: 10,
-        boxSizing: "border-box"
-    },
+    title: { fontSize: "20px", fontWeight: "600", color: "#FFF", margin: 0 },
+    closeBtn: { background: "none", border: "none", color: "#aeb9c4", cursor: "pointer" },
+    modalBody: { padding: "25px", display: 'flex', flexDirection: 'column', gap: '20px' },
+    searchWrapper: { position: "relative" },
+    searchIcon: { position: "absolute", left: "15px", top: "50%", transform: "translateY(-50%)", color: "#aeb9c4" },
     searchInput: {
-        width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
-        padding: 0,
-        paddingLeft: 20,
-        border: 0,
-        outline: "none",
-        background: "rgba(230, 230, 230, 1)",
-        fontSize: 16,
-        fontWeight: 600,
-        boxShadow: "4px 4px 3px rgba(0,0,0,0.2)",
-            borderRadius: 4,
-        border: "2px solid rgba(80, 80, 80, 1)"
+        width: "100%", height: "45px", background: "#2a2f3b", border: "1px solid #3c4257",
+        borderRadius: "12px", padding: "0 20px 0 45px", boxSizing: "border-box", color: "#FFF",
+        fontSize: "14px", outline: "none",
     },
-    searchButton: {
-        width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
-        border: 0,
-        outline: "none",
-        background: "rgba(100, 200, 0, 1)",
-        fontSize: 16,
-        fontWeight: 600,
-        boxShadow: "4px 4px 3px rgba(0,0,0,0.2)" ,
-        cursor: "pointer",
-        borderRadius: 4,
-        border: "2px solid rgba(80, 80, 80, 1)"
-    },
-    areaTitle: {
-        marginTop: 20,
-        fontSize: 16,
-        color: "rgba(80, 80, 80, 1)",
-        fontWeight: 600,
-        width: "100%",
-        display: "flex",
-        justifyContent: "start" 
-    },
-    tagUnselecteds: {
-        width: 400,
-        height: 120,
-        overflowY: "auto",
-        display: "flex",
-        flexWrap: "wrap",
-        background: "rgba(200, 200, 200, 1)",
-        borderRadius: 4,
-        padding: 10,
-        boxSizing: "border-box",
-        gap: 10
+    tagsSection: {},
+    areaTitle: { fontSize: "14px", color: "#aeb9c4", fontWeight: 600, marginBottom: '10px' },
+    tagsContainer: {
+        minHeight: '100px', maxHeight: '150px', overflowY: 'auto', display: "flex", flexWrap: "wrap",
+        background: "#2a2f3b", borderRadius: "12px", padding: "10px", gap: "10px", border: "1px solid #3c4257",
     },
     tag: {
-        width: "max-content",
-        height: "max-content",
-        padding: "5px 10px",
-        boxSizing: "border-box",
-        borderRadius: 4,
-        background: "rgba(180, 180, 180, 1)",
+        padding: "5px 12px", maxHeight: "max-content", borderRadius: "20px", background: "#3c4257",
+        fontSize: "14px", color: "#aeb9c4", cursor: 'pointer', transition: 'all 0.2s ease',
     },
-    tagText: {
-        fontSize: 14,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)",
-    },
+    tagSelected: { background: '#4ecf78', color: '#1e212b', fontWeight: '600' },
+    noTagsMessage: { width: '100%', textAlign: 'center', color: '#aeb9c4', alignSelf: 'center', fontSize: '14px' },
+    modalFooter: { padding: '20px 25px', borderTop: '1px solid #2a2f3b', display: 'flex', justifyContent: 'flex-end' },
     saveButton: {
-        width: 400,
-        height: 35,
-        boxSizing: "border-box",
-        border: 0,
-        outline: "none",
-        background: "rgba(0, 200, 200, 1)",
-        fontSize: 16,
-        fontWeight: 600,
-        cursor: "pointer",
-        borderRadius: 4,
-        marginTop: 10,
-        color: "rgba(80, 80, 80, 1)"
+        background: '#4ecf78', color: '#1e212b', border: 'none', borderRadius: '10px',
+        padding: '10px 20px', fontSize: '15px', fontWeight: '600', cursor: 'pointer',
     }
-}
+};
 
 export default style;

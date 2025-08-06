@@ -1,192 +1,145 @@
-
-
 const style = {
     chatContainer: {
         width: "100%",
-        height: "84vh",
+        height: "calc(100vh - 90px)",
         boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
-        background: "white",
-        position: "relative"
-        // borderLeft: "2px solid rgba(0,0,0,0.1)"
+        background: "#181a20",
     },
     chatHeader: {
         width: "100%",
-        height: "8vh",
-        background: "rgba(220, 220, 230, 1)",
+        height: "70px",
+        background: "#1e212b",
         display: "flex",
         justifyContent: "space-between",
-        padding: "0 30px",
+        padding: "0 25px",
         boxSizing: "border-box",
-        alignItems: "center"
-    },
-    chatOptionMenu: {
-        display: "flex",
-        gap: 20
-    },
-    chatOptionsButton: {
-        width: 30,
-        height: 30,
-        cursor: "pointer",
-        transition: ".3s",
-        position: "relative"
-    },
-    popUpIconButton: {
-        position: "absolute",
-        bottom: -50,
-        left: -80,
-        fontSize: 16,
-        color: "black",
-        background: "white",
-        opacity: 0.6,
-        borderRadius: 8,
-        padding: 5,
-        zIndex: 9,
-        boxShadow: "2px 2px 3px rgba(0,0,0,0.6)"
-    },
-    optionsIcon: {
-        width: "100%",
-        opacity: 0.3,
-        transition: ".7s"
-    },
-    chatBody: {
-        width: "100%",
-        height: "68vh",
-        boxSizing: "border-box",
-        overflowY: "auto",
-        boxSizing: "border-box",
-        backgroundImage: "url('/images/whatsapp-wallpaper.jpg')",
-        backgroundSize: "contain",
-        backgroundPosition: "center",
-        position: "relative"
-    },
-    chatBodyBlackOpacity: {
-        width: "100%",
-        minHeight: "68vh",
-        height: "100%",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        zIndex: 1,
-        background: "rgba(0,0,0,0.4)"
-    },
-    bodyContent: {
-        width: "100%",
-        height: "max-content",
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        zIndex: 2,
-        padding: 30,
-        boxSizing: "border-box",
-        position: "relative"
-    },
-    sendMessagesBox: {
-        width: "100%",
-        height: "8vh",
-        background: "rgba(220, 220, 230, 1)",
-        display: "grid",
-        gridTemplateColumns: "1fr 15fr 1fr",
-        padding: "0 20px",
-        boxSizing: "border-box",
-        position: "relative"
-    },
-    attachConfirmBox: {
-        position: "absolute",
-        top: -200,
-        height: 200,
-        boxShadow: "-5px -4px 5px rgba(0,0,0,0.2)",
-        width: "100%",
-        background: "rgba(255, 255, 249, 1)",
-        display: "flex",
-        justifyContent: "center",
         alignItems: "center",
-        boxSizing: "border-box",
-        padding: 10,
-    },
-    attachShowFileBox: {
-        padding: '8px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '40px',
-    },
-    fileShow: {
-        width:  "100%"
-    },
-    attachFileButton: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "left",
-        alignItems: "center"
-    },
-    attachIcon: {
-        width: 35,
-        height: 35,
-        transition: ".5s",
-        cursor: "pointer",
-        opacity: 0.6
-    },
-    messageInputBox: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    messageInput: {
-        width: "100%",
-        height: "35px",
-        boxSizing: "border-box",
-        paddingLeft: 20,
-        fontSize: 16,
-        fontWeight: 600,
-        outline: "none",
-        color: "rgba(100, 100, 100, 1)"
-    },
-    sendMessageButton: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    sendMessageIcon: {
-        width: 35,
-        height: 35,
-        transition: ".5s",
-        cursor: "pointer",
-        opacity: 0.6
+        flexShrink: 0,
     },
     clientInfo: {
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
+        gap: "15px",
+        cursor: "pointer",
     },
     clientPictureBox: {
-        width: 40,
-        height: 40,
+        width: 45,
+        height: 45,
         overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         borderRadius: "50%",
-        boxShadow: "3px 3px 5px rgba(0,0,0,0.4)",
-        cursor: "pointer"
     },
     clientPicture: {
-        width: "150%",
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+    },
+    clientTextInfo: {
+        display: "flex",
+        flexDirection: "column",
     },
     clientName: {
-        fontSize: 22,
-        color: "rgba(0,0,0,0.7)",
-        fontWeight: 600,
-        marginLeft: 20,
-        cursor: "pointer"
-    }
-}
+        fontSize: "16px",
+        color: "#FFF",
+        fontWeight: "600",
+    },
+    clientNumber: {
+        fontSize: "13px",
+        color: "#aeb9c4",
+    },
+    chatOptionMenu: {
+        display: "flex",
+        gap: "10px"
+    },
+    headerButton: {
+        background: "none",
+        border: "none",
+        color: "#aeb9c4",
+        cursor: "pointer",
+        padding: "8px",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    chatBody: {
+        flexGrow: 1,
+        boxSizing: "border-box",
+        overflowY: "auto",
+        padding: "20px 30px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+    },
+    noMessageInfo: {
+        textAlign: "center",
+        color: "#aeb9c4",
+        marginTop: "auto",
+        marginBottom: "auto",
+    },
+    sendMessagesBox: {
+        width: "100%",
+        height: "70px",
+        background: "#1e212b",
+        display: "flex",
+        padding: "0 15px",
+        boxSizing: "border-box",
+        alignItems: "center",
+        gap: "15px",
+        flexShrink: 0,
+    },
+    messageInputBox: {
+        flexGrow: 1,
+    },
+    messageInput: {
+        width: "100%",
+        height: "45px",
+        background: "#2a2f3b",
+        border: "1px solid #3c4257",
+        borderRadius: "12px",
+        padding: "0 20px",
+        boxSizing: "border-box",
+        fontSize: "15px",
+        color: "#FFF",
+        outline: "none",
+    },
+    iconButton: {
+        background: "none",
+        border: "none",
+        color: "#aeb9c4",
+        cursor: "pointer",
+        padding: "10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "50%",
+    },
+    noChatContainer: {
+        width: "100%",
+        height: "calc(100vh - 90px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#181a20",
+        color: "#aeb9c4",
+        textAlign: "center",
+    },
+    noChatImage: {
+        width: "250px",
+        opacity: "0.5",
+    },
+    noChatTitle: {
+        fontSize: "22px",
+        color: "#FFF",
+        marginTop: "30px",
+        fontWeight: "600",
+    },
+    noChatSubtitle: {
+        fontSize: "16px",
+        marginTop: "10px",
+    },
+};
 
 export default style;

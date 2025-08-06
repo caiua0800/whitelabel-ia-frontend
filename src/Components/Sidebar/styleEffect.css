@@ -1,3 +1,7 @@
-.routeBox:hover{
-    background-color: rgba(210, 210, 210, 0.1) !important;
+.routeBox-hover:hover {
+    background-color: #2a2f3b;
+}
+
+.routeBox-hover:hover span, .routeBox-hover:hover div {
+    color: #FFF !important;
 }

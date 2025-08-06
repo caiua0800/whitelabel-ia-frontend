@@ -1,68 +1,69 @@
-
 const style = {
     header: {
         width: "100%",
         height: "100%",
-        background: "rgba(30, 80, 80, 1)",
-        display: "grid",
-        gridTemplateColumns: "0.4fr 4fr 2fr 2fr",
-        gap: 20,
-        padding: "0 10px",
-        boxSizing: "border-box",
-    },
-    boxAdd: {
-        width: "100%",
-        height: "80%",
-        borderRadius: 8,
-        background: "radial-gradient(rgba(30, 150, 80, 1), rgba(30, 200, 80, 1))",
+        background: "#1e212b",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
         alignItems: "center",
-        boxShadow: "3px 4px 5px rgba(0,0,0,0.2)",
+        justifyContent: "space-between",
+        padding: "0 40px 0px 100px",
         boxSizing: "border-box",
-        padding: "0 30px",
-        cursor: "pointer",
-        transition: ".3s"
+        borderBottom: "1px solid #2a2f3b",
     },
-    addText: {
-        fontSize: 16,
-        color: "white",
-        width: "100%",
-        display:  "flex",
-        justifyContent: "center",
-        textAlign: "center",
+    branding: {
+        display: "flex",
+        alignItems: "center",
+        gap: "20px",
+        
+    },
+    logo: {
+        height: "45px",
+        width: "auto",
+    },
+    dashboardTitle: {
+        fontSize: "24px",
         fontWeight: "600",
-        transition: ".3s"
+        color: "#FFF",
+        margin: "0",
     },
-    boxContainer: {
-        width: "100%",
-        height: "100%",
+    statsContainer: {
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
+        gap: "20px",
     },
-    box: {
-        width: "400px",
-        height: "80%",
-        borderRadius: 8,
-        background: "rgba(30, 200, 80, 1)",
+    statCard: {
+        background: "#2a2f3b",
+        borderRadius: "12px",
+        padding: "15px 25px",
+        display: "flex",
+        alignItems: "center",
+        gap: "15px",
+        minWidth: "220px",
+        border: "1px solid #3c4257",
+    },
+    statIconWrapper: {
+        background: "rgba(78, 205, 120, 0.1)",
+        color: "#4ecf78",
+        height: "45px",
+        width: "45px",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    statTextWrapper: {
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        filter: "drop-shadow(10px 4px 12px rgba(255, 255, 255, 0.1))"
     },
-    boxTitle: {
-        fontSize: 22,
-        fontWeight: 600,
-        color: "white"
+    statTitle: {
+        fontSize: "14px",
+        color: "#aeb9c4",
+        fontWeight: "500",
     },
-    boxValue: {
-        fontSize: 28,
-        fontWeight: 600,
-        color: "white"
-    }
-}
+    statValue: {
+        fontSize: "22px",
+        color: "#FFF",
+        fontWeight: "600",
+    },
+};
 
 export default style;

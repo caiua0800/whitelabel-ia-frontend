@@ -1,143 +1,54 @@
 const style = {
-    container: {
-      width: "100%",
-      height: "100%",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      background: "rgba(210, 210, 210, 1)",
-      zIndex: 10
+    overlay: {
+        width: "100vw", height: "100vh", position: "fixed", top: 0, left: 0,
+        background: "rgba(0,0,0,0.6)", zIndex: 11, display: "flex",
+        justifyContent: "center", alignItems: "center", backdropFilter: "blur(5px)",
     },
-    containerContent: {
-        width: "100%",
-        height: "100%",
-        padding: "30px 50px",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        position: "relative"
+    modalContainer: {
+        width: '100%', maxWidth: '700px', background: "#1e212b",
+        borderRadius: "16px", border: "1px solid #2a2f3b",
+        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
     },
-    title: {
-      fontSize: 38,
-      fontWeight: 800,
-      color: "rgba(80, 80, 80, 1)",
+    modalHeader: {
+        padding: "20px 25px", borderBottom: "1px solid #2a2f3b", display: "flex",
+        justifyContent: "space-between", alignItems: "center",
     },
-    closeBtn: {
-        position: "absolute",
-        top: 30,
-        left: 30,
-        width: 60,
-        cursor: "pointer",
-        opacity: 0.6
+    title: { fontSize: "20px", fontWeight: "600", color: "#FFF", margin: 0 },
+    closeBtn: { background: "none", border: "none", color: "#aeb9c4", cursor: "pointer" },
+    form: { padding: "25px", display: "flex", flexDirection: "column", gap: 15, },
+    inputGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px' },
+    inputGroup: {},
+    label: {
+        display: "block", fontSize: "14px", fontWeight: "500",
+        marginBottom: "8px", color: "#aeb9c4",
     },
-    content: {
-        width: "100%",
-        display: "grid",
-        gridTemplateRows: "auto auto auto",
-        gap: 10,
-        marginTop: 40
+    input: {
+        width: "100%", height: "45px", background: "#2a2f3b",
+        border: "1px solid #3c4257", borderRadius: "12px", padding: "0 20px",
+        boxSizing: "border-box", color: "#FFF", fontSize: "15px", outline: "none",
     },
-    row: {
-        width: "100%",
-        display: "grid",
-        gap: 10
-    },
-    rowItemBox: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "start"
-    },
-    rowItemTitle: {
-        fontSize: 18,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
-    },
-    rowItemObservation: {
-        fontSize: 12,
-        color: "rgba(0, 0, 0, 0.6)",
-        fontWeight: 500
-    },
-    rowItemInput: {
-        width: "100%",
-        height: 35,
-        boxSizing: "border-box",
-        padding: 0,
-        paddingLeft: 20,
-        border: 0,
-        boxShadow: "3px 3px 4px rgba(0,0,0,0.2)",
-        borderRadius: 4,
-        outline: "none",
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
-    },
-    rowItemTextArea: {
-        width: "100%",
-        height: 250,
-        boxSizing: "border-box",
-        padding: 15,
-        border: 0,
-        boxShadow: "3px 3px 4px rgba(0,0,0,0.2)",
-        borderRadius: 4,
-        outline: "none",
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)"
-    },
-    selectCategoryButton: {
-        width: "100%",
-        height: 35,
-        border: 0,
-        boxShadow: "3px 3px 4px rgba(0,0,0,0.2)",
-        cursor: "pointer",
-        boxSizing: "border-box",
-        padding: 0,
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)",
-        background: "rgba(0, 200, 255, 1)",
-        borderRadius: 4
-    },
-    categoryObs: {
-        fontSize: 12,
-        color: "rgba(0, 0, 0, 0.6)",
-        fontWeight: 500
+    textarea: { height: '120px', paddingTop: '12px', resize: 'vertical' },
+    categoryButton: {
+        display: 'flex', alignItems: 'center', justifyContent: 'center', height: "45px",
+        background: "#2a2f3b", border: "1px solid #3c4257", borderRadius: "12px",
+        color: "#aeb9c4", fontSize: "14px", cursor: "pointer",
     },
     selectedCategories: {
-        width: "100%",
-        maxHeight: 150,
-        display: "flex",
-        justifyContent: "start",
-        gap: 10,
-        flexWrap: "wrap"
+        display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px'
     },
     selectedCategory: {
-        padding: "5px 20px",
-        boxSizing: "border-box",
-        background: "rgba(100, 220, 0, 0.6)",
-        color: "rgba(80, 80, 80, 1)",
-        borderRadius: 4,
-        cursor: "pointer",
-        fontSize: 14,
-        fontWeight: 600
+        padding: '4px 10px', background: '#3c4257', borderRadius: '6px',
+        fontSize: '13px', color: '#aeb9c4'
+    },
+    footer: {
+        paddingTop: '10px', borderTop: '1px solid #2a2f3b', marginTop: '10px',
+        display: 'flex', justifyContent: 'flex-end',
     },
     createButton: {
-        width: "100%",
-        height: 35,
-        border: 0,
-        boxShadow: "3px 3px 4px rgba(0,0,0,0.2)",
-        cursor: "pointer",
-        boxSizing: "border-box",
-        padding: 0,
-        fontSize: 16,
-        fontWeight: 600,
-        color: "rgba(80, 80, 80, 1)",
-        background: "rgba(100, 220, 0, 1)",
-        borderRadius: 4
+        background: '#4ecf78', color: '#1e212b', border: 'none',
+        borderRadius: '10px', padding: '10px 20px', fontSize: '15px',
+        fontWeight: '600', cursor: 'pointer',
     }
-  };
-  
-  export default style;
-  
+};
+
+export default style;

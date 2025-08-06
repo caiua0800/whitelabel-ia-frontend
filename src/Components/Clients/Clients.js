@@ -9,6 +9,16 @@ import AddClient from "./AddClient/AddClient";
 import EditarContato from "./EditarContato/EditarContato";
 import InsertClients from "./InsertClients/InsertClients";
 import { LoadingContext } from "../../Context/LoadingContext";
+import {
+  FiPlus,
+  FiUpload,
+  FiDownload,
+  FiSearch,
+  FiSliders,
+  FiTrash2,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 
 const tableBorder = "2px solid rgba(80, 80, 80, 1)";
 const tableBorder2 = "2px solid rgba(80, 80, 80, 0)";
@@ -78,7 +88,7 @@ export default function Clients() {
 
   const handleSearch = async (term = searchTerm, page = 1) => {
     try {
-      startLoading()
+      startLoading();
       setIsSearching(true);
       const normalizedTerm = term
         .normalize("NFD")
@@ -93,7 +103,7 @@ export default function Clients() {
       const countResponse = await searchChats(
         term,
         1,
-        1, 
+        1,
         "752931221232617",
         credentials.accessToken,
         order,
@@ -123,12 +133,14 @@ export default function Clients() {
       console.error("Erro na busca:", error);
     } finally {
       setIsSearching(false);
-      stopLoading()
+      stopLoading();
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
+      handleSearch();
+    }else{
       handleSearch();
     }
   };
@@ -202,358 +214,167 @@ export default function Clients() {
   return (
     <>
       <div style={style.container}>
-        <span style={style.title}>Clientes</span>
-        <div style={style.headerGrid}>
-          <div style={style.headerTextExplanation}>
-            <div style={style.explanationTexts}>
-              <span style={style.explanation}>
-                Aqui você consegue ver todos os clientes que entraram em contato
-                (com cadastro ou não), associar Tags a eles, exportar tabelas,
-                gerênciar as contas e muito mais!
-              </span>
-              <span style={style.explanation}>
-                Configure seus leads com suas tags para fazer disparos de
-                maneira eficiente.
-              </span>
-            </div>
-          </div>
-          <div style={style.headerFirstButtonsGrid}>
+        <div style={style.header}>
+          <h1 style={style.title}>Gerenciamento de Clientes</h1>
+          <div style={style.headerActions}>
             <button
-              style={{ ...style.button, background: "rgba(80, 200, 0, 1)" }}
-              onClick={handleExportExcel}
-            >
-              Extrair Tabela Excel
-            </button>
-            <button
-              style={{ ...style.button, background: "rgba(80, 200, 200, 1)" }}
-              onClick={handleExportPdf}
-            >
-              Extrair Tabela PDF
-            </button>
-          </div>
-          <div style={style.headerFirstButtonsGrid}>
-            <button
-              style={{ ...style.button, background: "rgba(210, 210, 210, 1)" }}
-              onClick={() => setShowAddClientModal(true)}
-            >
-              Adicionar Cliente
-            </button>
-            <button
-              style={{ ...style.button, background: "rgba(210, 210, 210, 1)" }}
               onClick={() => setShowInsertClientsModal(true)}
+              style={style.actionButton}
             >
-              Inserir Clients (Tab. Excel)
+              <FiUpload style={{ marginRight: "8px" }} /> Importar
+            </button>
+            <button
+              onClick={() => setShowAddClientModal(true)}
+              style={style.actionButtonPrimary}
+            >
+              <FiPlus style={{ marginRight: "8px" }} /> Adicionar Cliente
             </button>
           </div>
         </div>
 
-        <div style={style.searchArea}>
-          <div style={style.searchBarBoxContainer}>
-            <span style={style.searchBarBoxContainerTitle}>
-              Buscar Clientes
-            </span>
-            <div style={style.searchBarBox}>
-              <input
-                placeholder="Nome ou contato"
-                style={style.searchBarInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={handleKeyPress}
-              />
-            </div>
+        <div style={style.panel}>
+          <div style={style.searchWrapper}>
+            <FiSearch style={style.searchIcon} />
+            <input
+              placeholder="Nome ou contato"
+              style={style.searchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
           </div>
-
-          <div style={style.filters}>
-            {/* <div style={style.filterBox}>
-              <span style={style.filterBoxName}>Entre</span>
-              <div style={style.filter}>
-                <input
-                  type="date"
-                  style={style.filterInput}
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div style={style.filterBox}>
-              <span style={style.filterBoxName}>Até</span>
-              <div style={style.filter}>
-                <input
-                  type="date"
-                  style={style.filterInput}
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div> */}
-
-            <div style={style.filterBox}>
-              <span style={style.filterBoxName}>Agente responsável</span>
-              <select
-                style={style.filterInput}
-                value={chosenAgent?.number || ""}
-                onChange={(e) => {
-                  const selected = avaliableAgents.find(
-                    (a) => a.number === e.target.value
-                  );
-                  setChosenAgent(selected);
-                }}
-              >
-                {avaliableAgents &&
-                  avaliableAgents.map((agent) => (
-                    <option key={agent.number} value={agent.number}>
-                      {agent.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div style={style.filterBox}>
-              <span style={style.filterBoxName}>Ordem</span>
-              <div style={style.filter}>
-                <select
-                  style={style.filterInput}
-                  value={order}
-                  onChange={(e) => setOrder(e.target.value)}
-                >
-                  <option value="desc">Mais recentes primeiro</option>
-                  <option value="asc">Mais antigos primeiro</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={style.filterBox}>
-              <span style={style.filterBoxName}>Tags</span>
-              <div style={style.filter}>
-                <button
-                  onClick={() => setShowTagsModal(true)}
-                  style={style.filterButton}
-                >
-                  Selecionar Tags
-                </button>
-              </div>
-            </div>
+          <div style={style.filterGroup}>
+            <select
+              style={style.selectInput}
+              value={chosenAgent?.number || ""}
+              onChange={(e) => {
+                const selected = avaliableAgents.find(
+                  (a) => a.number === e.target.value
+                );
+                setChosenAgent(selected);
+              }}
+            >
+              {avaliableAgents &&
+                avaliableAgents.map((agent) => (
+                  <option key={agent.id} value={agent.number}>
+                    {agent.name}
+                  </option>
+                ))}
+            </select>
+            <button
+              onClick={() => setShowTagsModal(true)}
+              style={style.tagButton}
+            >
+              <FiSliders style={{ marginRight: "8px" }} /> Tags (
+              {selectedTags.length})
+            </button>
+            <button onClick={handleClearFilters} style={style.clearButton}>
+              <FiTrash2 style={{ marginRight: "8px" }} /> Limpar
+            </button>
+            <button
+              style={style.searchButton}
+              onClick={handleKeyPress}
+              disabled={isSearching}
+            >
+              {isSearching ? "Buscando..." : "Pesquisar"}
+            </button>
           </div>
-          <button
-            style={style.searchButton}
-            onClick={() => handleSearch()}
-            disabled={isSearching}
-          >
-            {isSearching ? "Buscando..." : "Pesquisar"}
-          </button>
         </div>
 
         <div style={style.tableContainer}>
-          <span style={style.tableTitle}>Tabela de clientes</span>
+          <div style={style.tableHeader}>
+            <span style={style.tableHeaderCell}>Nome</span>
+            <span style={style.tableHeaderCell}>Contato</span>
+            <span style={style.tableHeaderCell}>Data</span>
+            <span style={style.tableHeaderCell}>Cidade</span>
+            <span style={style.tableHeaderCell}>Estado</span>
+            <span style={style.tableHeaderCell}>Status</span>
+          </div>
 
-          <div style={style.table}>
-            <div style={{ ...style.tableHeader, borderBottom: tableBorder }}>
-              <div
-                style={{ ...style.tableHeaderCell, borderRight: tableBorder }}
-              >
-                <span style={style.tableHeaderCellName}>Nome</span>
-              </div>
-              <div
-                style={{ ...style.tableHeaderCell, borderRight: tableBorder }}
-              >
-                <span style={style.tableHeaderCellName}>Contato</span>
-              </div>
-              <div
-                style={{ ...style.tableHeaderCell, borderRight: tableBorder }}
-              >
-                <span style={style.tableHeaderCellName}>Data</span>
-              </div>
-              <div
-                style={{ ...style.tableHeaderCell, borderRight: tableBorder }}
-              >
-                <span style={style.tableHeaderCellName}>Cidade</span>
-              </div>
-              <div
-                style={{ ...style.tableHeaderCell, borderRight: tableBorder }}
-              >
-                <span style={style.tableHeaderCellName}>Estado</span>
-              </div>
-              <div style={style.tableHeaderCell}>
-                <span style={style.tableHeaderCellName}>Status</span>
-              </div>
-            </div>
-
-            <div style={style.tableBody(getCurrentPageClients())}>
-              {getCurrentPageClients().length > 0 ? (
-                getCurrentPageClients().map((client) => (
-                  <div
-                    onClick={() => setShowEditClientModal(client)}
-                    key={client.id}
-                    style={style.tableHeader}
-                  >
-                    <div
-                      style={{
-                        ...style.tableHeaderCell1,
-                        borderRight: tableBorder2,
-                      }}
-                    >
-                      <span>{client.clientName || "Não informado"}</span>
-                    </div>
-                    <div
-                      style={{
-                        ...style.tableHeaderCell1,
-                        borderRight: tableBorder2,
-                      }}
-                    >
-                      <span>
-                        {func.formatarContato(client.id) || "Não informado"}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        ...style.tableHeaderCell1,
-                        borderRight: tableBorder2,
-                      }}
-                    >
-                      <span>
-                        {func.formatarData(client.dateCreated) ||
-                          "Não informado"}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        ...style.tableHeaderCell1,
-                        borderRight: tableBorder2,
-                      }}
-                    >
-                      <span>{client.city || "Não informado"}</span>
-                    </div>
-                    <div
-                      style={{
-                        ...style.tableHeaderCell1,
-                        borderRight: tableBorder2,
-                      }}
-                    >
-                      <span>{client.state || "Não informado"}</span>
-                    </div>
-                    <div style={{ ...style.tableHeaderCell1 }}>
-                      <span>{client.status === 1 ? "Ativo" : "Inativo"}</span>
-                    </div>
-                  </div>
-                ))
-              ) : (
+          <div style={style.tableBody}>
+            {isSearching && (!chats || chats.length === 0) ? (
+              <div style={style.messageCenter}>Buscando...</div>
+            ) : chats && chats.length > 0 ? (
+              chats.map((client) => (
                 <div
-                  style={{
-                    gridColumn: "1 / -1",
-                    textAlign: "center",
-                    padding: "20px",
-                    color: "#666",
-                  }}
+                  onClick={() => setShowEditClientModal(client)}
+                  key={client.id}
+                  style={style.tableRow}
+                  className="table-row-hover"
                 >
-                  {isSearching ? "Buscando..." : "Nenhum cliente encontrado"}
+                  <span style={style.tableCell}>
+                    {client.clientName || "Não informado"}
+                  </span>
+                  <span style={style.tableCell}>
+                    {func.formatarContato(client.id) || "Não informado"}
+                  </span>
+                  <span style={style.tableCell}>
+                    {func.formatarData(client.dateCreated) || "Não informado"}
+                  </span>
+                  <span style={style.tableCell}>
+                    {client.city || "Não informado"}
+                  </span>
+                  <span style={style.tableCell}>
+                    {client.state || "Não informado"}
+                  </span>
+                  <span style={style.tableCell}>
+                    {client.status === 1 ? "Ativo" : "Inativo"}
+                  </span>
                 </div>
-              )}
-            </div>
+              ))
+            ) : (
+              <div style={style.messageCenter}>Nenhum cliente encontrado.</div>
+            )}
           </div>
         </div>
 
-        {/* Paginação */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "20px",
-            width: "100%",
-          }}
-        >
-          <div style={{ flex: 1 }}></div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "20px",
-            }}
-          >
+        {totalPages > 1 && (
+          <div style={style.paginationContainer}>
             <button
               style={{
-                ...style.button,
-                padding: "8px 16px",
-                background:
-                  currentPage === 1 ? "#ccc" : "rgba(80, 200, 200, 1)",
-                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                ...style.paginationButton,
+                ...(currentPage === 1 ? style.disabledButton : {}),
               }}
               onClick={handlePrevPage}
               disabled={currentPage === 1 || isSearching}
             >
-              Anterior
+              <FiChevronLeft /> Anterior
             </button>
-
-            <span style={{ fontSize: "16px", fontWeight: 600 }}>
+            <span style={style.paginationView}>
               Página {currentPage} de {totalPages}
             </span>
-
             <button
               style={{
-                ...style.button,
-                padding: "8px 16px",
-                background:
-                  currentPage === totalPages ? "#ccc" : "rgba(80, 200, 200, 1)",
-                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                ...style.paginationButton,
+                ...(currentPage === totalPages ? style.disabledButton : {}),
               }}
               onClick={handleNextPage}
               disabled={currentPage === totalPages || isSearching}
             >
-              Próxima
+              Próxima <FiChevronRight />
             </button>
           </div>
-
-          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-            {/* <select
-              style={{
-                padding: "8px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-              }}
-              disabled={isSearching}
-              onChange={(e) => {
-                // Implementar mudança de itens por página se necessário
-              }}
-            >
-              <option value="3">3 itens por página</option>
-              <option value="6">6 itens por página</option>
-              <option value="10">10 itens por página</option>
-            </select> */}
-          </div>
-        </div>
+        )}
       </div>
 
       {showTagsModal && (
-        <>
-          <TagsModal
-            currentTagsAdded={selectedTags}
-            onClose={() => setShowTagsModal(false)}
-            handleSelect={handleSelectTags}
-          />
-        </>
+        <TagsModal
+          currentTagsAdded={selectedTags}
+          onClose={() => setShowTagsModal(false)}
+          handleSelect={handleSelectTags}
+        />
       )}
-
       {showAddClientModal && (
-        <>
-          <AddClient onClose={() => setShowAddClientModal(false)} />
-        </>
+        <AddClient onClose={() => setShowAddClientModal(false)} />
       )}
-
       {showInsertClientsModal && (
-        <>
-          <InsertClients onClose={() => setShowInsertClientsModal(false)} />
-        </>
+        <InsertClients onClose={() => setShowInsertClientsModal(false)} />
       )}
-
       {showEditClientModal && (
-        <>
-          <EditarContato
-            onClose={handleCloseEditModal}
-            chat={showEditClientModal}
-          />
-        </>
+        <EditarContato
+          onClose={handleCloseEditModal}
+          chat={showEditClientModal}
+        />
       )}
     </>
   );

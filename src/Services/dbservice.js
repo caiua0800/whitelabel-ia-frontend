@@ -1,15 +1,19 @@
 import axios from "axios";
 
-const REACT_APP_BASE_ROUTE_DOTNET_SERVER = process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER;
-const REACT_APP_BASE_ROUTE_WHATSAPP_SERVER = process.env.REACT_APP_BASE_ROUTE_WHATSAPP_SERVER;
+const REACT_APP_BASE_ROUTE_DOTNET_SERVER =
+  process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER;
+const REACT_APP_BASE_ROUTE_WHATSAPP_SERVER =
+  process.env.REACT_APP_BASE_ROUTE_WHATSAPP_SERVER;
 
 export async function obterChats(agentNumber, token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat?agentNumber=${agentNumber}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat?agentNumber=${agentNumber}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
-
 
 export async function obterShots(token) {
   const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/dto`, {
@@ -19,9 +23,12 @@ export async function obterShots(token) {
 }
 
 export async function obterInformacoesDisparos(token, month, year) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/monthly-stats?month=${month}&year=${year}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/monthly-stats?month=${month}&year=${year}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -93,37 +100,99 @@ export async function searchShots(
 }
 
 export async function criarShot(token, shot) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`, shot, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`,
+    shot,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function criarShot2(token, shot) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`, shot, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`,
+    shot,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function obterModelos(token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}MessageModel`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}MessageModel`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
-
 export async function enviarDisparo(token, agentNumber, shotId, clients) {
-  console.log(agentNumber)
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/send/${shotId}?agentNumber=${agentNumber}`, clients, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/send/${shotId}?agentNumber=${agentNumber}`,
+    clients,
+    {
+      headers: { Authorization: token },
+    }
+  );
+
   return res.status;
 }
 
+export async function criarModelo(token, modeloInfo) {
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}messageModel`,
+    modeloInfo,
+    {
+      headers: { Authorization: token },
+    }
+  );
 
-export async function iniciarChat(token, agentNumber, client_shot_dto, text_to_send, my_name) {
+  if (res.status == 201) {
+    try {
+      var shotResponse = await axios.post(
+        `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot`,
+        {
+          messageModelId: res.data.id,
+          name: modeloInfo.name,
+          status: 1,
+          header: {
+            text: modeloInfo.headerText
+          },
+          body: {
+            text: modeloInfo.bodyText
+          },
+          footer: {
+            text: modeloInfo.footerText
+          }
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      console.log(shotResponse);
+      return shotResponse.status;
+    } catch (error) {
+      console.log("Erro ao criar shot");
+      console.log(error);
+      return null;
+    }
+  } else {
+    return null;
+  }
+}
+
+export async function iniciarChat(
+  token,
+  agentNumber,
+  client_shot_dto,
+  text_to_send,
+  my_name
+) {
   const res = await axios.post(
     `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/start-chat?agentNumber=${agentNumber}`,
     { client_shot_dto, text_to_send, my_name },
@@ -146,27 +215,38 @@ export async function iniciarChatLeads(token, agentNumber, client_shot_dto) {
 }
 
 export async function criarProduto(token, product) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}product`, product, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}product`,
+    product,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function gerarPix(token, identificationType) {
-  console.log(identificationType)
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/signature-pix`, {
-    identificationType,
-    description: "Pagamento da assinatura."
-  }, {
-    headers: { Authorization: token },
-  });
+  console.log(identificationType);
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/signature-pix`,
+    {
+      identificationType,
+      description: "Pagamento da assinatura.",
+    },
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function verificarPagamento(token, paymentId) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/verify/${paymentId}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}payments/verify/${paymentId}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res;
 }
 
@@ -281,16 +361,22 @@ export async function searchProducts(
 }
 
 export async function obterChat(token, id) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/${id}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/${id}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function obterMensagens(chatId, agentNumber, token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}message/chat/${chatId}/${agentNumber}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}message/chat/${chatId}/${agentNumber}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -302,9 +388,12 @@ export async function obterTags(token) {
 }
 
 export async function searchTags(searchTerm, token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/search?name=${searchTerm}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/search?name=${searchTerm}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -320,9 +409,13 @@ export async function saveChatIdToTag(tagId, chatId, token) {
 }
 
 export async function saveTagsToTheChat(newTags, chatId, token) {
-  const res = await axios.put(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/tag/${chatId}`, newTags, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.put(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/tag/${chatId}`,
+    newTags,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -337,46 +430,68 @@ export async function removeChatIdFromTag(tagId, chatId, token) {
 }
 
 export async function criarTag(tag, token) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag`, tag, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag`,
+    tag,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function criarCategoria(tag, token) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}category`, tag, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}category`,
+    tag,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function deleteTag(id, token) {
-  const res = await axios.delete(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${id}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.delete(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${id}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
 
   if (res.status === 200) return true;
   else return false;
 }
 
 export async function editTag(tag, token) {
-  const res = await axios.put(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${tag.id}`, tag, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.put(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${tag.id}`,
+    tag,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function editCategory(tag, token) {
-  const res = await axios.put(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}category/${tag.id}`, tag, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.put(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}category/${tag.id}`,
+    tag,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function obterTag(id, token) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${id}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}tag/${id}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -394,8 +509,8 @@ export async function editarStatusAgente(chatId, newStatus, token) {
 export async function editarStatusTodosOsAgentes(token) {
   const res = await axios.put(
     `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/status/all?newStatus=2`,
-    {},  // 
-    {   
+    {}, //
+    {
       headers: { Authorization: token },
     }
   );
@@ -403,7 +518,7 @@ export async function editarStatusTodosOsAgentes(token) {
 }
 
 export async function editarStatusVenda(saleId, newStatus, token) {
-  console.log(saleId, newStatus, token)
+  console.log(saleId, newStatus, token);
   const res = await axios.put(
     `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}sale/${saleId}/new-status/${newStatus}`,
     {
@@ -413,14 +528,20 @@ export async function editarStatusVenda(saleId, newStatus, token) {
   return res;
 }
 
-export async function sendWhatsapp(message, agentNumber, isFromAdmin, chatId, token) {
+export async function sendWhatsapp(
+  message,
+  agentNumber,
+  isFromAdmin,
+  chatId,
+  token
+) {
   const res = await axios.post(
     `${REACT_APP_BASE_ROUTE_WHATSAPP_SERVER}send-whatsapp`,
     {
       message,
       isFromAdmin,
       to: chatId,
-      whatsappNumId: agentNumber
+      whatsappNumId: agentNumber,
     },
     {
       headers: { Authorization: token },
@@ -432,16 +553,23 @@ export async function sendWhatsapp(message, agentNumber, isFromAdmin, chatId, to
 }
 
 export async function createMultipleClients(clients, token) {
-  const res = await axios.post(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/multiple`, clients, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/multiple`,
+    clients,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
 export async function getPrompt(token, agentNumber) {
-  const res = await axios.get(`${REACT_APP_BASE_ROUTE_DOTNET_SERVER}agent/prompt?agentNumber=${agentNumber}`, {
-    headers: { Authorization: token },
-  });
+  const res = await axios.get(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}agent/prompt?agentNumber=${agentNumber}`,
+    {
+      headers: { Authorization: token },
+    }
+  );
   return res.data;
 }
 
@@ -450,7 +578,7 @@ export async function updatePrompt(token, newPrompt, agentNumber) {
     `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}agent/prompt`,
     {
       NewPrompt: newPrompt,
-      AgentNumber: agentNumber
+      AgentNumber: agentNumber,
     },
     {
       headers: { Authorization: token },
@@ -458,7 +586,6 @@ export async function updatePrompt(token, newPrompt, agentNumber) {
   );
   return res.status === 200;
 }
-
 
 export async function getAgents(token) {
   const res = await axios.get(

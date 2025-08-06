@@ -149,6 +149,121 @@ const style = {
     fontSize: 16,
     fontWeight: 600,
     border: "2px solid rgba(80, 80, 80, 0.6)"
+  },
+  // novo metodozin
+  containerNewMethod: {
+    width: "100%",
+    display: "flex",
+    flexDirection:"column",
+    alignItems: "center",
+    marginTop: 20
+  },
+  modelNameInputBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection:"column",
+    alignItems: "center",
+  },
+  modelNameInputBoxTitle: {
+    fontSize: 22,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)"
+  },
+  modelNameInputBoxInput: {
+    width: "100%",
+    height: 35,
+    borderRadius: 4,
+    border: 0,
+    boxSizing: "border-box",
+    textAlign: "center",
+    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
+    outline: "none",
+    border: "2px solid rgba(230, 230, 230, 1)",
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)"
+  },
+  modelNameTextareaBox: {
+    width: "100%",
+    display: "flex",
+    flexDirection:"column",
+    alignItems: "center",
+    marginTop: 20
+  },
+  modelNameTextareaBoxTitle: {
+    fontSize: 22,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)"
+  },
+  modelNameTextareaBoxTextarea: {
+    width: "100%",
+    height: 200,
+    borderRadius: 4,
+    border: 0,
+    boxSizing: "border-box",
+    textAlign: "center",
+    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
+    outline: "none",
+    border: "2px solid rgba(230, 230, 230, 1)",
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)",
+    resize: "none"
+  },
+  modelNameTextareaBoxRodape: {
+    width: "100%",
+    height: 35,
+    borderRadius: 4,
+    border: 0,
+    boxSizing: "border-box",
+    textAlign: "center",
+    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
+    outline: "none",
+    border: "2px solid rgba(230, 230, 230, 1)",
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)",
+    resize: "none"
+  },
+  newMethodGrid: {
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: "2fr 2fr",
+    gap: 20,
+    marginTop: 20
+  },
+  newMethodColumn: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+    justifyContent: "center"
+  },
+  seeModel: {
+    width: "100%",
+    height: 35,
+    marginTop: 10,
+    background: "rgba(0, 200, 220, 1)",
+    border: "0",
+    borderRadius: 4,
+    outline: "none",
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(80, 80, 80, 1)"
+  },
+  createModel: {
+    width: "100%",
+    height: 35,
+    marginTop: 10,
+    background: "rgba(40, 230, 0, 1)",
+    border: "0",
+    borderRadius: 4,
+    outline: "none",
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: 600,
+    color: "rgba(0, 0, 0, 1)"
   }
 };
 

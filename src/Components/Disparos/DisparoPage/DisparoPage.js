@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import style from "./DisparoPageStyle";
 import ModalDefault from "../../ModalDefault/ModalDefault";
-import Model1 from "../../NovoDisparo/Models/Model1";
 import func from "../../../Services/fotmatters";
 import NewShot from "./NewShot/NewShot";
-import Model2 from "../../NovoDisparo/Models/Model2";
 import ShotModel from "../../ShotModel/ShotModel";
 
 export default function DisparoPage({ onClose, shot }) {

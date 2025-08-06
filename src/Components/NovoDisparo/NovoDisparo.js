@@ -1,149 +1,90 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import style from "./NovoDisparoStyle";
 import { useNavigate } from "react-router-dom";
-import { criarShot, obterModelos } from "../../Services/dbservice";
+import { criarModelo, criarShot } from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
-import Model from "./Models/Model";
+import { LoadingContext } from "../../Context/LoadingContext";
+import RevisarECriar from "./Models/RevisarECriar/RevisarECriar";
 
 export default function NovoDisparo() {
-  const [selectedModelId, setSelectedModelId] = useState(null);
-  const [variableValues, setVariableValues] = useState({});
-  const [foundVariables, setFoundVariables] = useState([]);
-  const [name, setName] = useState("");
+  const { credentials } = useContext(AuthContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
+  const [modelName, setModelName] = useState("");
+  const [headerText, setHeaderText] = useState("");
+  const [bodyText, setBodyText] = useState("");
+  const [rodapeText, setRodapeText] = useState("");
+  const [modalRevisar, setModalRevisar] = useState(false);
 
   const navigate = useNavigate();
-  const { credentials } = useContext(AuthContext);
-  const [models, setModels] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const getBack = () => {
     navigate("/disparos");
   };
 
-  const getModels = async () => {
-    try {
-      setLoading(true);
-      const response = await obterModelos(credentials.accessToken);
-      if (response) {
-        setModels(response);
-      }
-    } catch (error) {
-      console.log("Erro ao obter modelos", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (models.length === 0) getModels();
-  }, []);
-
-  const extractVariables = (text, location) => {
-    if (!text) return [];
-    const regex = /{{\s*(\d+)\s*}}/g;
-    const matches = text.match(regex) || [];
-    const uniqueNumbers = [
-      ...new Set(matches.map((v) => v.replace(/{{\s*|\s*}}/g, ""))),
-    ];
-
-    return uniqueNumbers.map((number) => ({
-      key: `${location}-${number}`,
-      number: number,
-      location: location,
-    }));
-  };
-
-  const handleSelectModel = (model) => {
-    setSelectedModelId(model.id);
-    setName(""); // Reseta o nome ao trocar de modelo
-
-    const headerVars = extractVariables(model.header?.text, "header");
-    const bodyVars = extractVariables(model.body?.text, "body");
-
-    const allVariables = [...headerVars, ...bodyVars];
-    allVariables.sort((a, b) => {
-      if (a.location < b.location) return -1;
-      if (a.location > b.location) return 1;
-      return a.number - b.number;
-    });
-
-    setFoundVariables(allVariables);
-    setVariableValues({});
-  };
-
-  const handleVariableChange = (key, value) => {
-    setVariableValues((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const createNewShot = async () => {
-    if (!name.trim() || !selectedModelId) {
-      alert("Por favor, nomeie o disparo e selecione um modelo.");
-      return;
-    }
-
-    const selectedModel = models.find(m => m.id === selectedModelId);
-    if (!selectedModel) {
-        alert("Erro: Modelo selecionado não foi encontrado.");
-        return;
+  const handleBodyTextChange = (e) => {
+    const value = e.target.value;
+    
+    // Verifica se há mais de duas quebras de linha seguidas
+    if (value.includes("\n\n\n")) {
+      return alert("Não é permitido mais de duas quebras de linha seguidas.");
     }
     
-    const headerParams = [];
-    const bodyParams = [];
-
-    for (const key in variableValues) {
-      const value = variableValues[key];
-      const [location, numberStr] = key.split('-');
-      
-      const param = {
-        key: parseInt(numberStr, 10), 
-        text: value,
-      };
-
-      if (location === 'header') {
-        headerParams.push(param);
-      } else if (location === 'body') {
-        bodyParams.push(param);
-      }
+    // Limita a 1000 caracteres
+    if (value.length > 1000) {
+      return alert("O texto do corpo não pode exceder 1000 caracteres.");
     }
+    
+    setBodyText(value);
+  };
 
-    const payload = {
-      name: name.trim(),
-      messageModelId: selectedModelId,
-      header: {
-        text: selectedModel.header?.text || "",
-        params: headerParams,
-      },
-      body: {
-        text: selectedModel.body?.text || "",
-        params: bodyParams,
-      },
-    };
+  const handleRevisar = () => {
+    if (headerText.trim() === "")
+      return alert("Preencha os campos obrigatórios.");
+    if (bodyText.trim() === "")
+      return alert("Preencha os campos obrigatórios.");
+    if (headerText.length < 3)
+      return alert("O Texto do header não pode ser tão pequeno.");
+    if (bodyText.length < 5)
+      return alert("O Texto do corpo não pode ser tão pequeno.");
+    if (bodyText.includes("\n\n\n"))
+      return alert("Não é permitido mais de duas quebras de linha seguidas.");
+    if (bodyText.length > 1000)
+      return alert("O texto do corpo não pode exceder 1000 caracteres.");
 
-    console.log(payload)
+    setModalRevisar(true);
+  };
+
+  const handleCreate = async () => {
 
     try {
-      const response = await criarShot(credentials?.accessToken, payload);
+      startLoading();
 
-      if (response) {
-        alert("Modelo de Disparo criado com sucesso.");
-        getBack();
-      } else {
-        alert("Erro ao criar Modelo de Disparo. Verifique os dados e tente novamente.");
+      var modelInfo = {
+        name: modelName,
+        headerText: headerText,
+        headerParam: "",
+        bodyText: bodyText,
+        bodyParams: [],
+        footerText: rodapeText
+      }
+      var res = await criarModelo(credentials.accessToken, modelInfo);
+
+      if(res === 201){
+        alert("Modelo criado com sucesso.");
       }
     } catch (error) {
-      alert("Erro ao criar modelo de disparo.");
-      console.log("Erro na chamada da API:", error);
-      console.log("Payload enviado:", payload); // Log para depuração
+      alert("erro ao criar.");
+      console.log("erro ao criar");
+      console.log(error)
+    } finally {
+      stopLoading()
     }
-  };
+  }
 
   return (
     <>
       <div style={style.container}>
-        <span style={style.title}>Crie um novo disparo</span>
+        <span style={style.title}>Crie um novo modelo para disparar</span>
         <div onClick={getBack} style={style.backButton}>
           <img
             style={style.backButtonImage}
@@ -152,100 +93,73 @@ export default function NovoDisparo() {
           />
           <span style={style.backButtonText}>Voltar</span>
         </div>
-        <div style={style.selectModelContainer}>
-          <span style={style.selectModelContainerTitle}>
-            Escolha um modelo para configurar
-          </span>
 
-          <div style={style.content}>
-            <div style={style.modelsContainer}>
-              <div style={style.modelsContainerTitleBox}>
-                <span style={style.modelsContainerTitleBoxText}>
-                  Modelos disponíveis (clique para selecionar)
-                </span>
-              </div>
-              {loading ? (
-                <div>Carregando modelos...</div>
-              ) : (
-                <div style={style.avaliableModels}>
-                  {models &&
-                    models.map((model) => (
-                      <Model
-                        key={model.id}
-                        data={model}
-                        selectedId={selectedModelId}
-                        handleSelectModel={() => handleSelectModel(model)}
-                        variableValues={variableValues}
-                      />
-                    ))}
-                </div>
-              )}
+        <div style={style.newMethodGrid}>
+          <div style={style.newMethodColumn}>
+            <div style={style.containerNewMethod}>
+              <span style={style.modelNameInputBoxTitle}>Nome do modelo*</span>
+              <input
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                style={style.modelNameInputBoxInput}
+              />
             </div>
-            <div style={style.preencher}>
-              <div style={style.preencherContent}>
-                {selectedModelId ? (
-                  <>
-                    <div style={style.variableInputContainer}>
-                      <label style={style.variableLabel}>
-                        Nomeie o modelo de disparo
-                      </label>
-                      <textarea
-                        onChange={(e) => setName(e.target.value)}
-                        value={name}
-                        style={style.variableTextarea}
-                        rows={1}
-                      />
-                    </div>
-                    {foundVariables.length > 0 && (
-                       <span style={style.preencherTitle}>
-                        Preencha as variáveis
-                      </span>
-                    )}
-                    {foundVariables.map((variable) => (
-                      <div
-                        key={variable.key}
-                        style={style.variableInputContainer}
-                      >
-                        <label style={style.variableLabel}>
-                          Variável {"{{"}
-                          {variable.number}
-                          {"}}"} no {variable.location}
-                        </label>
-                        <textarea
-                          style={style.variableTextarea}
-                          value={variableValues[variable.key] || ""}
-                          onChange={(e) =>
-                            handleVariableChange(variable.key, e.target.value)
-                          }
-                          rows={3}
-                        />
-                      </div>
-                    ))}
-                    
-                    {foundVariables.length === 0 && (
-                      <div style={style.placeholderPreencher}>
-                         <span>
-                            Este modelo não contém parâmetros para preencher.
-                          </span>
-                      </div>
-                    )}
 
-                    <button onClick={createNewShot} style={style.createModel}>
-                      Criar Modelo De Disparo
-                    </button>
-                  </>
-                ) : (
-                  <div style={style.placeholderPreencher}>
-                    <span>
-                      Selecione um modelo à esquerda para configurar.
-                    </span>
-                  </div>
-                )}
+            <div style={style.containerNewMethod}>
+              <span style={style.modelNameInputBoxTitle}>
+                Texto inicial do modelo*
+              </span>
+              <input
+                value={headerText}
+                onChange={(e) => setHeaderText(e.target.value)}
+                style={style.modelNameInputBoxInput}
+              />
+            </div>
+
+            <div style={style.modelNameTextareaBox}>
+              <span style={style.modelNameTextareaBoxTitle}>
+                Texto do Rodapé (opicional)
+              </span>
+              <input
+                value={rodapeText}
+                onChange={(e) => setRodapeText(e.target.value)}
+                placeholder="Ex: Att. Equipe Golden"
+                style={style.modelNameTextareaBoxRodape}
+              />
+            </div>
+          </div>
+
+          <div style={style.newMethodColumn}>
+            <div style={style.modelNameTextareaBox}>
+              <span style={style.modelNameTextareaBoxTitle}>
+                Texto do corpo do modelo* (Máx. 1000 caracteres)
+              </span>
+              <textarea
+                value={bodyText}
+                onChange={handleBodyTextChange}
+                style={style.modelNameTextareaBoxTextarea}
+                maxLength={1000}
+              />
+              <div style={{textAlign: "right", width: "100%", color: bodyText.length > 900 ? "red" : "inherit"}}>
+                {bodyText.length}/1000 caracteres
               </div>
             </div>
           </div>
         </div>
+        <button onClick={handleRevisar} style={style.seeModel}>
+          Revisar Modelo
+        </button>
+
       </div>
+      {modalRevisar && (
+        <RevisarECriar
+          headerText={headerText}
+          bodyText={bodyText}
+          rodapeText={rodapeText}
+          onConfirm={() => {handleCreate(); setModalRevisar(false)}}
+          onClose={() => setModalRevisar(false)}
+        />
+      )}
     </>
   );
 }

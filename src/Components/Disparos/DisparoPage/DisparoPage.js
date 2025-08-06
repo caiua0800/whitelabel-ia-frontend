@@ -4,9 +4,14 @@ import ModalDefault from "../../ModalDefault/ModalDefault";
 import func from "../../../Services/fotmatters";
 import NewShot from "./NewShot/NewShot";
 import ShotModel from "../../ShotModel/ShotModel";
+import { verificarModelo } from "../../../Services/dbservice";
+import { AuthContext } from "../../../Context/AuthContext";
+import { LoadingContext } from "../../../Context/LoadingContext";
 
 export default function DisparoPage({ onClose, shot }) {
   const [newShotModal, setNewShotModal] = useState(false);
+  const { credentials } = useContext(AuthContext);
+  const { startLoading, stopLoading } = useContext(LoadingContext);
 
   const handleClientesAlcancados = () => {
     if (shot) {
@@ -22,9 +27,60 @@ export default function DisparoPage({ onClose, shot }) {
     return 0;
   };
 
+  const handleVerify = async () => {
+    if (shot) {
+      try {
+        startLoading();
+        const res = await verificarModelo(
+          credentials.accessToken,
+          shot.shot.id
+        );
+        console.log(res)
+        if (res.success) {
+          alert(
+            "Template verificado e pronto pra uso.\nVolte em modelos e selecione-o novamente."
+          );
+          onClose();
+          return;
+        } else {
+          alert("Template ainda não foi verificado.\nAguarde e tente novamente mais tarde.");
+          onClose();
+          return;
+        }
+      } catch (error) {
+        alert("Erro ao verificar.");
+        console.log(error);
+      } finally {
+        stopLoading();
+      }
+    } else {
+      alert("Erro ao verificar");
+    }
+  };
+
   return (
     <>
       <ModalDefault zIndex={10}>
+        {shot && shot.shot && shot.shot.status === 1 && (
+          <div style={style.statusModal}>
+            <div style={style.statusModalContainer}>
+              <img
+                onClick={onClose}
+                src="./icons/left-arrow-icon.svg"
+                style={style.closeBtn}
+              />
+
+              <div style={style.centerInfo}>
+                <span style={style.infoWarning}>
+                  O modelo ainda não foi verificado pela meta.
+                </span>
+                <button onClick={handleVerify} style={style.verifyButton}>
+                  Verificar Status
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div style={style.modal}>
           <img
             onClick={onClose}

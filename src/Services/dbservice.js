@@ -143,6 +143,19 @@ export async function enviarDisparo(token, agentNumber, shotId, clients) {
   return res.status;
 }
 
+
+export async function verificarModelo(token, shotId) {
+  const res = await axios.post(
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/check-template-status/${shotId}`,
+    null,
+    {
+      headers: { Authorization: token },
+    }
+  );
+
+  return res.data;
+}
+
 export async function criarModelo(token, modeloInfo) {
   const res = await axios.post(
     `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}messageModel`,

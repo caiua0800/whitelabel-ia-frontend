@@ -32,7 +32,7 @@ const style = {
     justifyContent: "center",
     marginTop: 40,
     maxHeight: 250,
-    overflowY: "auto"
+    overflowY: "auto",
   },
   info: {
     width: "100%",
@@ -200,7 +200,8 @@ const style = {
     width: "100%",
     height: 35,
     boxSizing: "border-box",
-    padding: 0,fontSize: 16,
+    padding: 0,
+    fontSize: 16,
     fontWeight: 600,
     color: "rgba(80, 80, 80, 1)",
     cursor: "pointer",
@@ -208,7 +209,48 @@ const style = {
     borderRadius: 4,
     boxShadow: "4px 4px 4px rgba(0,0,0,0.2)",
     background: "rgba(100, 220, 0, 1)",
-    marginTop: 10
+    marginTop: 10,
+  },
+  statusModal: {
+    zIndex: 11,
+    width: "100vw",
+    height: "100vh",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    background: "rgba(255, 255, 255, 0.8)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  statusModalContainer: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centerInfo: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems:  "center",
+    gap: 10
+  },
+  infoWarning: {
+    fontSize: 32,
+    fontWeight: 600,
+    color: "black"
+  },
+  verifyButton: {
+    padding: "10px 20px",
+    boxSizing: "border-box",
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: "pointer",
+    borderRadius: 4,
+    border: "2p solid rgba(80, 80, 80, 1)",
+    background: "rgba(100, 210, 210, 1)"
   }
 };
 

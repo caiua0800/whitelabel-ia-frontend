@@ -54,30 +54,46 @@ export default function NovoDisparo() {
     setModalRevisar(true);
   };
 
+  const formatModelName = (name) => {
+    // Remove acentos
+    const withoutAccents = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Converte para minúsculas
+    const lowerCase = withoutAccents.toLowerCase();
+    // Substitui espaços por underscores
+    const finalName = lowerCase.replace(/\s+/g, '_');
+    return finalName;
+  };
+
   const handleCreate = async () => {
+    if (!modelName.trim()) {
+      return alert("O nome do modelo não pode estar vazio.");
+    }
 
     try {
       startLoading();
 
+      const formattedModelName = formatModelName(modelName);
+
       var modelInfo = {
-        name: modelName,
+        name: formattedModelName,
         headerText: headerText,
         headerParam: "",
         bodyText: bodyText,
         bodyParams: [],
         footerText: rodapeText
       }
+      
       var res = await criarModelo(credentials.accessToken, modelInfo);
 
       if(res === 201){
         alert("Modelo criado com sucesso.");
+        getBack()
       }
     } catch (error) {
-      alert("erro ao criar.");
-      console.log("erro ao criar");
-      console.log(error)
+      alert("Erro ao criar modelo.");
+      console.log("Erro ao criar modelo:", error);
     } finally {
-      stopLoading()
+      stopLoading();
     }
   }
 
@@ -102,7 +118,9 @@ export default function NovoDisparo() {
                 value={modelName}
                 onChange={(e) => setModelName(e.target.value)}
                 style={style.modelNameInputBoxInput}
+                placeholder="Ex: modelo_de_exemplo"
               />
+              <small style={{color: 'gray'}}>O nome será convertido para minúsculas, sem acentos e com espaços substituídos por _</small>
             </div>
 
             <div style={style.containerNewMethod}>

@@ -104,7 +104,7 @@ const ChatsRows = () => {
       <div style={style.chatsContainer}>
         <div style={style.chatsHeader}>
           <div style={style.headerTitleWrapper}>
-            <h2 style={{color: "white", ...style.chatsHeaderTitle}}>Conversas</h2>
+            <span style={{color: "white", ...style.chatsHeaderTitle}}>Conversas</span>
             <span style={style.chatsHeaderSubtitle}>
               {totalChats || 0} no total
             </span>

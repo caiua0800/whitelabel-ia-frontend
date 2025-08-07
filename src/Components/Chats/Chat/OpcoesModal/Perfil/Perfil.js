@@ -1,176 +1,50 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useContext } from "react";
 import style from "./PerfilStyle";
-import { LoadingContext } from "../../../../../Context/LoadingContext";
 import { ChatContext } from "../../../../../Context/ChatContext";
+import func from "../../../../../Services/fotmatters";
+import { FiX, FiUser, FiPhone, FiMapPin, FiHome, FiBox, FiFlag } from "react-icons/fi";
 
 export default function Perfil({ onClose }) {
   const { activeChat } = useContext(ChatContext);
 
-  const formatPhone = (n) => {
-    if (n?.trim().length === 13) {
-      return `(${n[0]}${n[1]}) ${n[2]}${n[3]} ${n[4]}${n[5]}${n[6]}${n[7]}${n[8]}${n[9]}${n[10]}${n[11]}${n[12]}`;
-    }
-    return n || "";
-  };
+  const InfoField = ({ icon, label, value }) => (
+    <div style={style.infoField}>
+      <div style={style.infoIcon}>{icon}</div>
+      <div>
+        <span style={style.infoLabel}>{label}</span>
+        <span style={style.infoValue}>{value || "Não informado"}</span>
+      </div>
+    </div>
+  );
 
   return (
-    <>
-      <div style={style.container}>
-        <div style={style.modalContainer}>
-          <div style={style.modal}>
-            <span style={style.modalTitle}>Edite o contato</span>
-
-            <div style={style.clientProfilePictureBox}>
-              <div style={style.clientProfilePictureCircle}>
-                <img
-                  src="./icons/user-icon2.png"
-                  style={style.clientProfilePicture}
-                />
-              </div>
+    <div style={style.overlay} onClick={onClose}>
+      <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
+        <div style={style.modalHeader}>
+            <h2 style={style.title}>Perfil do Contato</h2>
+            <button onClick={onClose} style={style.closeButton}><FiX size={20}/></button>
+        </div>
+        <div style={style.modalBody}>
+            <div style={style.profileHeader}>
+                <div style={style.profilePictureCircle}>
+                    <img src="./icons/user-icon2.png" style={style.profilePicture} alt="Avatar"/>
+                </div>
+                <div style={style.profileNameContainer}>
+                    <span style={style.profileName}>{activeChat.clientName || "Sem Nome"}</span>
+                    <span style={style.profileContact}>{func.formatarContato(activeChat?.id)}</span>
+                </div>
             </div>
 
-            <div style={style.clientInfoContainer}>
-              <div style={style.infoRowOne}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Nome do cliente</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.clientName || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowTwo}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Contato</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      disabled
-                      value={formatPhone(activeChat?.id)}
-                      placeholder=""
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>CEP</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      type="number"
-                      value={activeChat.zipcode || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Logradouro</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.street || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Número</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.number || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Bairro</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.neighborhood || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Complemento</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.complement || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowThree}>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Cidade</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.city || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-                <div style={style.infoRowContainer}>
-                  <span style={style.infoTitle}>Estado</span>
-                  <div style={style.infoRowBox}>
-                    <input
-                      value={activeChat.state || ""}
-                      placeholder=""
-                      disabled
-                      style={style.infoRowInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div style={style.infoRowContainer}>
-                <span style={style.infoTitle}>País</span>
-                <div style={style.infoRowBox}>
-                  <input
-                    value={activeChat.country || ""}
-                    placeholder=""
-                    disabled
-                    style={style.infoRowInput}
-                  />
-                </div>
-              </div>
+            <div style={style.infoGrid}>
+                <InfoField icon={<FiUser/>} label="Nome Completo" value={activeChat.clientName} />
+                <InfoField icon={<FiPhone/>} label="Contato" value={func.formatarContato(activeChat?.id)} />
+                <InfoField icon={<FiMapPin/>} label="CEP" value={activeChat.zipcode} />
+                <InfoField icon={<FiHome/>} label="Endereço" value={`${activeChat.street || ''}, ${activeChat.number || ''}`} />
+                <InfoField icon={<FiBox/>} label="Bairro" value={activeChat.neighborhood} />
+                <InfoField icon={<FiFlag/>} label="Cidade / Estado" value={`${activeChat.city || ''} - ${activeChat.state || ''}`} />
             </div>
-
-            <div style={style.confirmation}>
-              <div
-                style={{
-                  ...style.containerButtons,
-                  gridTemplateColumns: "100%",
-                }}
-              >
-                <button
-                  onClick={onClose}
-                  style={{ ...style.button, background: "rgba(255, 80, 0, 1)" }}
-                >
-                  Sair
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

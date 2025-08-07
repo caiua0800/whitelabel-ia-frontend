@@ -1,10 +1,12 @@
 import React, { useState, useContext } from "react";
 import style from "./NovoDisparoStyle";
 import { useNavigate } from "react-router-dom";
-import { criarModelo, criarShot } from "../../Services/dbservice";
+import { criarModelo } from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
 import { LoadingContext } from "../../Context/LoadingContext";
 import RevisarECriar from "./Models/RevisarECriar/RevisarECriar";
+import { FiArrowLeft, FiEye, FiInfo } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function NovoDisparo() {
   const { credentials } = useContext(AuthContext);
@@ -17,164 +19,190 @@ export default function NovoDisparo() {
 
   const navigate = useNavigate();
 
-  const getBack = () => {
-    navigate("/disparos");
-  };
+  const getBack = () => navigate("/disparos");
 
   const handleBodyTextChange = (e) => {
     const value = e.target.value;
-    
-    // Verifica se há mais de duas quebras de linha seguidas
     if (value.includes("\n\n\n")) {
-      return alert("Não é permitido mais de duas quebras de linha seguidas.");
+      toast.error("Não é permitido mais de duas quebras de linha seguidas.");
+      return;
     }
-    
-    // Limita a 1000 caracteres
-    if (value.length > 1000) {
-      return alert("O texto do corpo não pode exceder 1000 caracteres.");
-    }
-    
     setBodyText(value);
   };
 
-  const handleRevisar = () => {
-    if (headerText.trim() === "")
-      return alert("Preencha os campos obrigatórios.");
-    if (bodyText.trim() === "")
-      return alert("Preencha os campos obrigatórios.");
-    if (headerText.length < 3)
-      return alert("O Texto do header não pode ser tão pequeno.");
-    if (bodyText.length < 5)
-      return alert("O Texto do corpo não pode ser tão pequeno.");
-    if (bodyText.includes("\n\n\n"))
-      return alert("Não é permitido mais de duas quebras de linha seguidas.");
-    if (bodyText.length > 1000)
-      return alert("O texto do corpo não pode exceder 1000 caracteres.");
+  const containsInvalidChars = (text) => {
+    // Verifica emojis, quebras de linha, asteriscos
+    const emojiRegex = /\p{Emoji}/u;
+    return emojiRegex.test(text) || text.includes('\n') || text.includes('*');
+  };
 
+  const handleRevisar = () => {
+    if (!modelName.trim())
+      return toast.error("O nome do modelo é obrigatório.");
+    
+    if (!headerText.trim())
+      return toast.error("O texto do cabeçalho é obrigatório.");
+    
+    if (containsInvalidChars(headerText)) {
+      return toast.error("Cabeçalho não pode ter emojis, quebras de linha ou asteriscos");
+    }
+    
+    if (!bodyText.trim()) 
+      return toast.error("O texto do corpo é obrigatório.");
+    
     setModalRevisar(true);
   };
 
   const formatModelName = (name) => {
-    // Remove acentos
-    const withoutAccents = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    // Converte para minúsculas
+    const withoutAccents = name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
     const lowerCase = withoutAccents.toLowerCase();
-    // Substitui espaços por underscores
-    const finalName = lowerCase.replace(/\s+/g, '_');
+    const finalName = lowerCase.replace(/\s+/g, "_");
     return finalName;
   };
 
   const handleCreate = async () => {
-    if (!modelName.trim()) {
-      return alert("O nome do modelo não pode estar vazio.");
-    }
-
     try {
       startLoading();
-
       const formattedModelName = formatModelName(modelName);
-
-      var modelInfo = {
+      const modelInfo = {
         name: formattedModelName,
         headerText: headerText,
         headerParam: "",
         bodyText: bodyText,
         bodyParams: [],
-        footerText: rodapeText
-      }
+        footerText: rodapeText,
+      };
       
-      var res = await criarModelo(credentials.accessToken, modelInfo);
-
-      if(res === 201){
-        alert("Modelo criado com sucesso.");
-        getBack()
+      const res = await criarModelo(credentials.accessToken, modelInfo);
+      
+      if (res === 201) {
+        toast.success("Modelo enviado para aprovação!");
+        getBack();
       }
     } catch (error) {
-      alert("Erro ao criar modelo.");
-      console.log("Erro ao criar modelo:", error);
+      let errorMessage = "Erro ao criar modelo";
+      
+      if (error.response?.data) {
+        const { error: apiError, details, type } = error.response.data;
+        
+        if (type === "validation") {
+          errorMessage = apiError;
+        } else {
+          errorMessage = `${apiError}${details ? `: ${details}` : ''}`;
+        }
+      }
+      
+      toast.error(errorMessage);
+      console.error("Erro ao criar modelo:", error);
     } finally {
       stopLoading();
     }
-  }
+  };
+
+  const characterCount = bodyText.length;
+  const characterLimit = 1024;
+  const isNearLimit = characterCount > characterLimit - 100;
 
   return (
     <>
       <div style={style.container}>
-        <span style={style.title}>Crie um novo modelo para disparar</span>
-        <div onClick={getBack} style={style.backButton}>
-          <img
-            style={style.backButtonImage}
-            src="./icons/left-arrow-icon.svg"
-            alt="Voltar"
-          />
-          <span style={style.backButtonText}>Voltar</span>
+        <div style={style.header}>
+          <div style={style.headerLeft}>
+            <button onClick={getBack} style={style.backButton}>
+              <FiArrowLeft size={20} />
+            </button>
+            <div>
+              <h1 style={style.title}>Criar Novo Modelo de Disparo</h1>
+              <p style={style.subtitle}>
+                Crie modelos de mensagens para enviar em massa aos seus
+                clientes.
+              </p>
+            </div>
+          </div>
+          <button onClick={handleRevisar} style={style.reviewButton}>
+            <FiEye style={{ marginRight: "8px" }} />
+            Revisar e Criar
+          </button>
         </div>
 
-        <div style={style.newMethodGrid}>
-          <div style={style.newMethodColumn}>
-            <div style={style.containerNewMethod}>
-              <span style={style.modelNameInputBoxTitle}>Nome do modelo*</span>
+        <div style={style.formGrid}>
+          <div style={style.formColumn}>
+            <div style={style.inputGroup}>
+              <label style={style.label}>Nome do Modelo</label>
               <input
                 value={modelName}
                 onChange={(e) => setModelName(e.target.value)}
-                style={style.modelNameInputBoxInput}
-                placeholder="Ex: modelo_de_exemplo"
+                style={style.input}
+                placeholder="Ex: promocao_dia_das_maes"
               />
-              <small style={{color: 'gray'}}>O nome será convertido para minúsculas, sem acentos e com espaços substituídos por _</small>
+              <small style={style.helperText}>
+                Somente letras minúsculas, números e _. Sem espaços.
+              </small>
             </div>
-
-            <div style={style.containerNewMethod}>
-              <span style={style.modelNameInputBoxTitle}>
-                Texto inicial do modelo*
-              </span>
+            <div style={style.inputGroup}>
+              <label style={style.label}>Texto do Cabeçalho (Header)</label>
               <input
                 value={headerText}
                 onChange={(e) => setHeaderText(e.target.value)}
-                style={style.modelNameInputBoxInput}
+                style={style.input}
+                placeholder="Ex: Promoção especial!"
               />
+              <small style={style.helperText}>
+                Não use emojis, quebras de linha ou asteriscos no cabeçalho
+              </small>
             </div>
-
-            <div style={style.modelNameTextareaBox}>
-              <span style={style.modelNameTextareaBoxTitle}>
-                Texto do Rodapé (opicional)
-              </span>
+            <div style={style.inputGroup}>
+              <label style={style.label}>Texto do Rodapé (Footer)</label>
               <input
                 value={rodapeText}
                 onChange={(e) => setRodapeText(e.target.value)}
-                placeholder="Ex: Att. Equipe Golden"
-                style={style.modelNameTextareaBoxRodape}
+                style={style.input}
+                placeholder="Ex: Att, Equipe Golden"
               />
             </div>
           </div>
 
-          <div style={style.newMethodColumn}>
-            <div style={style.modelNameTextareaBox}>
-              <span style={style.modelNameTextareaBoxTitle}>
-                Texto do corpo do modelo* (Máx. 1000 caracteres)
-              </span>
+          <div style={style.formColumn}>
+            <div style={style.inputGroup}>
+              <label style={style.label}>
+                Texto do Corpo (Body)
+                <span
+                  style={{
+                    ...style.charCount,
+                    color: isNearLimit ? "#ff5b5b" : "#aeb9c4",
+                  }}
+                >
+                  {characterCount}/{characterLimit}
+                </span>
+              </label>
               <textarea
                 value={bodyText}
                 onChange={handleBodyTextChange}
-                style={style.modelNameTextareaBoxTextarea}
-                maxLength={1000}
+                style={{ ...style.input, ...style.textarea }}
+                maxLength={characterLimit}
               />
-              <div style={{textAlign: "right", width: "100%", color: bodyText.length > 900 ? "red" : "inherit"}}>
-                {bodyText.length}/1000 caracteres
-              </div>
+            </div>
+            <div style={style.infoBox}>
+              <FiInfo style={{ marginRight: "10px", flexShrink: 0 }} />
+              <span>
+                Lembre-se: modelos com variáveis (ex: `{1}`), conteúdo
+                promocional ou links podem precisar de aprovação da Meta.
+              </span>
             </div>
           </div>
         </div>
-        <button onClick={handleRevisar} style={style.seeModel}>
-          Revisar Modelo
-        </button>
-
       </div>
       {modalRevisar && (
         <RevisarECriar
           headerText={headerText}
           bodyText={bodyText}
           rodapeText={rodapeText}
-          onConfirm={() => {handleCreate(); setModalRevisar(false)}}
+          onConfirm={() => {
+            handleCreate();
+            setModalRevisar(false);
+          }}
           onClose={() => setModalRevisar(false)}
         />
       )}

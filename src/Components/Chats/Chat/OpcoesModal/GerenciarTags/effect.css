@@ -3,3 +3,8 @@
 .tag:hover{
     background-color: rgba(0, 200, 200, 1) !important;
 }
+
+.options-menu-item-hover:hover {
+    background-color: #2a2f3b;
+    color: #FFF;
+}

@@ -1,270 +1,119 @@
 const style = {
   container: {
     width: "100%",
-    height: "100%",
+    height: "100vh",
     display: "flex",
     flexDirection: "column",
-    padding: "80px 50px",
-    alignItems: "start",
+    background: "#181a20",
+    color: "#FFF",
+    padding: "30px 80px",
     boxSizing: "border-box",
-    position: "relative",
-    zIndex: 10,
-    background: "rgba(240, 240, 240, 1)",
-    overflowY: "auto",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    zIndex: 99
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: '30px',
+  },
+  headerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
   },
   backButton: {
-    position: "absolute",
-    top: 20,
-    left: 30,
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  backButtonImage: {
-    width: 50,
-    opacity: 0.7,
-  },
-  backButtonText: {
-    fontSize: 22,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)",
+    background: '#2a2f3b',
+    border: '1px solid #3c4257',
+    color: '#aeb9c4',
+    width: '40px',
+    height: '40px',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
   },
   title: {
-    fontSize: 38,
-    fontWeight: 800,
-    color: "rgba(80, 80, 80, 1)",
-  },
-  selectModelContainer: {
-    width: "100%",
-    marginTop: 20,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "start",
-  },
-  selectModelContainerTitle: {
-    fontSize: 18,
-    color: "rgba(80, 80, 80, 1)",
-    width: "100%",
-    textAlign: "start",
-    borderBottom: "2px solid rgba(80, 80, 80, 1)",
-    boxSizing: "border-box",
-    paddingBottom: 5
-  },
-  content: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "2fr 2fr",
-    marginTop: 20
-  },
-  modelsContainer: {
-    width: "100%",
-    display: "grid",
-    gridTemplateRows: "40px auto",
-    boxSizing: "border-box",
-    padding: 20
-  },
-  modelsContainerTitleBox: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "start",
-    alignItems: "center",
-  },
-  modelsContainerTitleBoxText: {
-    fontSize: 22,
-    fontWeight: 500,
-    color: "rgba(80, 80, 80, 1)"
-  },
-  avaliableModels: {
-    width: "100%",
-    gap: 20,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "start"
-  },
-  preencher: {
-    width: "100%",
-    borderLeft: "2px solid rgba(80, 80, 80, 1)",
-    boxSizing: "border-box",
-    padding: "20px 30px", // Aumentei o padding lateral
-    display: "flex", // Adicionado
-    flexDirection: "column", // Adicionado
-    gap: "20px",
-    position: "relative",
-  },
-  preencherContent: {
-    position: "sticky",
-    top: 0,
-    width: "100%",
-    boxSizing: "border-box",
-    padding: "20px 30px", 
-    display: "flex", 
-    flexDirection: "column", 
-    gap: "20px",
-  },
-  preencherTitle: {
-    fontSize: 22,
-    fontWeight: 500,
-    color: "rgba(80, 80, 80, 1)",
-    boxSizing: "border-box",
-    // borderBottom: "1px solid rgba(80, 80, 80, 0.5)",
-  },
-  variableInputContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    width: "100%"
-  },
-  variableLabel: {
-    fontSize: 16,
+    fontSize: '28px',
     fontWeight: 600,
-    color: "rgba(50, 50, 50, 1)"
+    margin: 0,
   },
-  variableTextarea: {
-    width: "100%",
-    padding: "10px",
-    fontSize: 14,
-    borderRadius: 8,
-    border: "1px solid #ccc",
-    boxSizing: "border-box",
-    resize: "vertical" ,
-    outline: "none"
+  subtitle: {
+    fontSize: '15px',
+    color: '#aeb9c4',
+    margin: '5px 0 0 0',
   },
-  placeholderPreencher: {
+  reviewButton: {
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
-    color: '#888',
+    background: '#4ecf78',
+    color: '#1e212b',
+    border: 'none',
+    borderRadius: '10px',
+    padding: '10px 20px',
     fontSize: '16px',
-    textAlign: 'center'
+    fontWeight: '600',
+    cursor: 'pointer',
   },
-  createModel: {
+  formGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '40px',
+    width: '100%',
+  },
+  formColumn: {},
+  inputGroup: {
+    marginBottom: '25px',
+  },
+  label: {
+    display: "block",
+    fontSize: "14px",
+    fontWeight: "500",
+    marginBottom: "8px",
+    color: "#aeb9c4",
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  charCount: {
+    fontWeight: '400',
+  },
+  input: {
     width: "100%",
-    border: 0,
-    padding: "10px 0",
-    borderRadius: 4,
-    cursor: "pointer",
-    background: "rgba(100, 220, 0, 1)",
-    fontSize: 16,
-    fontWeight: 600,
-    border: "2px solid rgba(80, 80, 80, 0.6)"
-  },
-  // novo metodozin
-  containerNewMethod: {
-    width: "100%",
-    display: "flex",
-    flexDirection:"column",
-    alignItems: "center",
-    marginTop: 20
-  },
-  modelNameInputBox: {
-    width: "100%",
-    display: "flex",
-    flexDirection:"column",
-    alignItems: "center",
-  },
-  modelNameInputBoxTitle: {
-    fontSize: 22,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
-  },
-  modelNameInputBoxInput: {
-    width: "100%",
-    height: 35,
-    borderRadius: 4,
-    border: 0,
+    height: "45px",
+    background: "#2a2f3b",
+    border: "1px solid #3c4257",
+    borderRadius: "12px",
+    padding: "0 20px",
     boxSizing: "border-box",
-    textAlign: "center",
-    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
+    color: "#FFF",
+    fontSize: "15px",
     outline: "none",
-    border: "2px solid rgba(230, 230, 230, 1)",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
   },
-  modelNameTextareaBox: {
-    width: "100%",
-    display: "flex",
-    flexDirection:"column",
-    alignItems: "center",
-    marginTop: 20
+  textarea: {
+    height: '250px',
+    paddingTop: '12px',
+    resize: 'vertical',
   },
-  modelNameTextareaBoxTitle: {
-    fontSize: 22,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
+  helperText: {
+    fontSize: '12px',
+    color: '#aeb9c4',
+    opacity: 0.7,
+    marginTop: '5px',
   },
-  modelNameTextareaBoxTextarea: {
-    width: "100%",
-    height: 200,
-    borderRadius: 4,
-    border: 0,
-    boxSizing: "border-box",
-    textAlign: "center",
-    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
-    outline: "none",
-    border: "2px solid rgba(230, 230, 230, 1)",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)",
-    resize: "none"
+  infoBox: {
+    background: 'rgba(59, 130, 246, 0.1)',
+    border: '1px solid rgba(59, 130, 246, 0.3)',
+    borderRadius: '10px',
+    padding: '15px',
+    display: 'flex',
+    alignItems: 'center',
+    color: '#93c5fd',
+    fontSize: '14px',
   },
-  modelNameTextareaBoxRodape: {
-    width: "100%",
-    height: 35,
-    borderRadius: 4,
-    border: 0,
-    boxSizing: "border-box",
-    textAlign: "center",
-    boxShadow: "3px 3px 4px rgba(0,0,0,0.4)",
-    outline: "none",
-    border: "2px solid rgba(230, 230, 230, 1)",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)",
-    resize: "none"
-  },
-  newMethodGrid: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "2fr 2fr",
-    gap: 20,
-    marginTop: 20
-  },
-  newMethodColumn: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "start",
-    justifyContent: "center"
-  },
-  seeModel: {
-    width: "100%",
-    height: 35,
-    marginTop: 10,
-    background: "rgba(0, 200, 220, 1)",
-    border: "0",
-    borderRadius: 4,
-    outline: "none",
-    cursor: "pointer",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(80, 80, 80, 1)"
-  },
-  createModel: {
-    width: "100%",
-    height: 35,
-    marginTop: 10,
-    background: "rgba(40, 230, 0, 1)",
-    border: "0",
-    borderRadius: 4,
-    outline: "none",
-    cursor: "pointer",
-    fontSize: 16,
-    fontWeight: 600,
-    color: "rgba(0, 0, 0, 1)"
-  }
 };
 
 export default style;

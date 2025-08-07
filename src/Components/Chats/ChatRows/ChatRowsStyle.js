@@ -16,11 +16,15 @@ const style = {
     flexShrink: 0,
     borderBottom: "1px solid #2a2f3b",
   },
-  headerTitleWrapper: {},
+  headerTitleWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start"
+  },
   chatsHeaderTitle: {
     fontSize: "22px",
     fontWeight: "600",
-    color: "#FFFFF",
+    color: "white",
     margin: "0",
   },
   chatsHeaderSubtitle: {

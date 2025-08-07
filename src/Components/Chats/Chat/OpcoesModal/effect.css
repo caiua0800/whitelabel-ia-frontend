@@ -18,3 +18,8 @@
 .options-menu-item:hover{
     padding-left: 30px !important;
 }
+
+.options-menu-item-hover:hover {
+    background-color: #2a2f3b;
+    color: #FFF;
+}

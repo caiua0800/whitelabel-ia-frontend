@@ -14,7 +14,7 @@ export default function OpcoesModal({ onClose }) {
   const { activeChat } = useContext(ChatContext);
 
   const OptionItem = ({ icon, text, onClick }) => (
-    <div onClick={onClick} className="options-menu-item" style={style.optionsMenuItem}>
+    <div onClick={onClick} className="options-menu-item-hover" style={style.optionsMenuItem}>
       {icon}
       <span style={style.menuItemText}>{text}</span>
     </div>
@@ -26,7 +26,7 @@ export default function OpcoesModal({ onClose }) {
         <div style={style.modalContainer} onClick={(e) => e.stopPropagation()}>
           <div style={style.modalHeader}>
             <h2 style={style.modalTitle}>Opções do Chat</h2>
-            <button onClick={onClose} style={style.closeButton}><FiX size={20}/></button>
+            <button onClick={onClose} style={style.closeButtonModal}><FiX size={20}/></button>
           </div>
           <div style={style.optionsMenu}>
             <OptionItem icon={<FiCpu size={20}/>} text="Tratamento Especial (IA)" onClick={() => setTratamentoEspecial(true)} />
@@ -37,8 +37,8 @@ export default function OpcoesModal({ onClose }) {
       </div>
       
       {tratamentoEspecial && <TratamentoEspecial id={activeChat.id} onClose={() => setTratamentoEspecial(false)} />}
-      {editarContato && <EditarContato id={activeChat.id} onClose={() => setEditarContato(false)} />}
-      {gerenciarTags && <GerenciarTags id={activeChat.id} onClose={() => setGerenciarTags(false)} />}
+      {editarContato && <EditarContato chat={activeChat} onClose={() => setEditarContato(false)} />}
+      {gerenciarTags && <GerenciarTags onClose={() => setGerenciarTags(false)} />}
     </>
   );
 }

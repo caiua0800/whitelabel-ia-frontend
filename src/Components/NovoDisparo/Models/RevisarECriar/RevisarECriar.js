@@ -10,7 +10,6 @@ export default function RevisarECriar({
   onConfirm,
   isLoading,
 }) {
-
   const handleModalClick = (e) => {
     e.stopPropagation();
   };
@@ -19,8 +18,10 @@ export default function RevisarECriar({
     <div style={style.overlay} onClick={onClose}>
       <div style={style.modalContainer} onClick={handleModalClick}>
         <div style={style.modalHeader}>
-            <h3 style={style.modalTitle}>Pré-visualização do Modelo</h3>
-            <button onClick={onClose} style={style.closeButton}><FiX size={20} /></button>
+          <h3 style={style.modalTitle}>Pré-visualização do Modelo</h3>
+          <button onClick={onClose} style={style.closeButton}>
+            <FiX size={20} />
+          </button>
         </div>
         
         <div style={style.phoneScreen}>
@@ -34,13 +35,21 @@ export default function RevisarECriar({
         </div>
 
         <div style={style.modalActions}>
-            <button style={style.cancelButton} onClick={onClose} disabled={isLoading}>
-                Cancelar
-            </button>
-            <button style={style.confirmButton} onClick={onConfirm} disabled={isLoading}>
-                <FiCheck style={{ marginRight: '8px' }} />
-                {isLoading ? "Criando..." : "Confirmar e Criar"}
-            </button>
+          <button 
+            style={style.cancelButton} 
+            onClick={onClose} 
+            disabled={isLoading}
+          >
+            Cancelar
+          </button>
+          <button 
+            style={style.confirmButton} 
+            onClick={onConfirm} 
+            disabled={isLoading}
+          >
+            <FiCheck style={{ marginRight: '8px' }} />
+            {isLoading ? "Criando..." : "Confirmar e Criar"}
+          </button>
         </div>
       </div>
     </div>

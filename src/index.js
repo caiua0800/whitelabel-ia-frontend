@@ -9,22 +9,25 @@ import { BrowserRouter } from "react-router-dom";
 import LoadingProvider from "./Context/LoadingContext";
 import ProductProvider from "./Context/ProductContext";
 import SaleProvider from "./Context/SaleContext";
+import SystemMessageProvider from "./Context/SystemMessageContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <LoadingProvider>
-        <AuthProvider>
-          <SaleProvider>
-            <ProductProvider>
-              <ChatProvider>
-                <App />
-              </ChatProvider>
-            </ProductProvider>
-          </SaleProvider>
-        </AuthProvider>
-      </LoadingProvider>
+      <SystemMessageProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            <SaleProvider>
+              <ProductProvider>
+                <ChatProvider>
+                  <App />
+                </ChatProvider>
+              </ProductProvider>
+            </SaleProvider>
+          </AuthProvider>
+        </LoadingProvider>
+      </SystemMessageProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

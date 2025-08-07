@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 
 export default function Login() {
   const { login, credentials } = useContext(AuthContext);
-  // const [id, setId] = useState("DanielMors");
-  // const [password, setPassword] = useState("GoldenPass");
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [id, setId] = useState("DanielMors");
+  const [password, setPassword] = useState("GoldenPass");
+  // const [id, setId] = useState("");
+  // const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { loading, startLoading, stopLoading } = useContext(LoadingContext);
 

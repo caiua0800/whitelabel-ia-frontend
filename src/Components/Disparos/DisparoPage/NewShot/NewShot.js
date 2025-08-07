@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import style from "./NewShotStyle";
 import ModalDefault from "../../../ModalDefault/ModalDefault";
 import { AuthContext } from "../../../../Context/AuthContext";
+import { SystemMessageContext } from "../../../../Context/SystemMessageContext";
 import { enviarDisparo, searchChats } from "../../../../Services/dbservice";
 import { ChatContext } from "../../../../Context/ChatContext";
 import func from "../../../../Services/fotmatters";
@@ -30,6 +31,7 @@ export default function NewShot({ onClose, shot }) {
   const [endDate, setEndDate] = useState("");
   const [chosenAgent, setChosenAgent] = useState(null);
   const [selectAgentModal, setSelectAgentModal] = useState(false);
+  const { showMessage } = useContext(SystemMessageContext);
 
   const handleSearch = async (page = 1) => {
     try {
@@ -254,7 +256,8 @@ export default function NewShot({ onClose, shot }) {
     if (selectedClients.length === 0) return;
 
     if (!chosenAgent) {
-      return alert("Selecione um agente para enviar as mensagens");
+      showMessage("Selecione um agente para enviar as mensagens.", "error");
+      return;
     }
 
     startLoading();
@@ -267,13 +270,17 @@ export default function NewShot({ onClose, shot }) {
       );
 
       if (response === 200) {
-        alert("Mensagens enviadas com sucesso.");
-        onClose(); // Isso vai fechar o modal e atualizar os dados
+        // alert("Mensagens enviadas com sucesso.");
+        showMessage("Mensagens enviadas com sucesso.", "success");
+        onClose();
       } else {
-        alert("Ocorreu um erro ao enviar.");
+        // alert("Ocorreu um erro ao enviar.");
+        showMessage("Ocorreu um erro ao enviar.", "error");
+
       }
     } catch (error) {
-      alert("Ocorreu um erro ao enviar.");
+      // alert("Ocorreu um erro ao enviar.");
+      showMessage("Ocorreu um erro ao enviar.", "error");
       console.error(error);
     } finally {
       stopLoading();

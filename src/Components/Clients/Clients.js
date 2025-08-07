@@ -9,6 +9,7 @@ import AddClient from "./AddClient/AddClient";
 import EditarContato from "./EditarContato/EditarContato";
 import InsertClients from "./InsertClients/InsertClients";
 import { LoadingContext } from "../../Context/LoadingContext";
+import { SystemMessageContext } from "../../Context/SystemMessageContext";
 import {
   FiPlus,
   FiUpload,
@@ -39,6 +40,7 @@ export default function Clients() {
   const [showInsertClientsModal, setShowInsertClientsModal] = useState(false);
   const [showEditClientModal, setShowEditClientModal] = useState(null);
   const [chosenAgent, setChosenAgent] = useState(null);
+  const {showMessage} = useContext(SystemMessageContext);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -210,6 +212,7 @@ export default function Clients() {
       console.error("Erro ao exportar PDF:", error);
     }
   };
+
 
   return (
     <>

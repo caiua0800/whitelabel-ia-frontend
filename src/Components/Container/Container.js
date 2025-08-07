@@ -4,14 +4,17 @@ import Sidebar from "../Sidebar/Sidebar";
 import Notification from "../Notification/Notification";
 import Loading from "../Loading/Loading";
 import SubscriptionNotification from "./SubscriptionNotification/SubscriptionNotification";
-import { FiMenu } from "react-icons/fi"; // Importa o ícone mara
-import "./ContainerEffect.css"; // Importa nosso novo arquivo de efeitos
+import { FiMenu } from "react-icons/fi";
+import "./ContainerEffect.css";
+import SystemMessage from "../SystemMessage/SystemMessage"; // <<< IMPORTA NOSSA DIVA
 
 const Container = ({ children }) => {
     const [sidebarState, setSidebarState] = useState(false);
 
     return (
         <>
+            <SystemMessage /> {/* <<< E COLOCA ELA AQUI PRA BRILHAR */}
+
             <div style={style.container}>
                 <Sidebar
                     state={sidebarState}
@@ -22,10 +25,9 @@ const Container = ({ children }) => {
                     onClick={() => setSidebarState(true)}
                     style={{
                         ...style.openButton,
-                        // Adiciona uma classe para controlar a visibilidade com mais elegância
                         ...(sidebarState ? style.openButtonHidden : {}),
                     }}
-                    className="open-sidebar-button" // Classe para o efeito de hover
+                    className="open-sidebar-button" 
                 >
                     <FiMenu size={22} />
                 </button>

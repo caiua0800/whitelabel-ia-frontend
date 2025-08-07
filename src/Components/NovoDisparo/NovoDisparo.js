@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { criarModelo } from "../../Services/dbservice";
 import { AuthContext } from "../../Context/AuthContext";
 import { LoadingContext } from "../../Context/LoadingContext";
+import { SystemMessageContext } from "../../Context/SystemMessageContext";
 import RevisarECriar from "./Models/RevisarECriar/RevisarECriar";
 import { FiArrowLeft, FiEye, FiInfo } from "react-icons/fi";
 import toast from "react-hot-toast";
@@ -16,6 +17,7 @@ export default function NovoDisparo() {
   const [bodyText, setBodyText] = useState("");
   const [rodapeText, setRodapeText] = useState("");
   const [modalRevisar, setModalRevisar] = useState(false);
+  const { showMessage } = useContext(SystemMessageContext);
 
   const navigate = useNavigate();
 
@@ -24,32 +26,39 @@ export default function NovoDisparo() {
   const handleBodyTextChange = (e) => {
     const value = e.target.value;
     if (value.includes("\n\n\n")) {
-      toast.error("Não é permitido mais de duas quebras de linha seguidas.");
+      showMessage(
+        "Não é permitido mais de duas quebras de linha seguidas.",
+        "error"
+      );
       return;
     }
     setBodyText(value);
   };
 
   const containsInvalidChars = (text) => {
-    // Verifica emojis, quebras de linha, asteriscos
     const emojiRegex = /\p{Emoji}/u;
-    return emojiRegex.test(text) || text.includes('\n') || text.includes('*');
+    return emojiRegex.test(text) || text.includes("\n") || text.includes("*");
   };
 
   const handleRevisar = () => {
     if (!modelName.trim())
       return toast.error("O nome do modelo é obrigatório.");
-    
-    if (!headerText.trim())
-      return toast.error("O texto do cabeçalho é obrigatório.");
-    
-    if (containsInvalidChars(headerText)) {
-      return toast.error("Cabeçalho não pode ter emojis, quebras de linha ou asteriscos");
+
+    if (!headerText.trim()) {
+      showMessage("O texto do cabeçalho é obrigatório.", "error");
+      return;
     }
-    
-    if (!bodyText.trim()) 
-      return toast.error("O texto do corpo é obrigatório.");
-    
+
+    if (containsInvalidChars(headerText)) {
+      showMessage(
+        "Cabeçalho não pode ter emojis, quebras de linha ou asteriscos.",
+        "error"
+      );
+      return;
+    }
+
+    if (!bodyText.trim()) return toast.error("O texto do corpo é obrigatório.");
+
     setModalRevisar(true);
   };
 
@@ -74,28 +83,35 @@ export default function NovoDisparo() {
         bodyParams: [],
         footerText: rodapeText,
       };
-      
+
       const res = await criarModelo(credentials.accessToken, modelInfo);
-      
+
       if (res === 201) {
         toast.success("Modelo enviado para aprovação!");
-        getBack();
+        showMessage(
+          "Modelo enviado para aprovação!",
+          "success"
+        );
+
+        setTimeout(() => {
+          getBack();
+        }, 500)
       }
     } catch (error) {
       let errorMessage = "Erro ao criar modelo";
-      
+
       if (error.response?.data) {
         const { error: apiError, details, type } = error.response.data;
-        
+
         if (type === "validation") {
           errorMessage = apiError;
         } else {
-          errorMessage = `${apiError}${details ? `: ${details}` : ''}`;
+          errorMessage = `${apiError}${details ? `: ${details}` : ""}`;
         }
       }
-      
-      toast.error(errorMessage);
-      console.error("Erro ao criar modelo:", error);
+
+      // toast.error(errorMessage);
+      showMessage(errorMessage, "error");
     } finally {
       stopLoading();
     }

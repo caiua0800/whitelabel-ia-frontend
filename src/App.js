@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Container from "./Components/Container/Container";
 import Chats from "./Components/Chats/Chats";
@@ -69,11 +69,53 @@ const navigation = [
   },
 ];
 
+// Função para detectar dispositivos móveis
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+};
+
 function App() {
   const { credentials, loading } = useContext(AuthContext);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+  }, []);
 
   if (loading) {
     return <div>Verificando sessão...</div>;
+  }
+
+  if (isMobile) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f5f5f5',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '10px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          maxWidth: '400px'
+        }}>
+          <h2 style={{ color: '#333', marginBottom: '15px' }}>Acesso Restrito</h2>
+          <p style={{ color: '#666', marginBottom: '20px' }}>
+            Esta aplicação está disponível apenas para acesso via desktop.
+          </p>
+          <p style={{ color: '#888', fontSize: '14px' }}>
+            Por favor, acesse através de um computador para continuar.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

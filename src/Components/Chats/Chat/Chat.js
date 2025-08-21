@@ -3,7 +3,7 @@ import style from "./ChatStyle";
 import Message from "../Message/Message";
 import "./effect.css";
 import { ChatContext } from "../../../Context/ChatContext";
-import { sendWhatsapp, editarStatusAgente } from "../../../Services/dbservice";
+import { sendWhatsapp, editarStatusAgente, iniciarChat } from "../../../Services/dbservice";
 import { AuthContext } from "../../../Context/AuthContext";
 import OpcoesModal from "./OpcoesModal/OpcoesModal";
 import Perfil from "./OpcoesModal/Perfil/Perfil";
@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 
 export default function Chat() {
   const { messages, activeChat, handleEditChatStatus, selectedAgent } = useContext(ChatContext);
-  const { credentials } = useContext(AuthContext);
+  const { credentials, enterprise } = useContext(AuthContext);
   const [messageInput, setMessageInput] = useState("");
   const chatBodyRef = useRef(null);
   const [opcoesModal, setOpcoesModal] = useState(false);
@@ -35,11 +35,11 @@ export default function Chat() {
     setLoadCircle(true);
 
     try {
-      await sendWhatsapp(
-        textToSend,
-        selectedAgent.number,
-        true,
+      await iniciarChat(
         activeChat.id,
+        selectedAgent.number,
+        textToSend,
+        enterprise.whatsappToken,
         credentials.accessToken
       );
     } catch (error) {

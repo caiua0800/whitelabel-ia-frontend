@@ -200,15 +200,16 @@ export async function criarModelo(token, modeloInfo) {
 }
 
 export async function iniciarChat(
-  token,
+  to,
   agentNumber,
-  client_shot_dto,
-  text_to_send,
-  my_name
+  message,
+  whatsappToken,
+  token,
 ) {
+
   const res = await axios.post(
-    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/start-chat?agentNumber=${agentNumber}`,
-    { client_shot_dto, text_to_send, my_name },
+    `${REACT_APP_BASE_ROUTE_DOTNET_SERVER}shot/start-chat?agentNumber=${agentNumber}&whatsappToken=${whatsappToken}`,
+    { to, message, agent_number: agentNumber, whatsapp_token: whatsappToken },
     {
       headers: { Authorization: token },
     }

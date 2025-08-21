@@ -17,13 +17,20 @@ const ChatsRows = () => {
   const [startChat, setStartChat] = useState(false);
   const [loading, setLoading] = useState(true);
   const { credentials } = useContext(AuthContext);
-  const { getChats, chats, avaliableAgents, selectedAgent, setSelectedAgent, totalChats } =
-    useContext(ChatContext);
+  const {
+    getChats,
+    chats,
+    avaliableAgents,
+    selectedAgent,
+    setSelectedAgent,
+    totalChats,
+  } = useContext(ChatContext);
   const { startLoading, stopLoading } = useContext(LoadingContext);
   const [loadingChats, setLoadingChats] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+
 
   const fetchChats = async (page = 1) => {
     try {
@@ -31,7 +38,7 @@ const ChatsRows = () => {
       setLoading(true);
       setLoadingChats(true);
       const countResponse = await searchChats(
-        searchTerm,
+        searchTerm.replace("(", "").replace(")", "").replace("+", "").trim(),
         page,
         itemsPerPage,
         selectedAgent ? (selectedAgent ? selectedAgent.number : null) : null,
@@ -104,7 +111,9 @@ const ChatsRows = () => {
       <div style={style.chatsContainer}>
         <div style={style.chatsHeader}>
           <div style={style.headerTitleWrapper}>
-            <span style={{color: "white", ...style.chatsHeaderTitle}}>Conversas</span>
+            <span style={{ color: "white", ...style.chatsHeaderTitle }}>
+              Conversas
+            </span>
             <span style={style.chatsHeaderSubtitle}>
               {totalChats || 0} no total
             </span>
@@ -151,7 +160,6 @@ const ChatsRows = () => {
             value={selectedAgent?.id || ""}
             style={style.agentSelect}
           >
-            <option value="">Todos os Agentes</option>
             {avaliableAgents &&
               avaliableAgents.map((i) => (
                 <option value={i.id} key={i.id}>
@@ -162,15 +170,23 @@ const ChatsRows = () => {
         </div>
 
         <div style={style.chatsBody}>
-          {loadingChats ? (
-            <div style={style.messageCenter}>Carregando...</div>
-          ) : chats && chats.length > 0 ? (
-            chats.map((chat) => <ChatBox key={chat.id} chat={chat} />)
-          ) : (
-            <div style={style.messageCenter}>Nenhuma conversa encontrada.</div>
-          )}
+
+
+          {loading && <div style={style.messageCenter}>Carregando...</div>}
+          {!loading &&
+            chats &&
+            chats.length != 0 &&
+            chats.map((chat) => <ChatBox key={chat.id} chat={chat} />)}
+          {!loading &&
+            chats &&
+            chats.length == 0 &&
+            chats.map((chat) => (
+              <div style={style.messageCenter}>
+                Nenhuma conversa encontrada.
+              </div>
+            ))}
         </div>
-          
+
         {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}

@@ -9,7 +9,7 @@ const ChatBox = ({ chat }) => {
 
   const isActive = activeChat && chat.id === activeChat.id;
 
-  if (!chat || !chat.lastMessageText) return null;
+  if (!chat) return null;
 
   return (
     <div
@@ -26,7 +26,7 @@ const ChatBox = ({ chat }) => {
           <span style={style.hour}>{formatHelpers.formatarData(chat.lastMessageDate)}</span>
         </div>
         <div style={style.clientLastMessage}>
-          <span style={style.message}>{chat.lastMessageText}</span>
+          <span style={style.message}>{chat.lastMessageText || ""}</span>
         </div>
       </div>
     </div>

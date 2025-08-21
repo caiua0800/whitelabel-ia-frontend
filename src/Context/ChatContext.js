@@ -21,7 +21,6 @@ export const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
   const [chatsDb, setChatsDb] = useState([]);
-  // O loading agora tem um estado específico para as mensagens
   const [loading, setLoading] = useState({
     chats: true,
     messages: false,
@@ -103,23 +102,24 @@ const ChatProvider = ({ children }) => {
       } else if (response && response.items) {
         chatsData = response.items;
       }
-      setTotalChats(response.totalCount)
-
+      
+      setTotalChats(response.totalCount);
       setChats(chatsData);
-      return chatsData;
+
+      return { data: chatsData, totalCount: response.totalCount };
     } catch (error) {
-      console.log("Erro ao obter chats");
-      console.log(error);
+      console.log("Erro ao obter chats", error);
+      setChats([]);
+      setTotalChats(0);
+      return { data: [], totalCount: 0 };
     }
   };
 
   useEffect(() => {
     var aux = 0;
-
     chatsDb.forEach((c) => {
       if (!c.lastMessageIsSeen) aux++;
     });
-
     setNotSeenChats(aux);
     setTotalChats(chatsDb.length);
   }, [chatsDb]);
@@ -141,17 +141,17 @@ const ChatProvider = ({ children }) => {
         chat.id === chatId ? { ...chat, ...updates } : chat
       )
     );
-     // Atualiza também a lista de busca se ela existir
     setChats((prevChats) =>
-      prevChats 
-        ? prevChats.map((chat) => chat.id === chatId ? { ...chat, ...updates } : chat)
+      prevChats
+        ? prevChats.map((chat) =>
+            chat.id === chatId ? { ...chat, ...updates } : chat
+          )
         : null
     );
   }, []);
 
   const handleNewMessage = useCallback(
     (data) => {
-      // Atualiza as mensagens se o chat ativo corresponder
       if (activeChat?.id === data.chatId) {
         setMessages((prev) =>
           prev.some((msg) => msg.id === data.message.id)
@@ -160,7 +160,6 @@ const ChatProvider = ({ children }) => {
         );
       }
 
-      // Atualiza a lista de chats com a última mensagem
       updateChatInList(data.chatId, {
         lastMessageText: data.message.text,
         lastMessageDate: data.message.dateCreated,
@@ -168,7 +167,6 @@ const ChatProvider = ({ children }) => {
         lastMessageIsSeen: data.chatId === activeChat?.id,
       });
 
-      // Mostra notificação se não for do chat ativo e não for uma resposta
       if (data.chatId !== activeChat?.id && !data.message.isReply) {
         setNotification(data.message);
       }
@@ -178,36 +176,32 @@ const ChatProvider = ({ children }) => {
 
   const connectWebSocket = useCallback(() => {
     if (!credentials?.accessToken || !selectedAgent?.number) {
-      console.log("WebSocket: Credenciais ou agente não disponíveis");
       return;
     }
 
-    // Desconecta qualquer conexão existente antes de criar uma nova
     if (ws.current) {
-        ws.current.close(1000, "Changing agent or logging out");
+      ws.current.close(1000, "Changing agent or logging out");
     }
 
     const rawToken = credentials.accessToken.replace("Bearer ", "").trim();
     const agentNum = selectedAgent.number;
-    const wsUrl = new URL(process.env.REACT_APP_WS_URL || "wss://servidordotnet.demelloagent.app/ws");
+    const wsUrl = new URL(
+      process.env.REACT_APP_WS_URL || "wss://servidordotnet.demelloagent.app/ws"
+    );
     wsUrl.searchParams.append("access_token", rawToken);
     wsUrl.searchParams.append("agent_number", agentNum);
 
-    console.log(`WebSocket: Conectando em ${wsUrl.toString()}`);
     ws.current = new WebSocket(wsUrl.toString());
     ws.current.reconnectAttempts = 0;
 
     ws.current.onopen = () => {
-      console.log("WebSocket: Conexão estabelecida");
       setSocketStatus("connected");
-      ws.current.reconnectAttempts = 0; // Reseta tentativas de reconexão
+      ws.current.reconnectAttempts = 0;
     };
 
     ws.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("WebSocket: Mensagem recebida", data);
-
         if (data.type === "new_message") {
           handleNewMessage(data);
         } else if (data.type === "chat_update") {
@@ -219,19 +213,14 @@ const ChatProvider = ({ children }) => {
     };
 
     ws.current.onclose = (event) => {
-      console.log(`WebSocket: Desconectado (código: ${event.code}, motivo: ${event.reason || "não especificado"})`);
       setSocketStatus("disconnected");
-      
-      // Evita reconectar se a desconexão foi intencional (código 1000)
       if (event.code !== 1000 && ws.current) {
         const delay = Math.min(5000 * (ws.current.reconnectAttempts + 1), 30000);
-        console.log(`WebSocket: Tentando reconectar em ${delay}ms`);
-        
         setTimeout(() => {
-            if (ws.current) {
-                ws.current.reconnectAttempts = (ws.current.reconnectAttempts || 0) + 1;
-                connectWebSocket();
-            }
+          if (ws.current) {
+            ws.current.reconnectAttempts = (ws.current.reconnectAttempts || 0) + 1;
+            connectWebSocket();
+          }
         }, delay);
       }
     };
@@ -239,14 +228,17 @@ const ChatProvider = ({ children }) => {
     ws.current.onerror = (error) => {
       console.error("WebSocket: Erro na conexão", error);
       setSocketStatus("error");
-      ws.current?.close(); // Tenta fechar em caso de erro para acionar o onclose
+      ws.current?.close();
     };
-  }, [credentials?.accessToken, selectedAgent?.number, handleNewMessage, updateChatInList]);
+  }, [
+    credentials?.accessToken,
+    selectedAgent?.number,
+    handleNewMessage,
+    updateChatInList,
+  ]);
 
   const disconnectWebSocket = useCallback(() => {
     if (ws.current) {
-      console.log("WebSocket: Desconectando intencionalmente.");
-      // Remove os listeners para evitar que a lógica de reconexão seja acionada
       ws.current.onclose = null;
       ws.current.onerror = null;
       ws.current.close(1000, "User logout or component unmount");
@@ -254,12 +246,15 @@ const ChatProvider = ({ children }) => {
       setSocketStatus("disconnected");
     }
   }, []);
-  
+
   const fetchChats = async () => {
     if (!credentials?.accessToken || !selectedAgent?.number) return;
     try {
-      setLoading(prev => ({ ...prev, chats: true }));
-      const data = await obterChats(selectedAgent.number, credentials.accessToken);
+      setLoading((prev) => ({ ...prev, chats: true }));
+      const data = await obterChats(
+        selectedAgent.number,
+        credentials.accessToken
+      );
       setChatsDb(data || []);
       setError(null);
     } catch (error) {
@@ -267,7 +262,7 @@ const ChatProvider = ({ children }) => {
       setError("Falha ao carregar chats");
       setChatsDb([]);
     } finally {
-      setLoading(prev => ({ ...prev, chats: false }));
+      setLoading((prev) => ({ ...prev, chats: false }));
     }
   };
 
@@ -287,7 +282,7 @@ const ChatProvider = ({ children }) => {
       handleSelectChat(data);
       setError(null);
     } catch (error) {
-      console.error("Erro ao obter novo chat:", error);
+      console.log(error)
       setError("Falha ao carregar chat");
     } finally {
       stopLoadingDelay();
@@ -297,7 +292,11 @@ const ChatProvider = ({ children }) => {
   const fetchMessages = async (id, agentNumber) => {
     if (!credentials?.accessToken) return [];
     try {
-      const data = await obterMensagens(id, agentNumber, credentials.accessToken);
+      const data = await obterMensagens(
+        id,
+        agentNumber,
+        credentials.accessToken
+      );
       return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error("Erro ao obter mensagens:", error);
@@ -305,81 +304,85 @@ const ChatProvider = ({ children }) => {
     }
   };
 
-  const handleSelectChat = useCallback(async (chat) => {
-    if (!chat || activeChat?.id === chat.id) {
-      return; 
-    }
-    startLoading()
-    setActiveChat(chat);
-    setMessages([]);
-    setLoading(prev => ({ ...prev, messages: true })); 
+  const handleSelectChat = useCallback(
+    async (chat) => {
+      if (!chat || activeChat?.id === chat.id) {
+        return;
+      }
+      startLoading();
+      setActiveChat(chat);
+      setMessages([]);
+      setLoading((prev) => ({ ...prev, messages: true }));
 
-    
-    // 3. Atualiza a lista de chats de forma imutável para refletir o status "visto"
-    if (!chat.lastMessageIsSeen) {
-      setChatsDb(prevChats => 
-        prevChats.map(c => 
-          c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c
-        )
-      );
-      setChats(prevChats => 
-        prevChats 
-        ? prevChats.map(c => c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c)
-        : null
-      );
-    }
-    startLoading()
-    try {
-    axios.put(`${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`);
+      if (!chat.lastMessageIsSeen) {
+        setChatsDb((prevChats) =>
+          prevChats.map((c) =>
+            c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c
+          )
+        );
+        setChats((prevChats) =>
+          prevChats
+            ? prevChats.map((c) =>
+                c.id === chat.id ? { ...c, lastMessageIsSeen: true } : c
+              )
+            : null
+        );
+      }
+      startLoading();
+      try {
+        // axios.put(
+        //   `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`
+        // );
 
-      const agentNumber = selectedAgent?.number || "";
-      const chatMessages = await fetchMessages(chat.id, agentNumber);
-      setActiveChat(currentActiveChat => {
-        if (currentActiveChat?.id === chat.id) {
-          setMessages(chatMessages);
+        const agentNumber = selectedAgent?.number || "";
+        const chatMessages = await fetchMessages(chat.id, agentNumber);
+        setActiveChat((currentActiveChat) => {
+          if (currentActiveChat?.id === chat.id) {
+            setMessages(chatMessages);
+            return currentActiveChat;
+          }
           return currentActiveChat;
-        }
-        return currentActiveChat; // Outro chat foi selecionado enquanto este carregava
-      });
-    } catch (error) {
-      console.error("Erro ao carregar mensagens:", error);
-      setMessages([]); // Limpa as mensagens em caso de erro
-    } finally {
-      // Garante que o loading só será desativado para o chat ativo
-      setActiveChat(currentActiveChat => {
-        if (currentActiveChat?.id === chat.id) {
-            setLoading(prev => ({ ...prev, messages: false }));
-        }
-        return currentActiveChat;
-      });
-    stopLoading()
+        });
+      } catch (error) {
+        console.log(error)
+        setMessages([]);
+      } finally {
+        setActiveChat((currentActiveChat) => {
+          if (currentActiveChat?.id === chat.id) {
+            setLoading((prev) => ({ ...prev, messages: false }));
+          }
+          return currentActiveChat;
+        });
+        stopLoading();
+      }
+    },
+    [activeChat?.id, credentials?.accessToken, selectedAgent?.number]
+  );
 
-    }
-  }, [activeChat?.id, credentials?.accessToken, selectedAgent?.number]);
-
-  // Efeito para gerenciar a conexão WebSocket
   useEffect(() => {
     if (user && credentials?.accessToken && selectedAgent?.number) {
       connectWebSocket();
     } else {
       disconnectWebSocket();
     }
-    
-    // Função de limpeza para desconectar quando o componente for desmontado ou as dependências mudarem
     return () => {
       disconnectWebSocket();
     };
-  }, [user, credentials?.accessToken, selectedAgent?.number, connectWebSocket, disconnectWebSocket]);
+  }, [
+    user,
+    credentials?.accessToken,
+    selectedAgent?.number,
+    connectWebSocket,
+    disconnectWebSocket,
+  ]);
 
-  // Efeito para buscar chats quando o agente selecionado mudar
   useEffect(() => {
     if (user && credentials?.accessToken && selectedAgent?.number) {
-      setActiveChat(null); // Limpa o chat ativo ao trocar de agente
+      setActiveChat(null);
       setMessages([]);
       fetchChats();
     }
   }, [user, credentials, selectedAgent]);
-
 
   const handleUpdateActiveTagsChat = useCallback(
     (newTags) => {

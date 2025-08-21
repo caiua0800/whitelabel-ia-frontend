@@ -84,13 +84,28 @@ const textFormatter = (text) => {
   ));
 };
 
+const formatNumber = (number) => {
+  if(number){
+    number = number.slice(2)
+  }
+  const cleaned = number.replace(/\D/g, "");
+  const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
+  if (!match) return "";
+  let formatted = "";
+  if (match[1]) formatted += `(${match[1]}`;
+  if (match[2]) formatted += `) ${match[2]}`;
+  if (match[3]) formatted += `-${match[3]}`;
+  return formatted;
+};
+
 const func = {
   formatarData,
   formatarContato,
   formatarDataCompleta,
   formatPermission,
   formatarMoeda,
-  textFormatter
+  textFormatter,
+  formatNumber
 };
 
 export default func;

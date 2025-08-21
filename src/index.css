@@ -7,9 +7,35 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
   background-color: #181a20; 
+  
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.modal-button-hover:hover {
+  background-color: #3A3D44 !important;
+  border-color: #4f535c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+button.bottomModalButton:hover {
+  background: #2563eb !important;
+}
+
+@keyframes fadeAndScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

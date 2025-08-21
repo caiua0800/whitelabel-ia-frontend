@@ -11,6 +11,8 @@ const AuthProvider = ({ children }) => {
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
+  console.log(enterprise)
 
   const logout = () => {
     setUser(null);

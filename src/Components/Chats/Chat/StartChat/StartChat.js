@@ -12,7 +12,7 @@ export default function StartChat({ onClose, reload }) {
   const [myName, setMyName] = useState("");
   const [displayValue, setDisplayValue] = useState("");
   const [text, setText] = useState("");
-  const { credentials } = useContext(AuthContext);
+  const { credentials, enterprise } = useContext(AuthContext);
   const { selectedAgent } = useContext(ChatContext);
   const { loading, startLoading, stopLoading } = useContext(LoadingContext);
 
@@ -46,14 +46,16 @@ export default function StartChat({ onClose, reload }) {
 
     startLoading();
     try {
+
       const response = await iniciarChat(
-        credentials.accessToken,
+        "55" + contact.trim(),
         selectedAgent.number,
-        { number: "55" + contact.trim(), name: "Novo Contato" },
         text,
-        myName
+        enterprise.whatsappToken,
+        credentials.accessToken,
       );
       
+      console.log(response)
       if (response === 200) {
         toast.success("Chat iniciado com sucesso!");
         reload();
@@ -92,28 +94,10 @@ export default function StartChat({ onClose, reload }) {
             </div>
           </div>
           
-          <div style={style.inputGroup}>
-            <label style={style.label}>
-                <span style={style.templateText}>"Olá tudo bem? Me chamo </span>
-                <span style={style.variableText}>{"{seu_nome}"}</span>
-                <span style={style.templateText}>"</span>
-            </label>
-            <div style={style.inputWrapper}>
-              <FiUser style={style.inputIcon}/>
-              <input
-                onChange={(e) => setMyName(e.target.value)}
-                value={myName}
-                placeholder="Seu nome aqui..."
-                style={style.input}
-                required
-              />
-            </div>
-          </div>
           
           <div style={style.inputGroup}>
             <label style={style.label}>
-                <span style={style.templateText}>"Estou entrando em contato </span>
-                <span style={style.variableText}>{"{mensagem}"}</span>
+                <span style={style.templateText}>"Digite a mensagem desejada abaixo</span>
                 <span style={style.templateText}>"</span>
             </label>
              <div style={style.inputWrapper}>

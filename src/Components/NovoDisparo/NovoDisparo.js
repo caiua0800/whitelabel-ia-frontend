@@ -10,7 +10,7 @@ import { FiArrowLeft, FiEye, FiInfo } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 export default function NovoDisparo() {
-  const { credentials } = useContext(AuthContext);
+  const { credentials, enterprise } = useContext(AuthContext);
   const { startLoading, stopLoading } = useContext(LoadingContext);
   const [modelName, setModelName] = useState("");
   const [headerText, setHeaderText] = useState("");
@@ -82,8 +82,13 @@ export default function NovoDisparo() {
         bodyText: bodyText,
         bodyParams: [],
         footerText: rodapeText,
+        account_id: enterprise.metaAccountId,
+        whatsapp_token: enterprise.whatsappToken
       };
 
+      console.log(enterprise.metaAccountId)
+      console.log(modelInfo.whatsappToken)
+  
       const res = await criarModelo(credentials.accessToken, modelInfo);
 
       if (res === 201) {

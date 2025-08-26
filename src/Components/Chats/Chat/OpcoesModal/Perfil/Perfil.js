@@ -31,13 +31,13 @@ export default function Perfil({ onClose }) {
                 </div>
                 <div style={style.profileNameContainer}>
                     <span style={style.profileName}>{activeChat.clientName || "Sem Nome"}</span>
-                    <span style={style.profileContact}>{func.formatarContato(activeChat?.id)}</span>
+                    <span style={style.profileContact}>{func.formatarContato(func.getChatId(activeChat?.id))}</span>
                 </div>
             </div>
 
             <div style={style.infoGrid}>
                 <InfoField icon={<FiUser/>} label="Nome Completo" value={activeChat.clientName} />
-                <InfoField icon={<FiPhone/>} label="Contato" value={func.formatarContato(activeChat?.id)} />
+                <InfoField icon={<FiPhone/>} label="Contato" value={func.formatarContato(func.getChatId(activeChat?.id))} />
                 <InfoField icon={<FiMapPin/>} label="CEP" value={activeChat.zipcode} />
                 <InfoField icon={<FiHome/>} label="Endereço" value={`${activeChat.street || ''}, ${activeChat.number || ''}`} />
                 <InfoField icon={<FiBox/>} label="Bairro" value={activeChat.neighborhood} />

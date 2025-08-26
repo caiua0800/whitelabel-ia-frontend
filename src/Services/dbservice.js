@@ -140,6 +140,9 @@ export async function enviarDisparo(token, agentNumber, shotId, clients) {
     }
   );
 
+  console.log(res)
+  console.log(res.status)
+
   return res.status;
 }
 

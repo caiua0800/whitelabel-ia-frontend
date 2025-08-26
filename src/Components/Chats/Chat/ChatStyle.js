@@ -38,6 +38,7 @@ const style = {
     clientTextInfo: {
         display: "flex",
         flexDirection: "column",
+        alignItems: "start"
     },
     clientName: {
         fontSize: "16px",

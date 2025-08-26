@@ -3,16 +3,28 @@ import style from "./ChatStyle";
 import Message from "../Message/Message";
 import "./effect.css";
 import { ChatContext } from "../../../Context/ChatContext";
-import { sendWhatsapp, editarStatusAgente, iniciarChat } from "../../../Services/dbservice";
+import {
+  sendWhatsapp,
+  editarStatusAgente,
+  iniciarChat,
+} from "../../../Services/dbservice";
 import { AuthContext } from "../../../Context/AuthContext";
 import OpcoesModal from "./OpcoesModal/OpcoesModal";
 import Perfil from "./OpcoesModal/Perfil/Perfil";
 import LoadingCircle from "../../Loading/LoadingCircle";
-import { FiPaperclip, FiSend, FiUserCheck, FiUserX, FiMoreVertical } from "react-icons/fi";
-import toast from 'react-hot-toast';
+import {
+  FiPaperclip,
+  FiSend,
+  FiUserCheck,
+  FiUserX,
+  FiMoreVertical,
+} from "react-icons/fi";
+import toast from "react-hot-toast";
+import func from "../../../Services/fotmatters";
 
 export default function Chat() {
-  const { messages, activeChat, handleEditChatStatus, selectedAgent } = useContext(ChatContext);
+  const { messages, activeChat, handleEditChatStatus, selectedAgent } =
+    useContext(ChatContext);
   const { credentials, enterprise } = useContext(AuthContext);
   const [messageInput, setMessageInput] = useState("");
   const chatBodyRef = useRef(null);
@@ -79,7 +91,9 @@ export default function Chat() {
       <div style={style.noChatContainer}>
         {/* <img src="/images/empty-chat.svg" alt="Selecione um chat" style={style.noChatImage} /> */}
         <h2 style={style.noChatTitle}>Selecione uma conversa</h2>
-        <p style={style.noChatSubtitle}>Escolha um dos seus contatos para começar a conversar.</p>
+        <p style={style.noChatSubtitle}>
+          Escolha um dos seus contatos para começar a conversar.
+        </p>
       </div>
     );
   }
@@ -90,18 +104,38 @@ export default function Chat() {
         <div style={style.chatHeader}>
           <div style={style.clientInfo} onClick={() => setSeeProfile(true)}>
             <div style={style.clientPictureBox}>
-              <img style={style.clientPicture} src="./icons/user-icon2.png" alt="Avatar"/>
+              <img
+                style={style.clientPicture}
+                src="./icons/user-icon2.png"
+                alt="Avatar"
+              />
             </div>
             <div style={style.clientTextInfo}>
-                <span style={style.clientName}>{activeChat.clientName || activeChat.id}</span>
-                <span style={style.clientNumber}>{activeChat.id}</span>
+              <span style={style.clientName}>
+                {activeChat.clientName || func.formatarContato(func.getChatId(activeChat.id))}
+              </span>
+              <span style={style.clientNumber}>{func.formatarContato(func.getChatId(activeChat.id))}</span>
             </div>
           </div>
           <div style={style.chatOptionMenu}>
-            <button onClick={handleToggleAgentStatus} style={style.headerButton} title={activeChat.status === 1 ? "Agente Ativado" : "Agente Bloqueado"}>
-              {activeChat.status === 1 ? <FiUserCheck size={20} /> : <FiUserX size={20} />}
+            <button
+              onClick={handleToggleAgentStatus}
+              style={style.headerButton}
+              title={
+                activeChat.status === 1 ? "Agente Ativado" : "Agente Bloqueado"
+              }
+            >
+              {activeChat.status === 1 ? (
+                <FiUserCheck size={20} />
+              ) : (
+                <FiUserX size={20} />
+              )}
             </button>
-            <button onClick={() => setOpcoesModal(true)} style={style.headerButton} title="Mais Opções">
+            <button
+              onClick={() => setOpcoesModal(true)}
+              style={style.headerButton}
+              title="Mais Opções"
+            >
               <FiMoreVertical size={20} />
             </button>
           </div>
@@ -109,16 +143,22 @@ export default function Chat() {
 
         <div style={style.chatBody} ref={chatBodyRef}>
           {messages && messages.length > 0 ? (
-             messages.map((message, key) => <Message message={message} key={key} />)
+            messages.map((message, key) => (
+              <Message message={message} key={key} />
+            ))
           ) : (
             <div style={style.noMessageInfo}>Inicie uma conversa!</div>
           )}
         </div>
-        
+
         <LoadingCircle loading={loadCircle} />
-        
+
         <form style={style.sendMessagesBox} onSubmit={handleSendMessage}>
-          <button type="button" style={style.iconButton} title="Anexar (em breve)">
+          <button
+            type="button"
+            style={style.iconButton}
+            title="Anexar (em breve)"
+          >
             <FiPaperclip size={22} />
           </button>
           <div style={style.messageInputBox}>
@@ -129,7 +169,11 @@ export default function Chat() {
               onChange={(e) => setMessageInput(e.target.value)}
             />
           </div>
-          <button type="submit" style={style.iconButton} title="Enviar Mensagem">
+          <button
+            type="submit"
+            style={style.iconButton}
+            title="Enviar Mensagem"
+          >
             <FiSend size={22} />
           </button>
         </form>

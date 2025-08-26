@@ -61,22 +61,25 @@ function formatarMoeda(valor) {
 }
 
 const textFormatter = (text) => {
-  if (!text) return '';
-  
+  if (!text) return "";
+
   // Passo 1: Substituir enumerações (1., 2., etc.) por quebras de linha
-  let formatted = text.replace(/(\d+)\./g, '\n$1. ');
-  
+  let formatted = text.replace(/(\d+)\./g, "\n$1. ");
+
   // Passo 2: Adicionar quebras após frases completas
-  formatted = formatted.replace(/([.!?])\s+(?=[A-ZÀ-Ú])/g, '$1\n\n');
-  
+  formatted = formatted.replace(/([.!?])\s+(?=[A-ZÀ-Ú])/g, "$1\n\n");
+
   // Passo 3: Formatar seções especiais
-  formatted = formatted.replace(/(Imagine só:|Veja como:|Quer que eu)/g, '\n\n$1');
-  
+  formatted = formatted.replace(
+    /(Imagine só:|Veja como:|Quer que eu)/g,
+    "\n\n$1"
+  );
+
   // Passo 4: Remover espaços extras
-  formatted = formatted.replace(/\s+/g, ' ').trim();
-  
+  formatted = formatted.replace(/\s+/g, " ").trim();
+
   // Passo 5: Converter quebras de linha em elementos React
-  return formatted.split('\n').map((paragraph, i) => (
+  return formatted.split("\n").map((paragraph, i) => (
     <React.Fragment key={i}>
       {paragraph}
       <br />
@@ -85,8 +88,8 @@ const textFormatter = (text) => {
 };
 
 const formatNumber = (number) => {
-  if(number){
-    number = number.slice(2)
+  if (number) {
+    number = number.slice(2);
   }
   const cleaned = number.replace(/\D/g, "");
   const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
@@ -98,14 +101,22 @@ const formatNumber = (number) => {
   return formatted;
 };
 
+const getChatId = (identifier) => {
+  if (!identifier) {
+    return identifier;
+  }
+  return identifier.split("-agent-")[0];
+};
+
 const func = {
   formatarData,
   formatarContato,
   formatarDataCompleta,
   formatPermission,
   formatarMoeda,
+  getChatId,
   textFormatter,
-  formatNumber
+  formatNumber,
 };
 
 export default func;

@@ -1,100 +1,96 @@
-
-
 const style = {
     notificationContainer: {
         position: "fixed",
-        bottom: 20,
-        left: 30,
-        width: 560,
-        height: 140,
-        zIndex: 9
+        bottom: 25,
+        right: 25,
+        width: 420,
+        height: 110,
+        zIndex: 1000,
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
     },
-    notificationBox: { 
-        background: "rgba(100, 200, 0, 1)",
-        border: "2px solid rgba(80, 80, 80, 1)",
-        boxShadow: "3px 3px 3px rgba(0,0,0,0.4)",
-        minWidth: "200px",
-        width: "max-content",
-        maxWidth: "100%",
+    notificationBox: {
+        width: "100%",
         height: "100%",
-        borderRadius: 8,
+        background: "rgba(26, 26, 30, 0.75)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "12px",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
         boxSizing: "border-box",
-        padding: "5px 40px",
-        display: "grid",
-        gridTemplateColumns: "30% 70%",
-        gap: 20,
+        padding: "15px 20px",
+        display: "flex",
+        alignItems: "center",
+        gap: 15,
         cursor: "pointer",
-        position: "relative"
+        position: "relative",
+        animation: "slideInFromBottom 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards",
+        transition: "transform 0.2s ease-out, box-shadow 0.2s ease-out",
+    },
+    iconContainer: {
+        width: "50px",
+        height: "50px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexShrink: 0,
+    },
+    icon: {
+        width: "32px",
+        height: "32px",
+        color: "#00aaff",
+    },
+    contentContainer: {
+        flex: 1,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        overflow: "hidden",
+    },
+    header: {
+        display: "flex",
+        alignItems: "baseline",
+        // gap: "8px",
+        flexDirection: "column",
+        alignItems: "start"
+    },
+    title: {
+        fontSize: "16px",
+        color: "#ffffff",
+        fontWeight: "600",
+    },
+    senderId: {
+        fontSize: "13px",
+        color: "#a0a0a0",
+        fontWeight: "400",
+    },
+    messageBody: {
+        textAlign: "left",
+    },
+    message: {
+        fontSize: "14px",
+        color: "#d1d1d1",
+        lineHeight: "1.4",
+    },
+    footer: {
+        width: "100%",
+        textAlign: "right",
+    },
+    hour: {
+        fontSize: "12px",
+        color: "#777",
+        fontWeight: "500",
     },
     closeBtn: {
         position: "absolute",
-        top: 10,
-        left: 15,
-        fontSize: 18,
-        color: "black",
-        fontWeight: 600,
-        cursor: "pointer"
+        top: 8,
+        right: 12,
+        fontSize: "24px",
+        color: "#888",
+        fontWeight: "300",
+        cursor: "pointer",
+        transition: "color 0.2s ease",
     },
-    photoContainer: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    photoBox: {
-        width: 80,
-        height: 80,
-        borderRadius: "50%",
-        border: "3px solid rgba(0,0,0,0.4)",
-        boxShadow: "2px 2px 3px rgba(0,0,0,0.4)",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    photo: {
-        width: "170%"
-    },
-    anotherPart: {
-        width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
-        display: "grid",
-        gridTemplateRows: "50% 50%"
-    },
-    numberPart: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "start",
-        alignItems: "end"
-    },
-    clientNumber: {
-        fontSize: 22,
-        color: "white",
-        fontWeight: "600"
-    },
-    messagePart: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "start",
-        alignItems: "start",
-        textAlign: "start",
-        position: "relative"
-    },
-    message: {
-        fontSize: 16,
-        color: "black"
-    },
-    hour: {
-        position: "absolute",
-        bottom: 10,
-        right: 20,
-        fontSize: 14,
-        color: "rgba(0,0,0,0.7)"
-    }
-}
+};
 
 export default style;

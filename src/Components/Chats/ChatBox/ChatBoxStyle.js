@@ -12,6 +12,9 @@ const style = {
     activeChat: {
         background: "#2a2f3b",
     },
+    notSeenChat: {
+        background: "#1e2a3a",
+    },
     profilePhotoBox: {
         width: 50,
         height: 50,
@@ -59,6 +62,10 @@ const style = {
         width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
+    },
+    notSeenMessage: {
+        color: "#FFF",
+        fontWeight: "bold",
     },
 };
 

@@ -1,243 +1,258 @@
 import React, { useState, useEffect, useContext } from "react";
 import style from "./SubscriptionNotificationStyle";
 import { AuthContext } from "../../../Context/AuthContext";
-import formatHelpers from "../../helpers/formatHelpers";
+import { LoadingContext } from "../../../Context/LoadingContext";
 import func from "../../../Services/fotmatters";
-import QRcode, { QRCodeCanvas } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import LoadingCircle from "../../Loading/LoadingCircle";
 import { gerarPix, verificarPagamento } from "../../../Services/dbservice";
-import { LoadingContext } from "../../../Context/LoadingContext";
+import { FiAlertOctagon, FiCheckCircle, FiCopy, FiCreditCard, FiClock } from "react-icons/fi";
+import toast from "react-hot-toast";
 
-const pixPayload =
-  "00020126580014BR.GOV.BCB.PIX0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913Fulano de Tal6008BRASILIA62070503***63041D3F";
+const formatarDataSimples = (dateString) => {
+  if (!dateString) return "N/A";
+  try {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${day}/${month}`;
+  } catch (error) {
+    return "Data inválida";
+  }
+};
 
 export default function SubscriptionNotification() {
   const { subscriptionInfo, credentials, enterprise } = useContext(AuthContext);
-  const { startLoading, stopLoading } = useContext(LoadingContext);
-  const [showWarning, setShowWarning] = useState(false);
-  const [generatePixOption, setGeneratePixOption] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showPixScreen, setShowPixScreen] = useState(false);
   const [pixInfo, setPixInfo] = useState(null);
+  const { startLoading, stopLoading } = useContext(LoadingContext)
+
+  const isBlocked = subscriptionInfo?.status === 3;
 
   useEffect(() => {
-    if (subscriptionInfo) console.log(subscriptionInfo.block_days_remaining);
-    if (
-      subscriptionInfo &&
-      subscriptionInfo.block_days_remaining &&
-      subscriptionInfo.block_days_remaining < 3
-    ) {
-      // if (subscriptionInfo.block_days_remaining <= 2) {
-      const shouldShow = verifyIfOpen();
-      setShowWarning(shouldShow);
-      // }
+    if (subscriptionInfo && (subscriptionInfo.status === 1 || subscriptionInfo.status === 3)) {
+      setShowModal(isBlocked || verifyIfOpen());
+    } else {
+      setShowModal(false);
     }
-  }, [subscriptionInfo]);
+  }, [subscriptionInfo, isBlocked]);
 
   const handleClose = () => {
-    localStorage.setItem(
-      "last-time-subscription-warning-opened",
-      new Date().toISOString()
-    );
-    setShowWarning(false);
+    if (isBlocked) return;
+    localStorage.setItem("last-time-subscription-warning-opened", new Date().toISOString());
+    setShowModal(false);
   };
 
   const verifyIfOpen = () => {
-    const lastTimeOpened = localStorage.getItem(
-      "last-time-subscription-warning-opened"
-    );
-
+    const lastTimeOpened = localStorage.getItem("last-time-subscription-warning-opened");
     if (!lastTimeOpened) return true;
-
-    const lastOpenedDate = new Date(lastTimeOpened);
-    const currentDate = new Date();
-    const diffInMs = currentDate - lastOpenedDate;
-    const diffInHours = diffInMs / (1000 * 60 * 60);
-    return diffInHours > 4;
+    const diffInHours = (new Date() - new Date(lastTimeOpened)) / (1000 * 60 * 60);
+    return true;
+    // return diffInHours > 4;
   };
 
-  const generatePix = async () => {
+  const handleGeneratePix = async () => {
+    startLoading();
     try {
-      var indentTypeAux1 = enterprise.cnpj
-        .replace(".", "")
-        .replace(".", "")
-        .replace("-", "")
-        .replace("-", "")
-        .replace("/", "")
-        .trim();
-      setGeneratePixOption(true);
+      const docNumber = enterprise.cnpj.replace(/\D/g, "");
       const response = await gerarPix(
         credentials.accessToken,
-        indentTypeAux1.length > 11 ? "CNPJ" : "CPF"
+        docNumber.length > 11 ? "CNPJ" : "CPF"
       );
       setPixInfo(response);
-      console.log(response);
+      setShowPixScreen(true);
     } catch (error) {
-      alert("Erro ao gerar pix.");
-      setGeneratePixOption(false);
+      toast.error("Erro ao gerar PIX. Tente novamente.");
+    } finally {
+      stopLoading();
     }
   };
+  
+  // Adicionando o contexto para a função
+  handleGeneratePix.contextType = LoadingContext;
 
-  const verificarPix = async () => {
-    try {
-      startLoading()
-      const response = await verificarPagamento(
-        credentials.accessToken,
-        pixInfo.id
-      );
-      handleVerifyPaymentMessage(response.data.message, response.data.status)
-    } catch (error) {
-      alert("Erro ao verificar pix.");
-      console.log(error);
-    } finally{
-      stopLoading()
-    }
+  const handlePaymentSuccess = () => {
+    setTimeout(() => window.location.reload(), 2500);
   };
 
-  const handleVerifyPaymentMessage = (msg, status) => {
-    if(status === "pending"){
-      alert("Pagamento ainda não foi aprovado.");
-    }else if(status === "approved" || status === "paid"){
-      alert("Pagamento verificado com sucesso.\n Sua assinatura se renovará em alguns instantes.");
-      handleClose()
-    }else{
-      alert("Status indefinido, entre em contato com o suporte.");
-    }
+  if (!subscriptionInfo || !showModal) {
+    return null;
   }
 
   return (
-    <>
-      {subscriptionInfo && showWarning && (
-        <div style={style.containerModal}>
-          <div style={style.containerContent}>
-            <div style={style.containerContentFirstColumn}>
-              <div style={style.containerContentTitleBox}>
-                <span style={style.containerContentTitle}>
-                  Lembrete de pagamento
-                </span>
-              </div>
-
-              <div style={style.signatureBoxInfo}>
-                <div style={style.infoContentBox}>
-                  <span style={style.infoContentBoxTitle}>
-                    Nome assinatura:
-                  </span>
-                  <span style={style.infoContentBoxValue}>
-                    {subscriptionInfo.name}
-                  </span>
-                </div>
-                <div style={style.infoContentBox}>
-                  <span style={style.infoContentBoxTitle}>
-                    Dureção assinatura:
-                  </span>
-                  <span style={style.infoContentBoxValue}>
-                    {subscriptionInfo.duration} dia(s)
-                  </span>
-                </div>
-                <div style={style.infoContentBox}>
-                  <span style={style.infoContentBoxTitle}>
-                    Último pagamento:
-                  </span>
-                  <span style={style.infoContentBoxValue}>
-                    {subscriptionInfo.datePaid || "Não informado"}
-                  </span>
-                </div>
-                <div style={style.infoContentBox}>
-                  <span style={style.infoContentBoxTitle}>
-                    Data de expiração:
-                  </span>
-                  <span style={style.infoContentBoxValue}>
-                    {func.formatarDataCompleta(subscriptionInfo.expiration)}
-                  </span>
-                </div>
-                <div style={style.infoContentBox}>
-                  <span style={style.infoContentBoxTitle}>Dias restantes:</span>
-                  <span style={style.infoContentBoxValue}>
-                    {subscriptionInfo.block_days_remaining}
-                  </span>
-                </div>
-
-                <div style={style.assustaEle}>
-                  <span style={style.assustaEleNormal}>
-                    <span style={style.assustaEleBold}>ATENÇÃO: </span>O não
-                    pagamento da assinatura até o dia da expiração acarretará em
-                    suspenção imediata dos serviços.
-                  </span>
-                </div>
-
-                <div style={style.priceBox}>
-                  <span style={style.priceBoxTitle}>VALOR À PAGAR</span>
-                  <span style={style.priceBoxValue}>
-                    {func.formatarMoeda(subscriptionInfo.value)}
-                  </span>
-                </div>
-                <div style={style.priceBoxBottom}>
-                  <span style={style.priceBoxTitleBottom}>Status</span>
-                  <span style={style.priceBoxValueBottom}>Pendente</span>
-                </div>
-              </div>
-            </div>
-
-            {generatePixOption ? (
-              <>
-                <GeneratePixOption
-                  pixInfo={pixInfo}
-                  handleClose={handleClose}
-                  verificarPix={verificarPix}
-                />
-              </>
-            ) : (
-              <>
-                <div style={style.containerContentSecondColumn}>
-                  <button onClick={generatePix} style={style.generatePixButton}>
-                    Gerar Pix para pagamento
-                  </button>
-                  <button style={style.payAfterButton} onClick={handleClose}>
-                    Pagar mais tarde
-                  </button>{" "}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </>
+    <div style={style.containerModal}>
+      <div style={style.modalContent}>
+        {showPixScreen ? (
+          <PixScreen
+            pixInfo={pixInfo}
+            credentials={credentials}
+            onPaymentSuccess={handlePaymentSuccess}
+            onClose={() => setShowPixScreen(false)}
+            isBlocked={isBlocked}
+          />
+        ) : (
+          <MainScreen
+            subscriptionInfo={subscriptionInfo}
+            isBlocked={isBlocked}
+            onGeneratePix={handleGeneratePix}
+            onClose={handleClose}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
-const GeneratePixOption = ({ pixInfo, handleClose, verificarPix }) => {
-  const [qrCode, setQrCode] = useState(null);
-
-  useEffect(() => {
-    if (pixInfo) {
-      setQrCode(pixInfo.point_of_interaction.transaction_data.qr_code);
-    }
-  }, [pixInfo]);
-
+const MainScreen = ({ subscriptionInfo, isBlocked, onGeneratePix, onClose }) => {
+  const [value, currency] = func.formatarMoeda(subscriptionInfo.value).split(" ");
+  
   return (
     <>
-      <div style={style.containerPixOption}>
-        <span style={style.title}>Pague com o QR code abaixo</span>
+      <div style={style.modalHeader(isBlocked)}>
+        <div style={style.headerIcon}>
+          <FiAlertOctagon size={40} color={isBlocked ? "#FF4757" : "#FACD14"} />
+        </div>
+        <h2 style={style.headerTitle}>
+          {isBlocked ? "Acesso Suspenso" : "Aviso de Vencimento"}
+        </h2>
+        <p style={style.headerSubtitle}>
+          {isBlocked
+            ? "Sua assinatura expirou. Regularize para reativar seu acesso."
+            : "Sua assinatura está próxima do vencimento. Evite interrupções."}
+        </p>
+      </div>
 
-        <div style={style.qrCodeContainer}>
-          <LoadingCircle loading={qrCode ? false : true} />
-          {qrCode && (
-            <QRCodeCanvas
-              value={qrCode}
-              size={300}
-              level="H"
-              includeMargin={true}
-              style={style.qrCode}
-            />
-          )}
-          {!qrCode && (
-            <div style={{width: 300, height: 300}} />
-          )}
+      <div style={style.modalBody}>
+        <div style={style.statsBar}>
+          <StatsItem label="Plano Atual" value={subscriptionInfo.name} />
+          <StatsItem label="Vencimento" value={formatarDataSimples(subscriptionInfo.expiration)} />
+          <StatsItem label="Dias Restantes" value={subscriptionInfo.block_days_remaining} />
         </div>
 
-        <button onClick={verificarPix} style={style.buttonPaid}>Verificar Pagamento</button>
-        <button onClick={handleClose} style={style.buttonExit}>
-          Sair
-        </button>
+        <div style={style.paymentSection}>
+          <p style={style.paymentLabel}>VALOR PARA RENOVAÇÃO</p>
+          <h1 style={style.paymentValue}>
+            {value}
+            <span style={style.paymentCurrency}>{currency}</span>
+          </h1>
+        </div>
+
+        <div style={style.actionButtons}>
+          <button onClick={onGeneratePix} style={style.primaryButton(isBlocked)}>
+            <FiCreditCard size={20} />
+            {isBlocked ? "Pagar e Reativar Agora" : "Renovar com PIX"}
+          </button>
+          {!isBlocked && (
+            <button onClick={onClose} style={style.secondaryButton}>
+              Lembrar Mais Tarde
+            </button>
+          )}
+        </div>
       </div>
     </>
   );
 };
+
+const PixScreen = ({ pixInfo, credentials, onPaymentSuccess, onClose, isBlocked }) => {
+  const { startLoading, stopLoading } = useContext(LoadingContext);
+  const [verificationStatus, setVerificationStatus] = useState("idle"); // idle, verifying, success, pending
+  const qrCodeValue = pixInfo?.point_of_interaction?.transaction_data?.qr_code;
+
+  const handleVerify = async () => {
+    setVerificationStatus("verifying");
+    startLoading();
+    try {
+      const response = await verificarPagamento(credentials.accessToken, pixInfo.id);
+      const { status } = response.data;
+      if (status === "approved" || status === "paid") {
+        setVerificationStatus("success");
+        onPaymentSuccess();
+      } else {
+        setVerificationStatus("pending");
+      }
+    } catch (error) {
+      toast.error("Erro na verificação. Tente novamente.");
+      setVerificationStatus("idle");
+    } finally {
+      stopLoading();
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(qrCodeValue);
+    toast.success("Código PIX Copia e Cola copiado!");
+  };
+
+  if (verificationStatus === "success") {
+    return (
+      <div style={{...style.pixScreen, ...style.verificationResultContainer}}>
+        <div style={style.resultIconSuccess}>
+          <FiCheckCircle size={40} color="#2ECC71" />
+        </div>
+        <h2 style={style.headerTitle}>Pagamento Confirmado!</h2>
+        <p style={style.headerSubtitle}>Sua assinatura está sendo atualizada. A página será recarregada em instantes.</p>
+      </div>
+    );
+  }
+
+  if (verificationStatus === "pending") {
+    return (
+      <div style={{...style.pixScreen, ...style.verificationResultContainer}}>
+        <div style={style.resultIconPending}>
+          <FiClock size={40} color="#FACD14" />
+        </div>
+        <h2 style={style.headerTitle}>Aguardando Confirmação</h2>
+        <p style={style.headerSubtitle}>Ainda não recebemos a confirmação do seu banco. Isso pode levar alguns segundos.</p>
+        <div style={{...style.actionButtons, width: "100%"}}>
+            <button onClick={() => setVerificationStatus("idle")} style={style.primaryButton(isBlocked)}>
+                <FiCreditCard size={20} /> Tentar Novamente
+            </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={style.pixScreen}>
+      <h2 style={style.headerTitle}>Pagamento via PIX</h2>
+      <p style={style.headerSubtitle}>
+        Use o app do seu banco para ler o QR Code ou use o Copia e Cola.
+      </p>
+
+      <div style={style.qrCodeContainer}>
+        {qrCodeValue ? (
+          <QRCodeCanvas value={qrCodeValue} size={200} level="H" />
+        ) : (
+          <div style={{width: 200, height: 200, display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <LoadingCircle />
+          </div>
+        )}
+      </div>
+
+      {qrCodeValue && (
+        <button onClick={copyToClipboard} style={style.copyPixButton}>
+          <FiCopy size={16} /> Copiar Código PIX
+        </button>
+      )}
+
+      <div style={style.actionButtons}>
+        <button onClick={handleVerify} style={style.primaryButton(isBlocked, verificationStatus === 'verifying')} disabled={verificationStatus === 'verifying'}>
+          {verificationStatus === 'verifying' ? <LoadingCircle size={20} /> : <><FiCheckCircle size={20} /> Já Paguei, Verificar</>}
+        </button>
+        {!isBlocked && (
+          <button onClick={onClose} style={style.secondaryButton}>
+            Cancelar
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const StatsItem = ({ label, value }) => (
+  <div style={style.statsItem}>
+    <p style={style.statsLabel}>{label}</p>
+    <p style={style.statsValue}>{value}</p>
+  </div>
+);

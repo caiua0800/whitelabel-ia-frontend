@@ -4,9 +4,9 @@ import Message from "../Message/Message";
 import "./effect.css";
 import { ChatContext } from "../../../Context/ChatContext";
 import {
-  sendWhatsapp,
   editarStatusAgente,
   iniciarChat,
+  searchChats,
 } from "../../../Services/dbservice";
 import { AuthContext } from "../../../Context/AuthContext";
 import OpcoesModal from "./OpcoesModal/OpcoesModal";
@@ -18,12 +18,13 @@ import {
   FiUserCheck,
   FiUserX,
   FiMoreVertical,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import func from "../../../Services/fotmatters";
 
 export default function Chat() {
-  const { messages, activeChat, handleEditChatStatus, selectedAgent } =
+  const { messages, activeChat, getChats, handleEditChatStatus, selectedAgent } =
     useContext(ChatContext);
   const { credentials, enterprise } = useContext(AuthContext);
   const [messageInput, setMessageInput] = useState("");
@@ -31,6 +32,8 @@ export default function Chat() {
   const [opcoesModal, setOpcoesModal] = useState(false);
   const [seeProfile, setSeeProfile] = useState(false);
   const [loadCircle, setLoadCircle] = useState(false);
+  const [isWindowClosed, setIsWindowClosed] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -38,9 +41,42 @@ export default function Chat() {
     }
   }, [messages, activeChat]);
 
+  useEffect(() => {
+    if (activeChat && messages && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      const lastMessageDate = new Date(lastMessage.dateCreated);
+      const now = new Date();
+
+      const diffInMs = now.getTime() - lastMessageDate.getTime();
+      const diffInHours = diffInMs / (1000 * 60 * 60);
+
+      setIsWindowClosed(diffInHours > 24);
+    } else {
+      setIsWindowClosed(false);
+    }
+  }, [messages, activeChat]);
+
+  const fetchChats = async (page = 1) => {
+    try {
+      await searchChats(
+        "", 1, 5,
+        selectedAgent ? selectedAgent.number : null,
+        credentials.accessToken, "asx", null, null, null, true
+      );
+
+      await getChats(
+        "", 1, 5,
+        selectedAgent ? selectedAgent.number : null,
+        credentials.accessToken, "asx", null, null, null, true
+      );
+    } catch (error) {
+      console.error("Erro ao buscar chats:", error);
+    }
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!messageInput.trim()) return;
+    if (!messageInput.trim() || isWindowClosed) return;
 
     const textToSend = messageInput;
     setMessageInput("");
@@ -54,6 +90,7 @@ export default function Chat() {
         enterprise.whatsappToken,
         credentials.accessToken
       );
+      await fetchChats(1);
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       toast.error("Falha ao enviar mensagem.");
@@ -89,7 +126,6 @@ export default function Chat() {
   if (!activeChat) {
     return (
       <div style={style.noChatContainer}>
-        {/* <img src="/images/empty-chat.svg" alt="Selecione um chat" style={style.noChatImage} /> */}
         <h2 style={style.noChatTitle}>Selecione uma conversa</h2>
         <p style={style.noChatSubtitle}>
           Escolha um dos seus contatos para começar a conversar.
@@ -153,34 +189,66 @@ export default function Chat() {
 
         <LoadingCircle loading={loadCircle} />
 
-        <form style={style.sendMessagesBox} onSubmit={handleSendMessage}>
-          <button
-            type="button"
-            style={style.iconButton}
-            title="Anexar (em breve)"
-          >
-            <FiPaperclip size={22} />
-          </button>
-          <div style={style.messageInputBox}>
-            <input
-              placeholder="Digite sua mensagem..."
-              style={style.messageInput}
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-            />
+        {isWindowClosed ? (
+          <div style={style.warningBox}>
+            <FiAlertTriangle size={20} />
+            <span>
+              A janela de 24h fechou. Só é possível enviar por disparos.
+              <button style={style.learnMoreLink} onClick={() => setIsHelpModalOpen(true)}>
+                Saiba mais
+              </button>
+            </span>
           </div>
-          <button
-            type="submit"
-            style={style.iconButton}
-            title="Enviar Mensagem"
-          >
-            <FiSend size={22} />
-          </button>
-        </form>
+        ) : (
+          <form style={style.sendMessagesBox} onSubmit={handleSendMessage}>
+            <button type="button" style={style.iconButton} title="Anexar (em breve)">
+              <FiPaperclip size={22} />
+            </button>
+            <div style={style.messageInputBox}>
+              <input
+                placeholder="Digite sua mensagem..."
+                style={style.messageInput}
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+              />
+            </div>
+            <button type="submit" style={style.iconButton} title="Enviar Mensagem">
+              <FiSend size={22} />
+            </button>
+          </form>
+        )}
       </div>
 
       {opcoesModal && <OpcoesModal onClose={() => setOpcoesModal(false)} />}
       {seeProfile && <Perfil onClose={() => setSeeProfile(false)} />}
+      
+      {isHelpModalOpen && (
+        <div style={style.modalOverlay} onClick={() => setIsHelpModalOpen(false)}>
+            <div style={style.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h3 style={style.modalHeader}>Janela de Conversa do WhatsApp</h3>
+                <div style={style.modalBody}>
+                    <p style={{marginBottom: '15px'}}>
+                        Esta janela está fechada porque se passaram <strong>mais de 24 horas desde a última mensagem com o cliente</strong>, seguindo as regras do WhatsApp.
+                    </p>
+                    <p>
+                        A janela para conversar <strong>manualmente</strong> com o cliente só abrirá novamente se:
+                    </p>
+                    <ul style={style.modalList}>
+                        <li style={style.modalListItem}>O cliente <strong>enviar uma nova mensagem</strong> por conta própria.</li>
+                        <li style={style.modalListItem}>O cliente <strong>responder a um Disparo de Modelo</strong> (template) que você enviou.</li>
+                    </ul>
+                    <p>
+                        Qualquer uma dessas ações reinicia a contagem de 24 horas, liberando o chat para conversa.
+                    </p>
+                </div>
+                <div style={style.modalFooter}>
+                    <button style={style.modalCloseButton} onClick={() => setIsHelpModalOpen(false)}>
+                        OK, entendi
+                    </button>
+                </div>
+            </div>
+        </div>
+      )}
     </>
   );
 }

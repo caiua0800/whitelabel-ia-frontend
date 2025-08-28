@@ -9,7 +9,7 @@ export default function LoadingCircle({ loading }) {
         <div
           style={{
             background: "rgba(0,0,0,0.8)",
-            zIndex: 99,
+            zIndex: 99999,
             position: "absolute",
             top: 0,
             left: 0,

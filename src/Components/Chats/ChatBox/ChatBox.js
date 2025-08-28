@@ -9,13 +9,18 @@ const ChatBox = ({ chat }) => {
   const { handleSelectChat, activeChat } = useContext(ChatContext);
 
   const isActive = activeChat && chat.id === activeChat.id;
+  const isNotSeen = !chat.lastMessageIsSeen;
 
   if (!chat) return null;
 
   return (
     <div
       onClick={() => handleSelectChat(chat)}
-      style={{ ...style.chatContainer, ...(isActive ? style.activeChat : {}) }}
+      style={{
+        ...style.chatContainer,
+        ...(isNotSeen ? style.notSeenChat : {}),
+        ...(isActive ? style.activeChat : {}),
+      }}
       className="chat-box-hover"
     >
       <div style={style.profilePhotoBox}>
@@ -35,7 +40,9 @@ const ChatBox = ({ chat }) => {
           </span>
         </div>
         <div style={style.clientLastMessage}>
-          <span style={style.message}>{chat.lastMessageText || ""}</span>
+          <span style={{ ...style.message, ...(isNotSeen && !isActive ? style.notSeenMessage : {}) }}>
+            {chat.lastMessageText || ""}
+          </span>
         </div>
       </div>
     </div>

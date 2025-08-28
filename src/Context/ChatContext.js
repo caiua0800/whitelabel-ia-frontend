@@ -102,7 +102,7 @@ const ChatProvider = ({ children }) => {
       } else if (response && response.items) {
         chatsData = response.items;
       }
-      
+
       setTotalChats(response.totalCount);
       setChats(chatsData);
 
@@ -208,17 +208,25 @@ const ChatProvider = ({ children }) => {
           updateChatInList(data.chatId, data.updates);
         }
       } catch (error) {
-        console.error("WebSocket: Erro ao processar mensagem", error, event.data);
+        console.error(
+          "WebSocket: Erro ao processar mensagem",
+          error,
+          event.data
+        );
       }
     };
 
     ws.current.onclose = (event) => {
       setSocketStatus("disconnected");
       if (event.code !== 1000 && ws.current) {
-        const delay = Math.min(5000 * (ws.current.reconnectAttempts + 1), 30000);
+        const delay = Math.min(
+          5000 * (ws.current.reconnectAttempts + 1),
+          30000
+        );
         setTimeout(() => {
           if (ws.current) {
-            ws.current.reconnectAttempts = (ws.current.reconnectAttempts || 0) + 1;
+            ws.current.reconnectAttempts =
+              (ws.current.reconnectAttempts || 0) + 1;
             connectWebSocket();
           }
         }, delay);
@@ -282,7 +290,7 @@ const ChatProvider = ({ children }) => {
       handleSelectChat(data);
       setError(null);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setError("Falha ao carregar chat");
     } finally {
       stopLoadingDelay();
@@ -330,9 +338,11 @@ const ChatProvider = ({ children }) => {
       }
       startLoading();
       try {
-        // axios.put(
-        //   `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`
-        // );
+        await axios.put(
+          `${process.env.REACT_APP_BASE_ROUTE_DOTNET_SERVER}chat/seen?id=${chat.id}&agentNumber=${selectedAgent.number}`,
+          null,
+          { headers: { Authorization: credentials.accessToken } }
+        );
 
         const agentNumber = selectedAgent?.number || "";
         const chatMessages = await fetchMessages(chat.id, agentNumber);
@@ -344,7 +354,7 @@ const ChatProvider = ({ children }) => {
           return currentActiveChat;
         });
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setMessages([]);
       } finally {
         setActiveChat((currentActiveChat) => {

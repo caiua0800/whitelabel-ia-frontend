@@ -40,7 +40,7 @@ export default function Clients() {
   const [showInsertClientsModal, setShowInsertClientsModal] = useState(false);
   const [showEditClientModal, setShowEditClientModal] = useState(null);
   const [chosenAgent, setChosenAgent] = useState(null);
-  const {showMessage} = useContext(SystemMessageContext);
+  const { showMessage } = useContext(SystemMessageContext);
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -142,7 +142,7 @@ export default function Clients() {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
-    }else{
+    } else {
       handleSearch();
     }
   };
@@ -213,7 +213,6 @@ export default function Clients() {
     }
   };
 
-
   return (
     <>
       <div style={style.container}>
@@ -271,9 +270,7 @@ export default function Clients() {
               <FiSliders style={{ marginRight: "8px" }} /> Tags (
               {selectedTags.length})
             </button>
-            <button onClick={handleClearFilters} style={style.clearButton}>
-              <FiTrash2 style={{ marginRight: "8px" }} /> Limpar
-            </button>
+
             <button
               style={style.searchButton}
               onClick={handleKeyPress}
@@ -309,7 +306,8 @@ export default function Clients() {
                     {client.clientName || "Não informado"}
                   </span>
                   <span style={style.tableCell}>
-                    {func.formatarContato(client.id) || "Não informado"}
+                    {func.formatarContato(func.getChatId(client.id)) ||
+                      "Não informado"}
                   </span>
                   <span style={style.tableCell}>
                     {func.formatarData(client.dateCreated) || "Não informado"}

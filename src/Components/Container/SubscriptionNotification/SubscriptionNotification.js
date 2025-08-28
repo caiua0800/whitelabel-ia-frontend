@@ -48,8 +48,7 @@ export default function SubscriptionNotification() {
     const lastTimeOpened = localStorage.getItem("last-time-subscription-warning-opened");
     if (!lastTimeOpened) return true;
     const diffInHours = (new Date() - new Date(lastTimeOpened)) / (1000 * 60 * 60);
-    return true;
-    // return diffInHours > 4;
+    return diffInHours > 4;
   };
 
   const handleGeneratePix = async () => {
